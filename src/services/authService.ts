@@ -6,7 +6,14 @@ const mockUsers = [
     email: 'ksvanquy@gmail.com',
     password: 'password123',
     role: 'user'
+  },{
+    id: 2,
+    name: 'admin',
+    email: 'admin@gmail.com',
+    password: 'password123',
+    role: 'admin'
   }
+  
 ];
 
 // Mock authentication service

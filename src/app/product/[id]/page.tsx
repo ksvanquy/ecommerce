@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { useCart } from '../../../context/CartContext';
 import { products, Product } from '../../../data/mockData';
+import ProductReviews from '../../../components/ProductReviews';
+import { useAuth } from '../../../context/AuthContext';
 
 export default function ProductDetailPage() {
   const router = useRouter();
@@ -12,6 +14,7 @@ export default function ProductDetailPage() {
   const [product, setProduct] = useState<Product | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [error, setError] = useState('');
+  const { user } = useAuth();
 
   useEffect(() => {
     const productId = parseInt(params.id as string);
@@ -113,6 +116,7 @@ export default function ProductDetailPage() {
             </div>
           </div>
         </div>
+        <ProductReviews productId={product.id} user={user} />
       </div>
     </div>
   );
