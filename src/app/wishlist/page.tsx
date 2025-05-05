@@ -5,12 +5,14 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { products } from '../../data/mockData';
 import { getWishlist, removeFromWishlist } from '../../data/mockWishlist';
+import { useCart } from '../../context/CartContext';
 
 export default function WishlistPage() {
   const router = useRouter();
   const [user, setUser] = useState<any>(null);
   const [wishlist, setWishlist] = useState<number[]>(getWishlist());
   const [wishlistProducts, setWishlistProducts] = useState<any[]>(products.filter(product => getWishlist().includes(product.id)));
+  const { addToCart } = useCart();
 
   useEffect(() => {
     // Get user from localStorage
@@ -99,7 +101,6 @@ export default function WishlistPage() {
                         <div>
                           <h3 className="text-sm text-gray-700">
                             <Link href={`/product/${product.id}`}>
-                              <span aria-hidden="true" className="absolute inset-0" />
                               {product.name}
                             </Link>
                           </h3>
@@ -121,6 +122,11 @@ export default function WishlistPage() {
                         </button>
                         <button
                           type="button"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            addToCart(product, 1);
+                          }}
                           className="text-sm font-medium text-indigo-600 hover:text-indigo-500"
                         >
                           Add to cart
