@@ -13,7 +13,7 @@ interface User {
 
 interface AuthContextType {
   user: User | null;
-  login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
+  login: (email: string, password: string, rememberMe?: boolean) => Promise<{ success: boolean; error?: string }>;
   register: (name: string, email: string, password: string) => Promise<{ success: boolean; error?: string }>;
   logout: () => void;
 }
@@ -32,16 +32,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
-    const currentUser = authService.getCurrentUser();
+    const localUser = localStorage.getItem('user');
+    const sessionUser = sessionStorage.getItem('user');
+    const currentUser = localUser || sessionUser;
     if (currentUser) {
-      setUser(currentUser);
+      setUser(JSON.parse(currentUser));
     }
   }, []);
 
-  const login = async (email: string, password: string) => {
+  const login = async (email: string, password: string, rememberMe = false) => {
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      setUser(mockUser);
+      const userData = await authService.login(email, password, rememberMe);
+      setUser(userData);
       return { success: true };
     } catch (error) {
       return { success: false, error: 'Login failed' };

@@ -3,7 +3,7 @@ const mockUsers = [
   {
     id: 1,
     name: 'John Doe',
-    email: 'john@example.com',
+    email: 'ksvanquy@gmail.com',
     password: 'password123',
     role: 'user'
   }
@@ -12,16 +12,22 @@ const mockUsers = [
 // Mock authentication service
 export const authService = {
   // Login
-  async login(email: string, password: string) {
+  async login(email: string, password: string, rememberMe = false) {
     const user = mockUsers.find(u => u.email === email && u.password === password);
     if (!user) {
       throw new Error('Invalid email or password');
+    }
+    if (rememberMe) {
+      localStorage.setItem('user', JSON.stringify({ ...user, avatar: 'https://i.pravatar.cc/150?img=1' }));
+    } else {
+      sessionStorage.setItem('user', JSON.stringify({ ...user, avatar: 'https://i.pravatar.cc/150?img=1' }));
     }
     return {
       id: user.id,
       name: user.name,
       email: user.email,
-      role: user.role
+      role: user.role,
+      avatar: 'https://i.pravatar.cc/150?img=1'
     };
   },
 
@@ -45,7 +51,8 @@ export const authService = {
       id: newUser.id,
       name: newUser.name,
       email: newUser.email,
-      role: newUser.role
+      role: newUser.role,
+      avatar: 'https://i.pravatar.cc/150?img=1'
     };
   },
 

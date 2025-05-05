@@ -7,8 +7,10 @@ import { CartProvider } from '../context/CartContext';
 import UserMenu from '../components/UserMenu';
 import CartIcon from '../components/CartIcon';
 import WishlistIcon from '../components/WishlistIcon';
+import NotificationIcon from '../components/NotificationIcon';
 import Link from 'next/link';
 import Image from 'next/image';
+import { mockNotifications } from '../data/mockNotifications';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -17,6 +19,8 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const unreadCount = mockNotifications.filter(n => !n.isRead).length;
+
   return (
     <html lang="en">
       <body className={inter.className}>
@@ -36,6 +40,7 @@ export default function RootLayout({
                     <div className="flex items-center space-x-6">
                       <WishlistIcon />
                       <CartIcon />
+                      <NotificationIcon unreadCount={unreadCount} />
                       <UserMenu />
                     </div>
                   </div>
