@@ -1,0 +1,6 @@
+{
+  "name": "Ecommerce",
+  "description": "E-commerce platform monorepo with React, Vite, Express, Drizzle ORM, and Turborepo tooling.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
