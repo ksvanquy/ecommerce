@@ -7,14 +7,12 @@ interface ProductListProps {
   products: Product[];
   isLoading?: boolean;
   onAddToCart?: (product: Product) => void;
-  onQuickView?: (product: Product) => void;
 }
 
 export const ProductList: React.FC<ProductListProps> = ({
   products,
   isLoading,
   onAddToCart,
-  onQuickView,
 }) => {
   if (isLoading) {
     return (
@@ -61,7 +59,6 @@ export const ProductList: React.FC<ProductListProps> = ({
           key={product.id}
           product={product}
           onAddToCart={onAddToCart}
-          onQuickView={onQuickView}
         />
       ))}
     </div>

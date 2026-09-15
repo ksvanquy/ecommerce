@@ -4,19 +4,17 @@ import type { Product } from '../types.ts';
 import { useCartStore } from '../../checkout/store/cartStore.ts';
 import { Button } from '../../../components/ui/Button.tsx';
 import { Badge } from '../../../components/ui/Badge.tsx';
-import { Eye, ShoppingCart, Check } from 'lucide-react';
+import { ShoppingCart, Check } from 'lucide-react';
 import { formatCurrency } from '../../../utils/currency.ts';
 
 interface ProductCardProps {
   product: Product;
   onAddToCart?: (product: Product) => void;
-  onQuickView?: (product: Product) => void;
 }
 
 export const ProductCard: React.FC<ProductCardProps> = ({
   product,
   onAddToCart,
-  onQuickView,
 }) => {
   const [imageError, setImageError] = useState(false);
   const [addedAnimation, setAddedAnimation] = useState(false);
@@ -34,14 +32,6 @@ export const ProductCard: React.FC<ProductCardProps> = ({
     setTimeout(() => setAddedAnimation(false), 1500);
   };
 
-  const handleQuickView = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (onQuickView) {
-      onQuickView(product);
-    }
-  };
-
   const isOutOfStock = product.inventory <= 0;
   const isLowStock = product.inventory > 0 && product.inventory <= 10;
 
@@ -50,8 +40,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({
       id={`product-card-${product.id}`}
       className="group bg-white border border-slate-200 rounded-xl overflow-hidden hover:border-blue-400 hover:shadow-md transition-all duration-200 flex flex-col relative"
     >
-      {/* Product Image Area */}
-      <div className="relative h-48 bg-slate-50 overflow-hidden flex items-center justify-center p-4">
+      {/* Product Image Link Area */}
+      <Link
+        to={`/products/${product.id}`}
+        className="relative h-48 bg-slate-50 overflow-hidden flex items-center justify-center p-4 block cursor-pointer"
+        title={`Xem chi tiết ${product.name}`}
+      >
         {product.imageUrl && !imageError ? (
           <img
             src={product.imageUrl}
@@ -67,30 +61,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({
           </div>
         )}
 
-        {/* Hover Quick Actions - Single unified action */}
-        <div className="absolute inset-0 bg-slate-900/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-[2px]">
-          {onQuickView ? (
-            <button
-              type="button"
-              onClick={handleQuickView}
-              className="px-4 py-2 rounded-full bg-blue-600 text-white text-xs font-semibold hover:bg-blue-700 shadow-md transition flex items-center gap-1.5 transform scale-95 group-hover:scale-100"
-            >
-              <Eye className="w-3.5 h-3.5" />
-              <span>Xem chi tiết</span>
-            </button>
-          ) : (
-            <Link
-              to={`/products/${product.id}`}
-              className="px-4 py-2 rounded-full bg-blue-600 text-white text-xs font-semibold hover:bg-blue-700 shadow-md transition flex items-center gap-1.5 transform scale-95 group-hover:scale-100"
-            >
-              <Eye className="w-3.5 h-3.5" />
-              <span>Xem chi tiết</span>
-            </Link>
-          )}
-        </div>
-
         {/* Stock status & Brand overlay */}
-        <div className="absolute top-2.5 left-2.5 flex flex-col gap-1 items-start">
+        <div className="absolute top-2.5 left-2.5 flex flex-col gap-1 items-start z-10">
           {product.brand && (
             <Badge variant="info" className="bg-blue-600 text-white shadow-2xs text-[10px] font-bold">
               {product.brand.name}
@@ -102,15 +74,15 @@ export const ProductCard: React.FC<ProductCardProps> = ({
         </div>
 
         {isOutOfStock ? (
-          <div className="absolute top-2.5 right-2.5 bg-rose-600/90 text-white text-[10px] font-bold px-2 py-0.5 rounded shadow-2xs">
+          <div className="absolute top-2.5 right-2.5 bg-rose-600/90 text-white text-[10px] font-bold px-2 py-0.5 rounded shadow-2xs z-10">
             Hết hàng
           </div>
         ) : isLowStock ? (
-          <div className="absolute top-2.5 right-2.5 bg-amber-500/90 text-white text-[10px] font-bold px-2 py-0.5 rounded shadow-2xs">
+          <div className="absolute top-2.5 right-2.5 bg-amber-500/90 text-white text-[10px] font-bold px-2 py-0.5 rounded shadow-2xs z-10">
             Chỉ còn {product.inventory}
           </div>
         ) : null}
-      </div>
+      </Link>
 
       {/* Product Content Details */}
       <div className="p-4 flex-1 flex flex-col justify-between">

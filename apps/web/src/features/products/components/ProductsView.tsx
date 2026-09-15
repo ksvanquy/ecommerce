@@ -5,13 +5,9 @@ import { useCategories } from '../api/useCategories.ts';
 import { ProductList } from './ProductList.tsx';
 import { ProductFiltersBar } from './ProductFiltersBar.tsx';
 import { Pagination } from './Pagination.tsx';
-import { Modal } from '../../../components/ui/Modal.tsx';
-import { Button } from '../../../components/ui/Button.tsx';
-import { Badge } from '../../../components/ui/Badge.tsx';
 import { useCartStore } from '../../checkout/store/cartStore.ts';
 import type { Product, ProductFilters } from '../types.ts';
-import { ShoppingCart, Check } from 'lucide-react';
-import { formatCurrency } from '../../../utils/currency.ts';
+import { Check } from 'lucide-react';
 
 export const ProductsView: React.FC = () => {
   const [filters, setFilters] = useState<ProductFilters>({
@@ -22,14 +18,12 @@ export const ProductsView: React.FC = () => {
     sortBy: 'newest',
   });
 
-  const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
   const [cartToast, setCartToast] = useState<{ visible: boolean; name: string }>({
     visible: false,
     name: '',
   });
 
   const addItem = useCartStore((state) => state.addItem);
-  const setOpenCart = useCartStore((state) => state.setOpen);
 
   const { data: categories = [] } = useCategories();
   const { data: productsData, isLoading } = useProducts(filters);
@@ -100,7 +94,6 @@ export const ProductsView: React.FC = () => {
           products={products}
           isLoading={isLoading}
           onAddToCart={handleAddToCart}
-          onQuickView={(p) => setQuickViewProduct(p)}
         />
 
         {/* Pagination */}
@@ -123,73 +116,13 @@ export const ProductsView: React.FC = () => {
             <p className="font-semibold text-emerald-400">Đã thêm vào giỏ hàng!</p>
             <p className="text-slate-300 truncate max-w-[180px]">{cartToast.name}</p>
           </div>
-          <button
-            type="button"
-            onClick={() => setOpenCart(true)}
+          <Link
+            to="/cart"
             className="text-xs text-blue-400 hover:text-blue-300 font-semibold underline ml-2"
           >
             Xem giỏ
-          </button>
+          </Link>
         </div>
-      )}
-
-      {/* Quick View Product Modal */}
-      {quickViewProduct && (
-        <Modal
-          isOpen={Boolean(quickViewProduct)}
-          onClose={() => setQuickViewProduct(null)}
-          title="Xem nhanh Sản phẩm"
-        >
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-2">
-            <div className="aspect-square bg-slate-100 rounded-2xl overflow-hidden border border-slate-200">
-              <img
-                src={quickViewProduct.imageUrl}
-                alt={quickViewProduct.name}
-                className="w-full h-full object-cover"
-                referrerPolicy="no-referrer"
-              />
-            </div>
-
-            <div className="flex flex-col justify-between space-y-4">
-              <div>
-                <div className="flex items-center gap-2 mb-2">
-                  <Badge variant="neutral">{quickViewProduct.category}</Badge>
-                  <span className="text-xs text-slate-500">Mã SP: {quickViewProduct.id}</span>
-                </div>
-
-                <h3 className="text-lg font-bold text-slate-900">{quickViewProduct.name}</h3>
-                <p className="text-xl font-extrabold text-blue-600 mt-2">
-                  {formatCurrency(quickViewProduct.price)}
-                </p>
-
-                <p className="text-xs text-slate-600 mt-3 line-clamp-4 leading-relaxed">
-                  {quickViewProduct.description}
-                </p>
-              </div>
-
-              <div className="pt-4 border-t border-slate-100 flex items-center gap-3">
-                <Button
-                  variant="primary"
-                  className="flex-1"
-                  onClick={() => {
-                    handleAddToCart(quickViewProduct);
-                    setQuickViewProduct(null);
-                  }}
-                >
-                  <ShoppingCart className="w-4 h-4 mr-2" />
-                  Thêm vào giỏ
-                </Button>
-                <Link
-                  to={`/products/${quickViewProduct.id}`}
-                  className="px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition"
-                  onClick={() => setQuickViewProduct(null)}
-                >
-                  Chi tiết
-                </Link>
-              </div>
-            </div>
-          </div>
-        </Modal>
       )}
     </div>
   );
