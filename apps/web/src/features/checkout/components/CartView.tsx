@@ -1,10 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCartStore } from '../store/cartStore.ts';
-import { Button } from '../../../components/ui/Button.tsx';
-import { Badge } from '../../../components/ui/Badge.tsx';
-import { Card } from '../../../components/ui/Card.tsx';
-import { Modal } from '../../../components/ui/Modal.tsx';
+import { Button, Badge, Card, Modal } from '@repo/ui';
 import { CheckoutModal } from './CheckoutModal.tsx';
 import { OrderSuccessModal } from './OrderSuccessModal.tsx';
 import { formatCurrency } from '../../../utils/currency.ts';

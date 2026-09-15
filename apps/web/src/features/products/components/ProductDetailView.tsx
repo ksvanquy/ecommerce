@@ -2,9 +2,7 @@ import React, { useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useProduct } from '../api/useProduct.ts';
 import { useCartStore } from '../../checkout/store/cartStore.ts';
-import { Button } from '../../../components/ui/Button.tsx';
-import { Badge } from '../../../components/ui/Badge.tsx';
-import { Card } from '../../../components/ui/Card.tsx';
+import { Button, Badge, Card } from '@repo/ui';
 import {
   ArrowLeft,
   ShoppingCart,

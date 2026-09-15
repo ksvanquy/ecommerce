@@ -30,7 +30,7 @@ Khi ứng dụng mở rộng mô-đun Quản trị (**Admin Portal**), việc c�
 
 | Tầng Kiến trúc | Thành phần / Module | Vị trí Đặt (Location) | Đặc điểm & Quy tắc Tái sử dụng |
 | :--- | :--- | :--- | :--- |
-| **🟢 Tầng 1: Shared Core** | Design Tokens (`blue`, `slate`), `Button`, `Badge`, `Input`, `Select`, `Modal`, `formatCurrency`, `cn` | `src/components/ui/` & `src/utils/` | **Dùng chung 100%** giữa Web và Admin. Tuyệt đối không tạo bản sao. |
+| **🟢 Tầng 1: Shared Core** | Design Tokens (`blue`, `slate`), `Button`, `Badge`, `Input`, `Card`, `Modal`, `formatCurrency` | `packages/ui/` (`@repo/ui`) & `apps/web/src/utils/` | **Dùng chung 100% Monorepo** giữa các Apps (Web, Admin). Tuyệt đối không tạo bản sao. |
 | **🔵 Tầng 2A: Web Storefront** | `Header`, `Footer`, `ProductCard`, `CategoryBar`, `CartDrawer`, `CheckoutProgress` | `apps/web/src/components/` | Tối ưu trải nghiệm thị giác cho người mua hàng (khoảng cách rộng, hình ảnh to, CTA nổi bật). |
 | **🟣 Tầng 2B: Admin Dense** | `AdminSidebar`, `AdminDataTable`, `MetricStatCard`, `BulkActionBar`, `OrderEditDrawer` | `apps/admin/src/components/` | Tối ưu mật độ thông tin cao cho nhân viên quản trị (padding nhỏ gọn `py-1`, thao tác nhanh). |
 

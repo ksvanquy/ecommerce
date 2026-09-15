@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { Button } from '../../../components/ui/Button.tsx';
-import { Input } from '../../../components/ui/Input.tsx';
+import { Button, Input } from '@repo/ui';
 import { useLogin } from '../api/useLogin.ts';
 import { loginSchema } from '@repo/shared-types';
 import { AlertCircle, LogIn } from 'lucide-react';

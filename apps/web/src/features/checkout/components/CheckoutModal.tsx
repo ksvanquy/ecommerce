@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useCartStore } from '../store/cartStore.ts';
 import { useCreateOrder } from '../api/useCreateOrder.ts';
 import { useAuthStore } from '../../auth/store/authStore.ts';
-import { Modal } from '../../../components/ui/Modal.tsx';
-import { Button } from '../../../components/ui/Button.tsx';
+import { Modal, Button } from '@repo/ui';
 import { formatCurrency } from '../../../utils/currency.ts';
 import { createOrderSchema } from '@repo/shared-types';
 import {

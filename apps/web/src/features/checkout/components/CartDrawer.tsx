@@ -13,8 +13,7 @@ import {
   CreditCard,
 } from 'lucide-react';
 import { useCartStore } from '../store/cartStore.ts';
-import { Button } from '../../../components/ui/Button.tsx';
-import { Badge } from '../../../components/ui/Badge.tsx';
+import { Button, Badge } from '@repo/ui';
 import { CheckoutModal } from './CheckoutModal.tsx';
 import { OrderSuccessModal } from './OrderSuccessModal.tsx';
 import { formatCurrency } from '../../../utils/currency.ts';

@@ -1,7 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Modal } from '../../../components/ui/Modal.tsx';
-import { Button } from '../../../components/ui/Button.tsx';
+import { Modal, Button } from '@repo/ui';
 import { formatCurrency } from '../../../utils/currency.ts';
 import {
   CheckCircle,

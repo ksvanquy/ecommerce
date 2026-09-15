@@ -30,6 +30,18 @@
       "@ecommerce/shared-types/*": [
         "./packages/shared-types/src/*"
       ],
+      "@repo/ui": [
+        "./packages/ui/src/index.ts"
+      ],
+      "@repo/ui/*": [
+        "./packages/ui/src/*"
+      ],
+      "@ecommerce/ui": [
+        "./packages/ui/src/index.ts"
+      ],
+      "@ecommerce/ui/*": [
+        "./packages/ui/src/*"
+      ],
       "@apps/api/*": [
         "./apps/api/src/*"
       ],

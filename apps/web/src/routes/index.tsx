@@ -3,10 +3,7 @@ import { createBrowserRouter, RouterProvider, useNavigate } from 'react-router-d
 import { Header } from '../components/layout/Header.tsx';
 import { Footer } from '../components/layout/Footer.tsx';
 import { PageWrapper } from '../components/layout/PageWrapper.tsx';
-import { Card } from '../components/ui/Card.tsx';
-import { Button } from '../components/ui/Button.tsx';
-import { Badge } from '../components/ui/Badge.tsx';
-import { Modal } from '../components/ui/Modal.tsx';
+import { Card, Button, Badge, Modal } from '@repo/ui';
 import {
   AuthView,
   LoginForm,

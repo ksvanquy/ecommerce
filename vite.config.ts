@@ -20,6 +20,9 @@ export default defineConfig(() => {
       alias: {
         '@': path.resolve(__dirname, 'apps/web/src'),
         '@repo/shared-types': path.resolve(__dirname, 'packages/shared-types/src'),
+        '@ecommerce/shared-types': path.resolve(__dirname, 'packages/shared-types/src'),
+        '@repo/ui': path.resolve(__dirname, 'packages/ui/src'),
+        '@ecommerce/ui': path.resolve(__dirname, 'packages/ui/src'),
         '@apps/api': path.resolve(__dirname, 'apps/api/src'),
         '@apps/web': path.resolve(__dirname, 'apps/web/src'),
       },

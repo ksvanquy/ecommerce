@@ -5,8 +5,7 @@ import { useCancelOrder } from '../api/useCancelOrder.ts';
 import { useCartStore } from '../store/cartStore.ts';
 import { useAuthStore } from '../../auth/store/authStore.ts';
 import { useLogin } from '../../auth/api/useLogin.ts';
-import { Button } from '../../../components/ui/Button.tsx';
-import { Modal } from '../../../components/ui/Modal.tsx';
+import { Button, Modal } from '@repo/ui';
 import { formatCurrency } from '../../../utils/currency.ts';
 import {
   Package,

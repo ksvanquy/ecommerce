@@ -9,7 +9,7 @@ import {
 } from 'lucide-react';
 import { useAuthStore } from '../../features/auth/store/authStore.ts';
 import { useCartStore } from '../../features/checkout/store/cartStore.ts';
-import { Button } from '../ui/Button.tsx';
+import { Button } from '@repo/ui';
 
 interface HeaderProps {
   activeTab?: string;
@@ -78,7 +78,7 @@ export const Header: React.FC<HeaderProps> = ({
 
         {/* Right Side: Quick Navigation, Prominent Cart & Low-key Auth */}
         <div className="flex items-center space-x-2 sm:space-x-3">
-          {/* Quick link: Products (Prominent Button) */}
+          {/* Quick link: Products */}
           <button
             type="button"
             id="btn-header-products"
@@ -86,7 +86,7 @@ export const Header: React.FC<HeaderProps> = ({
             className={`px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 cursor-pointer shadow-2xs ${
               activeTab === 'products'
                 ? 'bg-blue-600 text-white shadow-blue-200'
-                : 'bg-slate-100 text-slate-800 hover:bg-slate-200 hover:text-slate-900'
+                : 'bg-slate-100 text-slate-700 hover:bg-slate-200 hover:text-slate-900'
             }`}
           >
             <ShoppingBag className="w-4 h-4" />
@@ -98,10 +98,10 @@ export const Header: React.FC<HeaderProps> = ({
             <button
               type="button"
               onClick={() => onSelectTab && onSelectTab('orders')}
-              className={`px-3 py-2 rounded-xl text-xs font-bold transition hidden sm:inline-flex items-center gap-1.5 cursor-pointer ${
+              className={`px-3.5 py-2 rounded-xl text-xs font-bold transition hidden sm:inline-flex items-center gap-1.5 cursor-pointer shadow-2xs ${
                 activeTab === 'orders'
-                  ? 'bg-blue-50 text-blue-700 border border-blue-200'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                  ? 'bg-blue-600 text-white shadow-blue-200'
+                  : 'bg-slate-100 text-slate-700 hover:bg-slate-200 hover:text-slate-900'
               }`}
             >
               <Package className="w-4 h-4" />
@@ -109,15 +109,15 @@ export const Header: React.FC<HeaderProps> = ({
             </button>
           )}
 
-          {/* Prominent Cart Header Button */}
+          {/* Cart Header Button */}
           <button
             id="btn-header-cart"
             type="button"
             onClick={handleOpenCart}
             className={`px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 cursor-pointer shadow-2xs ${
-              activeTab === 'cart'
-                ? 'bg-blue-700 text-white ring-2 ring-blue-300'
-                : 'bg-blue-600 text-white hover:bg-blue-700'
+              activeTab === 'cart' || totalCartItems > 0
+                ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-blue-200'
+                : 'bg-slate-100 text-slate-700 hover:bg-slate-200 hover:text-slate-900'
             }`}
             title="Xem Giỏ hàng chi tiết"
             aria-label="Giỏ hàng"
@@ -127,7 +127,7 @@ export const Header: React.FC<HeaderProps> = ({
             {totalCartItems > 0 && (
               <span
                 id="header-cart-badge"
-                className="ml-0.5 px-1.5 py-0.5 rounded-full bg-white text-blue-700 text-[10px] font-extrabold flex items-center justify-center leading-none"
+                className="ml-0.5 px-1.5 py-0.5 rounded-full bg-white text-blue-700 text-[10px] font-extrabold flex items-center justify-center leading-none shadow-2xs"
               >
                 {totalCartItems > 99 ? '99+' : totalCartItems}
               </span>

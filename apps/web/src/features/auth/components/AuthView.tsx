@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Card } from '../../../components/ui/Card.tsx';
-import { Button } from '../../../components/ui/Button.tsx';
-import { Badge } from '../../../components/ui/Badge.tsx';
+import { Card, Button, Badge } from '@repo/ui';
 import { LoginForm } from './LoginForm.tsx';
 import { RegisterForm } from './RegisterForm.tsx';
 import { useAuthStore } from '../store/authStore.ts';

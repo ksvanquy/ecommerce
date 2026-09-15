@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { Button } from '../../../components/ui/Button.tsx';
-import { Input } from '../../../components/ui/Input.tsx';
+import { Button, Input } from '@repo/ui';
 import { useRegister } from '../api/useRegister.ts';
 import { UserRole, registerSchema } from '@repo/shared-types';
 import { AlertCircle, CheckCircle2, UserCheck, Shield } from 'lucide-react';
