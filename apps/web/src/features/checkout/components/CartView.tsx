@@ -84,49 +84,24 @@ export const CartView: React.FC = () => {
     }
   };
 
-  // Sample order payload matching Phase 4 specifications
-  const phase4Payload = {
-    items: items.map((i) => ({
-      productId: i.product.id,
-      name: i.product.name,
-      quantity: i.quantity,
-      price: i.product.price,
-      subtotal: i.product.price * i.quantity,
-    })),
-    subtotal,
-    discount,
-    couponCode,
-    shipping,
-    total,
-    shippingAddress: '123 Đường Công Nghệ, Quận 1, TP. Hồ Chí Minh',
-  };
-
   return (
     <div className="space-y-6 max-w-6xl mx-auto py-2">
-      {/* Phase 3 Header Banner */}
-      <div className="bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 text-white rounded-2xl p-6 shadow-sm">
+      {/* Header Banner */}
+      <div className="bg-gradient-to-r from-slate-900 via-blue-950 to-indigo-950 text-white rounded-2xl p-6 shadow-sm">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <div className="flex items-center space-x-2">
-              <span className="bg-blue-400/20 text-blue-300 text-[11px] font-bold px-2 py-0.5 rounded font-mono uppercase tracking-wider border border-blue-400/30">
-                Giai đoạn 3 Hoàn thiện
-              </span>
-              <span className="text-slate-300 text-xs font-medium">
-                Module Cart • Quản lý State Client (Zustand + LocalStorage)
-              </span>
-            </div>
-            <h1 className="text-2xl font-bold mt-2 tracking-tight">
-              Giỏ hàng Mua sắm (Shopping Cart)
+            <h1 className="text-2xl font-bold tracking-tight">
+              Giỏ hàng của bạn
             </h1>
             <p className="text-slate-300 text-xs mt-1 max-w-2xl leading-relaxed">
-              Toàn bộ trạng thái giỏ hàng được quản lý bởi Zustand Store độc lập, tự động đồng bộ hóa vào LocalStorage. Người dùng có thể thêm/xóa/sửa số lượng, áp mã khuyến mãi và chuẩn bị dữ liệu sẵn sàng cho Giai đoạn 4 (Đặt hàng).
+              Kiểm tra danh sách sản phẩm, điều chỉnh số lượng hoặc áp dụng mã giảm giá trước khi tiến hành thanh toán đơn hàng.
             </p>
           </div>
 
           <div className="shrink-0 flex items-center gap-2">
             <Link
               to="/products"
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-white text-xs font-semibold border border-white/20 transition"
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-semibold border border-white/20 transition"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
               <span>Tiếp tục mua hàng</span>
@@ -303,7 +278,7 @@ export const CartView: React.FC = () => {
 
                 <div className="text-slate-500 text-[11px] flex items-center gap-1.5">
                   <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                  <span>Dữ liệu giỏ hàng được đồng bộ tự động ở client</span>
+                  <span>Giỏ hàng tự động lưu trữ &amp; đồng bộ</span>
                 </div>
               </div>
             </div>
