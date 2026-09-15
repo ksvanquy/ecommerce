@@ -11,6 +11,7 @@ import { Badge } from '../../../components/ui/Badge.tsx';
 import { useCartStore } from '../../checkout/store/cartStore.ts';
 import type { Product, ProductFilters } from '../types.ts';
 import { ShoppingCart, Check } from 'lucide-react';
+import { formatCurrency } from '../../../utils/currency.ts';
 
 export const ProductsView: React.FC = () => {
   const [filters, setFilters] = useState<ProductFilters>({
@@ -158,10 +159,7 @@ export const ProductsView: React.FC = () => {
 
                 <h3 className="text-lg font-bold text-slate-900">{quickViewProduct.name}</h3>
                 <p className="text-xl font-extrabold text-blue-600 mt-2">
-                  {new Intl.NumberFormat('vi-VN', {
-                    style: 'currency',
-                    currency: 'VND',
-                  }).format(quickViewProduct.price)}
+                  {formatCurrency(quickViewProduct.price)}
                 </p>
 
                 <p className="text-xs text-slate-600 mt-3 line-clamp-4 leading-relaxed">

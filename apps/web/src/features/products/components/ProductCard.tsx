@@ -5,6 +5,7 @@ import { useCartStore } from '../../checkout/store/cartStore.ts';
 import { Button } from '../../../components/ui/Button.tsx';
 import { Badge } from '../../../components/ui/Badge.tsx';
 import { Eye, ShoppingCart, Check, PackageCheck, AlertCircle } from 'lucide-react';
+import { formatCurrency } from '../../../utils/currency.ts';
 
 interface ProductCardProps {
   product: Product;
@@ -121,7 +122,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
           <div>
             <span className="text-[10px] text-slate-400 block leading-none">Giá bán</span>
             <span className="font-bold text-slate-900 text-base">
-              ${product.price.toLocaleString()}
+              {formatCurrency(product.price)}
             </span>
           </div>
 

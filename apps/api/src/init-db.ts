@@ -1,5 +1,5 @@
 import bcrypt from 'bcryptjs';
-import { getPostgresClient, checkDatabaseConnection } from './connection.ts';
+import { getPostgresClient, getPgliteInstance, getIsUsingPglite, checkDatabaseConnection } from './connection.ts';
 import { db } from './db/index.ts';
 import {
   usersTable,
@@ -176,7 +176,7 @@ const SEED_PRODUCTS = [
     id: 'prod_01',
     name: 'Sony WH-1000XM5 Wireless Headphones',
     description: 'Tai nghe chống ồn chủ động hàng đầu ngành với công nghệ Auto NC Optimizer, thời lượng pin lên đến 30 giờ và âm thanh Hi-Res tuyệt hảo.',
-    price: 349,
+    price: 8490000,
     inventory: 45,
     category: 'Audio',
     categoryId: 'cat_sub_headphones',
@@ -188,7 +188,7 @@ const SEED_PRODUCTS = [
     id: 'prod_02',
     name: 'Apple Watch Ultra 2 Titanium Case',
     description: 'Đồng hồ thông minh siêu bền bỉ dành cho thể thao mạo hiểm với vỏ titan 49mm, định vị GPS tần số kép chuẩn xác và pin 72 giờ.',
-    price: 799,
+    price: 19990000,
     inventory: 28,
     category: 'Wearables',
     categoryId: 'cat_wearables',
@@ -200,7 +200,7 @@ const SEED_PRODUCTS = [
     id: 'prod_03',
     name: 'MacBook Air 15-inch M3 Midnight',
     description: 'Thiết kế mỏng nhẹ siêu thực 11.5mm, màn hình Liquid Retina sắc nét, chip Apple M3 hiệu năng vượt trội và thời lượng pin 18 giờ.',
-    price: 1299,
+    price: 31990000,
     inventory: 15,
     category: 'Electronics',
     categoryId: 'cat_sub_laptops',
@@ -212,7 +212,7 @@ const SEED_PRODUCTS = [
     id: 'prod_04',
     name: 'Keychron Q1 Pro Custom Mechanical Keyboard',
     description: 'Bàn phím cơ không dây layout 75%, vỏ nhôm CNC nguyên khối, switch Gateron Jupiter, hỗ trợ QMK/VIA và hot-swappable toàn diện.',
-    price: 199,
+    price: 4890000,
     inventory: 60,
     category: 'Accessories',
     categoryId: 'cat_sub_keyboards',
@@ -224,7 +224,7 @@ const SEED_PRODUCTS = [
     id: 'prod_05',
     name: 'Logitech MX Master 3S Ergonomic Mouse',
     description: 'Chuột công thái học cao cấp với con lăn điện từ MagSpeed cuộn 1000 dòng/giây, cảm biến 8000 DPI Quiet Clicks và kết nối 3 thiết bị.',
-    price: 99,
+    price: 2490000,
     inventory: 80,
     category: 'Accessories',
     categoryId: 'cat_sub_mice',
@@ -236,7 +236,7 @@ const SEED_PRODUCTS = [
     id: 'prod_06',
     name: 'Dell UltraSharp 27 4K PremierColor Monitor',
     description: 'Màn hình đồ họa chuyên nghiệp 27 inch 4K IPS Black, độ bao phủ 98% DCI-P3, cổng kết nối Thunderbolt 4 cấp nguồn 90W tiện lợi.',
-    price: 649,
+    price: 15990000,
     inventory: 20,
     category: 'Displays',
     categoryId: 'cat_displays',
@@ -248,7 +248,7 @@ const SEED_PRODUCTS = [
     id: 'prod_07',
     name: 'Bose QuietComfort Ultra Earbuds',
     description: 'Tai nghe True Wireless chống ồn đỉnh cao với công nghệ Âm thanh không gian Bose Immersive Audio và chống nước chuẩn IPX4.',
-    price: 299,
+    price: 7490000,
     inventory: 35,
     category: 'Audio',
     categoryId: 'cat_sub_earbuds',
@@ -260,7 +260,7 @@ const SEED_PRODUCTS = [
     id: 'prod_08',
     name: 'Samsung Galaxy S24 Ultra Titanium Gray',
     description: 'Flagship đỉnh cao với khung titan, bút S Pen tích hợp, camera 200MP zoom quang 100x và tính năng Galaxy AI thông minh thế hệ mới.',
-    price: 1199,
+    price: 29990000,
     inventory: 18,
     category: 'Phones',
     categoryId: 'cat_phones',
@@ -279,11 +279,11 @@ const SEED_ORDERS = [
       customerPhone: '0901234567',
       shippingAddress: '45 Lê Duẩn, Phường Bến Nghé, Quận 1, TP. Hồ Chí Minh',
       customerNote: 'Giao hàng trong giờ hành chính giúp mình',
-      subtotal: 349,
-      discountAmount: 35,
+      subtotal: 8490000,
+      discountAmount: 849000,
       shippingFee: 0,
       couponCode: 'GIAM10',
-      totalAmount: 314,
+      totalAmount: 7641000,
       status: 'delivered',
       paymentMethod: 'cod',
       paymentStatus: 'paid',
@@ -297,9 +297,9 @@ const SEED_ORDERS = [
         productId: 'prod_01',
         productName: 'Sony WH-1000XM5 Wireless Headphones',
         productImage: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=800&q=80',
-        price: 349,
+        price: 8490000,
         quantity: 1,
-        subtotal: 349,
+        subtotal: 8490000,
         createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
       },
     ],
@@ -312,11 +312,11 @@ const SEED_ORDERS = [
       customerPhone: '0901234567',
       shippingAddress: 'Tòa nhà Bitexco, Số 2 Hải Triều, Bến Nghé, Quận 1, TP. Hồ Chí Minh',
       customerNote: 'Gọi điện trước khi giao 15 phút',
-      subtotal: 298,
+      subtotal: 7380000,
       discountAmount: 0,
       shippingFee: 0,
       couponCode: null,
-      totalAmount: 298,
+      totalAmount: 7380000,
       status: 'processing',
       paymentMethod: 'bank_transfer',
       paymentStatus: 'paid',
@@ -330,9 +330,9 @@ const SEED_ORDERS = [
         productId: 'prod_04',
         productName: 'Keychron Q1 Pro Custom Mechanical Keyboard',
         productImage: 'https://images.unsplash.com/photo-1587829741301-dc798b83add3?auto=format&fit=crop&w=800&q=80',
-        price: 199,
+        price: 4890000,
         quantity: 1,
-        subtotal: 199,
+        subtotal: 4890000,
         createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
       },
       {
@@ -341,27 +341,33 @@ const SEED_ORDERS = [
         productId: 'prod_05',
         productName: 'Logitech MX Master 3S Ergonomic Mouse',
         productImage: 'https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?auto=format&fit=crop&w=800&q=80',
-        price: 99,
+        price: 2490000,
         quantity: 1,
-        subtotal: 99,
+        subtotal: 2490000,
         createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
       },
     ],
   },
 ];
 
+async function runExecDDL(ddlQuery: string): Promise<void> {
+  if (getIsUsingPglite()) {
+    await getPgliteInstance().exec(ddlQuery);
+  } else {
+    await getPostgresClient().unsafe(ddlQuery);
+  }
+}
+
 export async function initializeDatabase(): Promise<boolean> {
   const isAvailable = await checkDatabaseConnection();
   if (!isAvailable.connected) {
-    console.warn(`[DB Init] Could not connect to PostgreSQL: ${isAvailable.message}`);
+    console.warn(`[DB Init] Could not connect to database: ${isAvailable.message}`);
     return false;
   }
 
   try {
-    const client = getPostgresClient();
-
     // 1. Create tables if not exist using DDL
-    await client`
+    await runExecDDL(`
       CREATE TABLE IF NOT EXISTS users (
         id TEXT PRIMARY KEY,
         email VARCHAR(255) NOT NULL UNIQUE,
@@ -371,9 +377,7 @@ export async function initializeDatabase(): Promise<boolean> {
         created_at TIMESTAMP NOT NULL DEFAULT NOW(),
         updated_at TIMESTAMP NOT NULL DEFAULT NOW()
       );
-    `;
 
-    await client`
       CREATE TABLE IF NOT EXISTS categories (
         id TEXT PRIMARY KEY,
         name VARCHAR(255) NOT NULL,
@@ -386,9 +390,7 @@ export async function initializeDatabase(): Promise<boolean> {
         created_at TIMESTAMP NOT NULL DEFAULT NOW(),
         updated_at TIMESTAMP NOT NULL DEFAULT NOW()
       );
-    `;
 
-    await client`
       CREATE TABLE IF NOT EXISTS products (
         id TEXT PRIMARY KEY,
         name VARCHAR(255) NOT NULL,
@@ -401,22 +403,7 @@ export async function initializeDatabase(): Promise<boolean> {
         created_at TIMESTAMP NOT NULL DEFAULT NOW(),
         updated_at TIMESTAMP NOT NULL DEFAULT NOW()
       );
-    `;
 
-    // Ensure category_id column exists if products was created in older migration
-    await client`
-      DO $$
-      BEGIN
-        IF NOT EXISTS (
-          SELECT 1 FROM information_schema.columns 
-          WHERE table_name = 'products' AND column_name = 'category_id'
-        ) THEN
-          ALTER TABLE products ADD COLUMN category_id TEXT REFERENCES categories(id) ON DELETE SET NULL;
-        END IF;
-      END $$;
-    `;
-
-    await client`
       CREATE TABLE IF NOT EXISTS orders (
         id TEXT PRIMARY KEY,
         user_id TEXT REFERENCES users(id),
@@ -435,9 +422,7 @@ export async function initializeDatabase(): Promise<boolean> {
         created_at TIMESTAMP NOT NULL DEFAULT NOW(),
         updated_at TIMESTAMP NOT NULL DEFAULT NOW()
       );
-    `;
 
-    await client`
       CREATE TABLE IF NOT EXISTS order_items (
         id TEXT PRIMARY KEY,
         order_id TEXT REFERENCES orders(id) ON DELETE CASCADE NOT NULL,
@@ -449,7 +434,7 @@ export async function initializeDatabase(): Promise<boolean> {
         subtotal INTEGER NOT NULL,
         created_at TIMESTAMP NOT NULL DEFAULT NOW()
       );
-    `;
+    `);
 
     // 2. Seed Categories if not present
     for (const cat of SEED_CATEGORIES) {
@@ -487,11 +472,11 @@ export async function initializeDatabase(): Promise<boolean> {
 
       if (existing.length === 0) {
         await db.insert(productsTable).values(prod);
-      } else if (!existing[0].categoryId && prod.categoryId) {
-        // Update categoryId if missing
+      } else {
+        // Update product price & categoryId if needed to keep VNĐ aligned
         await db
           .update(productsTable)
-          .set({ categoryId: prod.categoryId })
+          .set({ price: prod.price, categoryId: prod.categoryId })
           .where(eq(productsTable.id, prod.id));
       }
     }
@@ -512,10 +497,11 @@ export async function initializeDatabase(): Promise<boolean> {
       }
     }
 
-    console.log('[DB Init] PostgreSQL database, categories hierarchy, and initial trust seeds initialized successfully.');
+    console.log('[DB Init] Database, categories hierarchy, and initial trust seeds initialized successfully.');
     return true;
   } catch (error) {
     console.error('[DB Init] Error initializing database tables/seeds:', error);
     return false;
   }
 }
+

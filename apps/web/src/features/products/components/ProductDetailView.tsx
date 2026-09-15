@@ -17,6 +17,7 @@ import {
   Calendar,
   Package,
 } from 'lucide-react';
+import { formatCurrency } from '../../../utils/currency.ts';
 
 export const ProductDetailView: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -186,8 +187,8 @@ export const ProductDetailView: React.FC = () => {
               <div className="p-4 rounded-xl bg-slate-50 border border-slate-100 flex items-baseline justify-between">
                 <div>
                   <span className="text-xs text-slate-500 block mb-0.5 font-medium">Giá bán niêm yết:</span>
-                  <span className="text-3xl font-extrabold text-blue-600 tracking-tight">
-                    ${product.price.toLocaleString()}
+                  <span className="text-2xl sm:text-3xl font-extrabold text-blue-600 tracking-tight">
+                    {formatCurrency(product.price)}
                   </span>
                 </div>
                 <div className="text-right">
@@ -256,7 +257,7 @@ export const ProductDetailView: React.FC = () => {
                   </button>
                 </div>
                 <span className="text-[11px] text-slate-400">
-                  (Tổng: ${(product.price * quantity).toLocaleString()})
+                  (Tổng: {formatCurrency(product.price * quantity)})
                 </span>
               </div>
 

@@ -17,6 +17,7 @@ import { Button } from '../../../components/ui/Button.tsx';
 import { Badge } from '../../../components/ui/Badge.tsx';
 import { CheckoutModal } from './CheckoutModal.tsx';
 import { OrderSuccessModal } from './OrderSuccessModal.tsx';
+import { formatCurrency } from '../../../utils/currency.ts';
 import type { Order } from '../types.ts';
 
 interface CartDrawerProps {
@@ -206,7 +207,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onNavigateToCart }) => {
                           {product.category}
                         </Badge>
                         <span className="text-[11px] text-slate-500 font-mono">
-                          ${product.price.toLocaleString()} / cái
+                          {formatCurrency(product.price)} / cái
                         </span>
                       </div>
 
@@ -238,7 +239,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onNavigateToCart }) => {
                         </div>
 
                         <div className="text-right font-mono font-bold text-xs text-slate-900">
-                          ${(product.price * quantity).toLocaleString()}
+                          {formatCurrency(product.price * quantity)}
                         </div>
                       </div>
                     </div>
@@ -252,9 +253,9 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onNavigateToCart }) => {
           {items.length > 0 && (
             <div className="p-4 border-t border-slate-200 bg-slate-50/90 space-y-3">
               {/* Free shipping progress hint */}
-              {subtotal < 200 ? (
+              {subtotal < 500000 ? (
                 <div className="p-2 bg-blue-50 border border-blue-100 rounded-xl text-[11px] text-blue-800 flex items-center justify-between">
-                  <span>Mua thêm <strong>${(200 - subtotal).toLocaleString()}</strong> để nhận</span>
+                  <span>Mua thêm <strong>{formatCurrency(500000 - subtotal)}</strong> để nhận</span>
                   <span className="font-semibold text-blue-600">Miễn phí ship</span>
                 </div>
               ) : (
@@ -268,7 +269,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onNavigateToCart }) => {
               <div className="space-y-1.5 text-xs">
                 <div className="flex justify-between text-slate-600">
                   <span>Tạm tính ({count} món):</span>
-                  <span className="font-mono font-medium">${subtotal.toLocaleString()}</span>
+                  <span className="font-mono font-medium">{formatCurrency(subtotal)}</span>
                 </div>
 
                 {discount > 0 && (
@@ -277,7 +278,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onNavigateToCart }) => {
                       <Sparkles className="w-3 h-3" />
                       Giảm giá ({couponCode}):
                     </span>
-                    <span className="font-mono">-${discount.toLocaleString()}</span>
+                    <span className="font-mono">-{formatCurrency(discount)}</span>
                   </div>
                 )}
 
@@ -287,7 +288,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onNavigateToCart }) => {
                     {shipping === 0 ? (
                       <span className="text-emerald-600 font-semibold">Miễn phí</span>
                     ) : (
-                      `$${shipping}`
+                      formatCurrency(shipping)
                     )}
                   </span>
                 </div>
@@ -295,7 +296,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onNavigateToCart }) => {
                 <div className="pt-2 border-t border-slate-200 flex justify-between items-baseline">
                   <span className="text-xs font-semibold text-slate-900">Tổng cộng:</span>
                   <span className="text-lg font-bold text-blue-600 font-mono">
-                    ${total.toLocaleString()}
+                    {formatCurrency(total)}
                   </span>
                 </div>
               </div>
@@ -311,7 +312,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onNavigateToCart }) => {
                   onClick={handleOpenCheckout}
                 >
                   <CreditCard className="w-4 h-4 mr-1.5" />
-                  <span>Đặt hàng ngay (${total.toLocaleString()})</span>
+                  <span>Đặt hàng ngay ({formatCurrency(total)})</span>
                 </Button>
 
                 {/* View Full Cart button */}

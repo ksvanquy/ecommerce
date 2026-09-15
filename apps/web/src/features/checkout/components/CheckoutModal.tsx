@@ -4,6 +4,7 @@ import { useCreateOrder } from '../api/useCreateOrder.ts';
 import { useAuthStore } from '../../auth/store/authStore.ts';
 import { Modal } from '../../../components/ui/Modal.tsx';
 import { Button } from '../../../components/ui/Button.tsx';
+import { formatCurrency } from '../../../utils/currency.ts';
 import { createOrderSchema } from '@repo/shared-types';
 import {
   ShoppingBag,
@@ -308,12 +309,12 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                         {item.product.name}
                       </p>
                       <p className="text-[11px] text-slate-500 font-mono">
-                        ${item.product.price} × {item.quantity}
+                        {formatCurrency(item.product.price)} × {item.quantity}
                       </p>
                     </div>
                     <div className="text-right shrink-0">
                       <span className="text-xs font-semibold text-slate-900 font-mono">
-                        ${item.product.price * item.quantity}
+                        {formatCurrency(item.product.price * item.quantity)}
                       </span>
                     </div>
                   </div>
@@ -324,7 +325,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
               <div className="pt-3 border-t border-slate-200 space-y-1.5 text-xs">
                 <div className="flex justify-between text-slate-600">
                   <span>Tạm tính:</span>
-                  <span className="font-mono font-medium text-slate-900">${subtotal}</span>
+                  <span className="font-mono font-medium text-slate-900">{formatCurrency(subtotal)}</span>
                 </div>
 
                 {discount > 0 && (
@@ -333,7 +334,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                       <Tag className="w-3 h-3" />
                       Giảm giá ({couponCode}):
                     </span>
-                    <span className="font-mono font-medium">-${discount}</span>
+                    <span className="font-mono font-medium">-{formatCurrency(discount)}</span>
                   </div>
                 )}
 
@@ -346,7 +347,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                     {shipping === 0 ? (
                       <span className="text-emerald-600 font-semibold">Miễn phí</span>
                     ) : (
-                      `$${shipping}`
+                      formatCurrency(shipping)
                     )}
                   </span>
                 </div>
@@ -354,7 +355,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                 <div className="pt-2 border-t border-slate-200 flex justify-between items-baseline">
                   <span className="text-sm font-bold text-slate-900">Tổng thanh toán:</span>
                   <span className="text-lg font-bold text-blue-600 font-mono">
-                    ${total}
+                    {formatCurrency(total)}
                   </span>
                 </div>
               </div>
@@ -378,7 +379,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                 ) : (
                   <span className="inline-flex items-center gap-1.5">
                     <CheckCircle2 className="w-4 h-4" />
-                    Xác nhận Đặt hàng (${total})
+                    Xác nhận Đặt hàng ({formatCurrency(total)})
                   </span>
                 )}
               </Button>

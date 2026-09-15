@@ -7,6 +7,7 @@ import { useAuthStore } from '../../auth/store/authStore.ts';
 import { useLogin } from '../../auth/api/useLogin.ts';
 import { Button } from '../../../components/ui/Button.tsx';
 import { Modal } from '../../../components/ui/Modal.tsx';
+import { formatCurrency } from '../../../utils/currency.ts';
 import {
   Package,
   Calendar,
@@ -344,7 +345,7 @@ export const OrderHistoryView: React.FC = () => {
                 <div className="flex items-center gap-2">
                   {getStatusBadge(order.status)}
                   <span className="text-[11px] px-2 py-0.5 rounded-full font-mono font-medium bg-slate-100 text-slate-600 border border-slate-200">
-                    {order.paymentMethod === 'cod' ? 'COD' : 'Bank Transfer'}
+                    {order.paymentMethod === 'cod' ? 'COD (Tiền mặt)' : 'Chuyển khoản QR'}
                   </span>
                 </div>
               </div>
@@ -369,14 +370,14 @@ export const OrderHistoryView: React.FC = () => {
                           {item.productName}
                         </h4>
                         <div className="flex items-center gap-2 mt-0.5 text-[11px] text-slate-500 font-mono">
-                          <span>${item.price}</span>
+                          <span>{formatCurrency(item.price)}</span>
                           <span>×</span>
                           <span>{item.quantity}</span>
                         </div>
                       </div>
                       <div className="text-right shrink-0">
                         <span className="text-xs font-bold text-slate-900 font-mono">
-                          ${item.subtotal || item.price * item.quantity}
+                          {formatCurrency(item.subtotal || item.price * item.quantity)}
                         </span>
                       </div>
                     </div>
@@ -400,27 +401,27 @@ export const OrderHistoryView: React.FC = () => {
                   <div className="space-y-1 text-xs text-slate-600">
                     <div className="flex justify-between">
                       <span>Tạm tính:</span>
-                      <span className="font-mono text-slate-900">${order.subtotal}</span>
+                      <span className="font-mono text-slate-900">{formatCurrency(order.subtotal)}</span>
                     </div>
 
                     {order.discountAmount > 0 && (
                       <div className="flex justify-between text-emerald-600">
                         <span>Giảm giá ({order.couponCode}):</span>
-                        <span className="font-mono">-${order.discountAmount}</span>
+                        <span className="font-mono">-{formatCurrency(order.discountAmount)}</span>
                       </div>
                     )}
 
                     <div className="flex justify-between">
                       <span>Phí giao hàng:</span>
                       <span className="font-mono text-slate-900">
-                        {order.shippingFee === 0 ? 'Miễn phí' : `$${order.shippingFee}`}
+                        {order.shippingFee === 0 ? 'Miễn phí' : formatCurrency(order.shippingFee)}
                       </span>
                     </div>
 
                     <div className="pt-2 border-t border-slate-200 flex justify-between items-baseline">
                       <span className="font-bold text-slate-900">Tổng thanh toán:</span>
                       <span className="text-base font-bold text-blue-600 font-mono">
-                        ${order.totalAmount}
+                        {formatCurrency(order.totalAmount)}
                       </span>
                     </div>
                   </div>
@@ -559,12 +560,12 @@ export const OrderHistoryView: React.FC = () => {
                       <div className="min-w-0">
                         <p className="font-semibold text-slate-900 truncate">{it.productName}</p>
                         <p className="text-[11px] text-slate-500 font-mono">
-                          ${it.price} × {it.quantity}
+                          {formatCurrency(it.price)} × {it.quantity}
                         </p>
                       </div>
                     </div>
                     <span className="font-bold font-mono text-slate-900 shrink-0">
-                      ${it.subtotal || it.price * it.quantity}
+                      {formatCurrency(it.subtotal || it.price * it.quantity)}
                     </span>
                   </div>
                 ))}
@@ -575,24 +576,24 @@ export const OrderHistoryView: React.FC = () => {
             <div className="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-1.5">
               <div className="flex justify-between text-slate-600">
                 <span>Tạm tính:</span>
-                <span className="font-mono text-slate-900">${detailModalOrder.subtotal}</span>
+                <span className="font-mono text-slate-900">{formatCurrency(detailModalOrder.subtotal)}</span>
               </div>
               {detailModalOrder.discountAmount > 0 && (
                 <div className="flex justify-between text-emerald-600">
                   <span>Mã giảm giá ({detailModalOrder.couponCode}):</span>
-                  <span className="font-mono">-${detailModalOrder.discountAmount}</span>
+                  <span className="font-mono">-{formatCurrency(detailModalOrder.discountAmount)}</span>
                 </div>
               )}
               <div className="flex justify-between text-slate-600">
                 <span>Phí giao hàng:</span>
                 <span className="font-mono text-slate-900">
-                  {detailModalOrder.shippingFee === 0 ? 'Miễn phí' : `$${detailModalOrder.shippingFee}`}
+                  {detailModalOrder.shippingFee === 0 ? 'Miễn phí' : formatCurrency(detailModalOrder.shippingFee)}
                 </span>
               </div>
               <div className="pt-2 border-t border-slate-200 flex justify-between items-baseline">
                 <span className="font-bold text-slate-900">Tổng thanh toán:</span>
                 <span className="text-base font-bold text-blue-600 font-mono">
-                  ${detailModalOrder.totalAmount}
+                  {formatCurrency(detailModalOrder.totalAmount)}
                 </span>
               </div>
             </div>

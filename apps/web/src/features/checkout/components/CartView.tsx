@@ -7,6 +7,7 @@ import { Card } from '../../../components/ui/Card.tsx';
 import { Modal } from '../../../components/ui/Modal.tsx';
 import { CheckoutModal } from './CheckoutModal.tsx';
 import { OrderSuccessModal } from './OrderSuccessModal.tsx';
+import { formatCurrency } from '../../../utils/currency.ts';
 import type { Order } from '../types.ts';
 import {
   ShoppingBag,
@@ -203,7 +204,7 @@ export const CartView: React.FC = () => {
                           <p className="text-xs text-slate-500">
                             Đơn giá:{' '}
                             <span className="font-mono font-semibold text-slate-800">
-                              ${product.price.toLocaleString()}
+                              {formatCurrency(product.price)}
                             </span>
                             {product.inventory > 0 && (
                               <span className="text-[11px] text-slate-400 ml-2">
@@ -246,7 +247,7 @@ export const CartView: React.FC = () => {
                         <div className="text-right min-w-[90px]">
                           <span className="text-[10px] text-slate-400 block sm:hidden">Thành tiền</span>
                           <span className="font-mono font-bold text-sm text-slate-900">
-                            ${(product.price * quantity).toLocaleString()}
+                            {formatCurrency(product.price * quantity)}
                           </span>
                         </div>
 
@@ -289,7 +290,7 @@ export const CartView: React.FC = () => {
                 <Truck className="w-4 h-4 text-blue-600 shrink-0" />
                 <div>
                   <p className="font-semibold text-slate-800">Miễn phí ship</p>
-                  <p className="text-[11px] text-slate-400">Cho đơn hàng từ $200</p>
+                  <p className="text-[11px] text-slate-400">Cho đơn hàng từ 500.000 VNĐ</p>
                 </div>
               </div>
               <div className="p-3.5 bg-white rounded-xl border border-slate-200 flex items-center gap-2.5">
@@ -321,7 +322,7 @@ export const CartView: React.FC = () => {
                 <div className="flex justify-between">
                   <span>Tạm tính ({count} món):</span>
                   <span className="font-mono font-semibold text-slate-800">
-                    ${subtotal.toLocaleString()}
+                    {formatCurrency(subtotal)}
                   </span>
                 </div>
 
@@ -331,7 +332,7 @@ export const CartView: React.FC = () => {
                       <Sparkles className="w-3.5 h-3.5" />
                       Giảm giá ({couponCode} - {discountPercent}%):
                     </span>
-                    <span className="font-mono">-${discount.toLocaleString()}</span>
+                    <span className="font-mono">-{formatCurrency(discount)}</span>
                   </div>
                 )}
 
@@ -341,21 +342,21 @@ export const CartView: React.FC = () => {
                     {shipping === 0 ? (
                       <span className="text-emerald-600 font-bold">Miễn phí</span>
                     ) : (
-                      `$${shipping}`
+                      formatCurrency(shipping)
                     )}
                   </span>
                 </div>
 
-                {subtotal < 200 && shipping > 0 && (
+                {subtotal < 500000 && shipping > 0 && (
                   <div className="p-2 bg-blue-50/70 border border-blue-100 rounded-lg text-[11px] text-blue-800">
-                    Mua thêm ${(200 - subtotal).toLocaleString()} để được <strong>Miễn phí vận chuyển</strong>!
+                    Mua thêm {formatCurrency(500000 - subtotal)} để được <strong>Miễn phí vận chuyển</strong>!
                   </div>
                 )}
 
                 <div className="pt-3 border-t border-slate-200 flex justify-between items-baseline">
                   <span className="text-sm font-bold text-slate-900">Tổng thanh toán:</span>
                   <span className="text-2xl font-extrabold text-blue-600 font-mono">
-                    ${total.toLocaleString()}
+                    {formatCurrency(total)}
                   </span>
                 </div>
               </div>

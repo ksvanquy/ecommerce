@@ -107,8 +107,8 @@ export const useCartStore = create<CartState>()(
       shippingFee: () => {
         const subtotal = get().subtotalPrice();
         if (subtotal === 0) return 0;
-        if (get().couponCode === 'FREESHIP' || subtotal >= 200) return 0;
-        return 15; // Standard flat shipping fee
+        if (get().couponCode === 'FREESHIP' || subtotal >= 500000) return 0;
+        return 30000; // Standard flat shipping fee: 30.000 VNĐ
       },
 
       discountAmount: () => {

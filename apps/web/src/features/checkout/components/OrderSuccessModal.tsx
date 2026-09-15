@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Modal } from '../../../components/ui/Modal.tsx';
 import { Button } from '../../../components/ui/Button.tsx';
+import { formatCurrency } from '../../../utils/currency.ts';
 import {
   CheckCircle,
   Package,
@@ -92,7 +93,7 @@ export const OrderSuccessModal: React.FC<OrderSuccessModalProps> = ({
                 Tổng thanh toán
               </span>
               <span className="text-sm font-mono font-bold text-slate-900">
-                ${order.totalAmount}
+                {formatCurrency(order.totalAmount)}
               </span>
             </div>
           </div>

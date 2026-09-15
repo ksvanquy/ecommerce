@@ -13,7 +13,7 @@ export const Footer: React.FC = () => {
             </div>
             <div>
               <p className="font-bold text-slate-900 text-xs">Giao hàng toàn quốc</p>
-              <p className="text-[11px] text-slate-500">Miễn phí cho đơn từ $200</p>
+              <p className="text-[11px] text-slate-500">Miễn phí cho đơn từ 500.000 VNĐ</p>
             </div>
           </div>
 
