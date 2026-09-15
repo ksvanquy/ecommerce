@@ -34,13 +34,12 @@ export const useCartStore = create<CartState>()(
               ...updated[existingIndex],
               quantity: newQty,
             };
-            return { items: updated, isOpen: true };
+            return { items: updated };
           }
 
           const initialQty = Math.min(maxStock, quantity);
           return {
             items: [...state.items, { product, quantity: initialQty }],
-            isOpen: true,
           };
         });
       },

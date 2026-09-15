@@ -20,7 +20,6 @@ import {
 } from '../features/products/index.ts';
 import {
   CartView,
-  CartDrawer,
   OrderHistoryView,
 } from '../features/checkout/index.ts';
 import { ProtectedRoute } from './ProtectedRoute.tsx';
@@ -61,9 +60,6 @@ function MainLayout({
       </div>
 
       <Footer />
-
-      {/* Mini-Cart Slide-Over Drawer */}
-      <CartDrawer onNavigateToCart={() => onSelectTab && onSelectTab('cart')} />
 
       {/* Auth Modal */}
       <Modal

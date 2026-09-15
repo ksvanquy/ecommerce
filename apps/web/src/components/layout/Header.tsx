@@ -27,7 +27,12 @@ export const Header: React.FC<HeaderProps> = ({
   const logout = useAuthStore((state) => state.logout);
 
   const totalCartItems = useCartStore((state) => state.totalItems());
-  const setCartOpen = useCartStore((state) => state.setOpen);
+
+  const handleOpenCart = () => {
+    if (onSelectTab) {
+      onSelectTab('cart');
+    }
+  };
 
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const profileMenuRef = useRef<HTMLDivElement>(null);
@@ -71,16 +76,17 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
         </div>
 
-        {/* Right Side: Quick Navigation, Mini-Cart & User Menu */}
+        {/* Right Side: Quick Navigation, Prominent Cart & Low-key Auth */}
         <div className="flex items-center space-x-2 sm:space-x-3">
-          {/* Quick link: Products */}
+          {/* Quick link: Products (Prominent Button) */}
           <button
             type="button"
+            id="btn-header-products"
             onClick={() => onSelectTab && onSelectTab('products')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition hidden sm:inline-flex items-center gap-1.5 cursor-pointer ${
+            className={`px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 cursor-pointer shadow-2xs ${
               activeTab === 'products'
-                ? 'bg-blue-50 text-blue-700'
-                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                ? 'bg-blue-600 text-white shadow-blue-200'
+                : 'bg-slate-100 text-slate-800 hover:bg-slate-200 hover:text-slate-900'
             }`}
           >
             <ShoppingBag className="w-4 h-4" />
@@ -92,9 +98,9 @@ export const Header: React.FC<HeaderProps> = ({
             <button
               type="button"
               onClick={() => onSelectTab && onSelectTab('orders')}
-              className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition hidden sm:inline-flex items-center gap-1.5 cursor-pointer ${
+              className={`px-3 py-2 rounded-xl text-xs font-bold transition hidden sm:inline-flex items-center gap-1.5 cursor-pointer ${
                 activeTab === 'orders'
-                  ? 'bg-blue-50 text-blue-700'
+                  ? 'bg-blue-50 text-blue-700 border border-blue-200'
                   : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
               }`}
             >
@@ -103,28 +109,33 @@ export const Header: React.FC<HeaderProps> = ({
             </button>
           )}
 
-          {/* Mini-Cart Drawer Trigger */}
+          {/* Prominent Cart Header Button */}
           <button
             id="btn-header-cart"
             type="button"
-            onClick={() => setCartOpen(true)}
-            className="relative p-2.5 text-slate-700 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition border border-transparent hover:border-blue-100 cursor-pointer"
-            title="Mở Giỏ hàng nhanh"
+            onClick={handleOpenCart}
+            className={`px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 cursor-pointer shadow-2xs ${
+              activeTab === 'cart'
+                ? 'bg-blue-700 text-white ring-2 ring-blue-300'
+                : 'bg-blue-600 text-white hover:bg-blue-700'
+            }`}
+            title="Xem Giỏ hàng chi tiết"
             aria-label="Giỏ hàng"
           >
-            <ShoppingCart className="w-5 h-5" />
+            <ShoppingCart className="w-4 h-4" />
+            <span>Giỏ hàng</span>
             {totalCartItems > 0 && (
               <span
                 id="header-cart-badge"
-                className="absolute -top-1 -right-1 min-w-[20px] h-5 px-1 rounded-full bg-blue-600 text-white text-[10px] font-bold flex items-center justify-center shadow-xs animate-in zoom-in"
+                className="ml-0.5 px-1.5 py-0.5 rounded-full bg-white text-blue-700 text-[10px] font-extrabold flex items-center justify-center leading-none"
               >
                 {totalCartItems > 99 ? '99+' : totalCartItems}
               </span>
             )}
           </button>
 
-          {/* User Account Menu */}
-          <div className="relative" ref={profileMenuRef}>
+          {/* User Account Menu OR Low-key De-emphasized Guest Auth Links */}
+          <div className="relative pl-1 border-l border-slate-200/80" ref={profileMenuRef}>
             {isAuthenticated && user ? (
               <div>
                 <button
@@ -268,25 +279,25 @@ export const Header: React.FC<HeaderProps> = ({
                 )}
               </div>
             ) : (
-              /* Guest State */
-              <div className="flex items-center space-x-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="text-xs"
+              /* Guest State: De-emphasized simple lowercase text links */
+              <div className="flex items-center space-x-1 text-xs text-slate-500 font-normal pl-1">
+                <button
+                  type="button"
+                  id="btn-header-login"
                   onClick={() => onOpenAuthModal && onOpenAuthModal('login')}
+                  className="hover:text-slate-900 transition px-1.5 py-1 cursor-pointer hover:underline text-slate-600"
                 >
-                  <UserIcon className="w-3.5 h-3.5 mr-1" />
-                  Đăng nhập
-                </Button>
-                <Button
-                  variant="primary"
-                  size="sm"
-                  className="text-xs hidden sm:inline-flex"
+                  đăng nhập
+                </button>
+                <span className="text-slate-300 select-none">/</span>
+                <button
+                  type="button"
+                  id="btn-header-register"
                   onClick={() => onOpenAuthModal && onOpenAuthModal('register')}
+                  className="hover:text-slate-900 transition px-1.5 py-1 cursor-pointer hover:underline text-slate-600"
                 >
-                  Đăng ký
-                </Button>
+                  đăng ký
+                </button>
               </div>
             )}
           </div>
