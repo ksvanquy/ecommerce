@@ -1,12 +1,15 @@
 import { eq, ilike, and, gte, lte, desc, asc, sql, inArray } from 'drizzle-orm';
 import { db } from '../db/index.ts';
-import { productsTable } from '../db/schema/index.ts';
+import { productsTable, brandsTable, productImagesTable, productVariantsTable } from '../db/schema/index.ts';
 import { categoriesRepository } from '../categories/index.ts';
 import type {
   Product,
   ProductFilters,
   CreateProductPayload,
   UpdateProductPayload,
+  Brand,
+  ProductImage,
+  ProductVariant,
 } from '@repo/shared-types';
 
 export interface PaginatedResult<T> {
@@ -18,6 +21,114 @@ export interface PaginatedResult<T> {
 }
 
 export class ProductsRepository {
+  private async attachRelations(dbProducts: any[]): Promise<Product[]> {
+    if (dbProducts.length === 0) return [];
+
+    const productIds = dbProducts.map((p) => p.id);
+    const brandIds = dbProducts.map((p) => p.brandId).filter(Boolean);
+
+    // Fetch Brands
+    let brandsMap = new Map<string, Brand>();
+    if (brandIds.length > 0) {
+      const dbBrands = await db
+        .select()
+        .from(brandsTable)
+        .where(inArray(brandsTable.id, brandIds));
+
+      for (const b of dbBrands) {
+        brandsMap.set(b.id, {
+          id: b.id,
+          name: b.name,
+          slug: b.slug,
+          logoUrl: b.logoUrl || undefined,
+          description: b.description || undefined,
+          website: b.website || undefined,
+          country: b.country || undefined,
+          isActive: b.isActive,
+          createdAt: b.createdAt.toISOString(),
+          updatedAt: b.updatedAt.toISOString(),
+        });
+      }
+    }
+
+    // Fetch Images
+    const dbImages = await db
+      .select()
+      .from(productImagesTable)
+      .where(inArray(productImagesTable.productId, productIds))
+      .orderBy(asc(productImagesTable.sortOrder));
+
+    const imagesByProduct = new Map<string, ProductImage[]>();
+    for (const img of dbImages) {
+      const item: ProductImage = {
+        id: img.id,
+        productId: img.productId,
+        imageUrl: img.imageUrl,
+        altText: img.altText || undefined,
+        isThumbnail: img.isThumbnail,
+        sortOrder: img.sortOrder,
+        createdAt: img.createdAt.toISOString(),
+      };
+      const list = imagesByProduct.get(img.productId) || [];
+      list.push(item);
+      imagesByProduct.set(img.productId, list);
+    }
+
+    // Fetch Variants
+    const dbVariants = await db
+      .select()
+      .from(productVariantsTable)
+      .where(inArray(productVariantsTable.productId, productIds))
+      .orderBy(desc(productVariantsTable.isDefault), asc(productVariantsTable.price));
+
+    const variantsByProduct = new Map<string, ProductVariant[]>();
+    for (const v of dbVariants) {
+      const item: ProductVariant = {
+        id: v.id,
+        productId: v.productId,
+        sku: v.sku,
+        name: v.name,
+        colorName: v.colorName || undefined,
+        colorCode: v.colorCode || undefined,
+        specSummary: v.specSummary || undefined,
+        price: v.price,
+        originalPrice: v.originalPrice || undefined,
+        inventory: v.inventory,
+        imageUrl: v.imageUrl || undefined,
+        isDefault: v.isDefault,
+        createdAt: v.createdAt.toISOString(),
+        updatedAt: v.updatedAt.toISOString(),
+      };
+      const list = variantsByProduct.get(v.productId) || [];
+      list.push(item);
+      variantsByProduct.set(v.productId, list);
+    }
+
+    return dbProducts.map((row) => {
+      const images = imagesByProduct.get(row.id) || [];
+      const variants = variantsByProduct.get(row.id) || [];
+      const brand = row.brandId ? brandsMap.get(row.brandId) : undefined;
+      const thumb = images.find((i) => i.isThumbnail)?.imageUrl || images[0]?.imageUrl || row.imageUrl || undefined;
+
+      return {
+        id: row.id,
+        name: row.name,
+        description: row.description,
+        price: row.price,
+        inventory: row.inventory,
+        category: row.category,
+        categoryId: row.categoryId,
+        brandId: row.brandId,
+        brand,
+        imageUrl: thumb,
+        images,
+        variants,
+        createdAt: row.createdAt.toISOString(),
+        updatedAt: row.updatedAt.toISOString(),
+      };
+    });
+  }
+
   async findMany(filters: ProductFilters = {}): Promise<PaginatedResult<Product>> {
     const page = Math.max(1, Number(filters.page) || 1);
     const limit = Math.max(1, Math.min(100, Number(filters.limit) || 8));
@@ -26,7 +137,6 @@ export class ProductsRepository {
     const conditions = [];
 
     if (filters.category && filters.category !== 'all') {
-      // Lấy tất cả danh mục con cháu
       const allDescendantIds = await categoriesRepository.getAllDescendantCategoryIds(filters.category);
       const allCategories = await categoriesRepository.findAll();
       const targetCats = allCategories.filter((c) => allDescendantIds.includes(c.id));
@@ -41,6 +151,10 @@ export class ProductsRepository {
             .join(',')
         )}]))`
       );
+    }
+
+    if (filters.brandId && filters.brandId !== 'all') {
+      conditions.push(eq(productsTable.brandId, filters.brandId));
     }
 
     if (filters.search && filters.search.trim() !== '') {
@@ -60,7 +174,6 @@ export class ProductsRepository {
 
     const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
 
-    // Xác định thứ tự sắp xếp
     let orderByClause = desc(productsTable.createdAt);
     if (filters.sortBy === 'price_asc') {
       orderByClause = asc(productsTable.price);
@@ -76,7 +189,6 @@ export class ProductsRepository {
     }
     const dbItems = await query.orderBy(orderByClause).limit(limit).offset(offset);
 
-    // Đếm tổng số lượng records khớp điều kiện
     const countQuery = db.select({ count: sql<number>`cast(count(*) as integer)` }).from(productsTable);
     if (whereClause) {
       countQuery.where(whereClause);
@@ -84,18 +196,7 @@ export class ProductsRepository {
     const countResult = await countQuery;
     const total = countResult[0]?.count || 0;
 
-    const items: Product[] = dbItems.map((row) => ({
-      id: row.id,
-      name: row.name,
-      description: row.description,
-      price: row.price,
-      inventory: row.inventory,
-      category: row.category,
-      categoryId: row.categoryId,
-      imageUrl: row.imageUrl || undefined,
-      createdAt: row.createdAt.toISOString(),
-      updatedAt: row.updatedAt.toISOString(),
-    }));
+    const items = await this.attachRelations(dbItems);
 
     return {
       items,
@@ -114,20 +215,8 @@ export class ProductsRepository {
       .limit(1);
 
     if (!rows[0]) return null;
-    const row = rows[0];
-
-    return {
-      id: row.id,
-      name: row.name,
-      description: row.description,
-      price: row.price,
-      inventory: row.inventory,
-      category: row.category,
-      categoryId: row.categoryId,
-      imageUrl: row.imageUrl || undefined,
-      createdAt: row.createdAt.toISOString(),
-      updatedAt: row.updatedAt.toISOString(),
-    };
+    const items = await this.attachRelations(rows);
+    return items[0] || null;
   }
 
   async getCategories(): Promise<string[]> {
@@ -151,24 +240,15 @@ export class ProductsRepository {
         inventory: Math.max(0, Math.round(data.inventory)),
         category: data.category.trim(),
         categoryId: (data as any).categoryId || null,
+        brandId: (data as any).brandId || null,
         imageUrl: data.imageUrl?.trim() || null,
         createdAt: now,
         updatedAt: now,
       })
       .returning();
 
-    return {
-      id: inserted.id,
-      name: inserted.name,
-      description: inserted.description,
-      price: inserted.price,
-      inventory: inserted.inventory,
-      category: inserted.category,
-      categoryId: inserted.categoryId,
-      imageUrl: inserted.imageUrl || undefined,
-      createdAt: inserted.createdAt.toISOString(),
-      updatedAt: inserted.updatedAt.toISOString(),
-    };
+    const result = await this.attachRelations([inserted]);
+    return result[0];
   }
 
   async update(id: string, data: UpdateProductPayload): Promise<Product | null> {
@@ -185,6 +265,7 @@ export class ProductsRepository {
         inventory: data.inventory !== undefined ? Math.max(0, Math.round(data.inventory)) : existing.inventory,
         category: data.category !== undefined ? data.category.trim() : existing.category,
         categoryId: (data as any).categoryId !== undefined ? (data as any).categoryId : existing.categoryId,
+        brandId: (data as any).brandId !== undefined ? (data as any).brandId : existing.brandId,
         imageUrl: data.imageUrl !== undefined ? data.imageUrl.trim() : existing.imageUrl,
         updatedAt: now,
       })
@@ -192,19 +273,8 @@ export class ProductsRepository {
       .returning();
 
     if (!updated) return null;
-
-    return {
-      id: updated.id,
-      name: updated.name,
-      description: updated.description,
-      price: updated.price,
-      inventory: updated.inventory,
-      category: updated.category,
-      categoryId: updated.categoryId,
-      imageUrl: updated.imageUrl || undefined,
-      createdAt: updated.createdAt.toISOString(),
-      updatedAt: updated.updatedAt.toISOString(),
-    };
+    const result = await this.attachRelations([updated]);
+    return result[0] || null;
   }
 
   async delete(id: string): Promise<boolean> {

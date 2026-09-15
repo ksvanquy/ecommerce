@@ -3,7 +3,10 @@ import { getPostgresClient, getPgliteInstance, getIsUsingPglite, checkDatabaseCo
 import { db } from './db/index.ts';
 import {
   usersTable,
+  brandsTable,
   productsTable,
+  productImagesTable,
+  productVariantsTable,
   categoriesTable,
   ordersTable,
   orderItemsTable,
@@ -28,6 +31,93 @@ const SEED_USERS = [
     passwordHash: DEFAULT_PASSWORD_HASH,
     fullName: 'Nguyễn Văn Khách Hàng',
     role: 'customer',
+    createdAt: new Date('2026-01-01T00:00:00.000Z'),
+    updatedAt: new Date('2026-01-01T00:00:00.000Z'),
+  },
+];
+
+const SEED_BRANDS = [
+  {
+    id: 'brand_sony',
+    name: 'Sony',
+    slug: 'sony',
+    logoUrl: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=300&q=80',
+    description: 'Tập đoàn công nghệ âm thanh và hình ảnh hàng đầu Nhật Bản',
+    website: 'https://www.sony.com',
+    country: 'Nhật Bản',
+    isActive: true,
+    createdAt: new Date('2026-01-01T00:00:00.000Z'),
+    updatedAt: new Date('2026-01-01T00:00:00.000Z'),
+  },
+  {
+    id: 'brand_apple',
+    name: 'Apple',
+    slug: 'apple',
+    logoUrl: 'https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?auto=format&fit=crop&w=300&q=80',
+    description: 'Thương hiệu công nghệ cá nhân cao cấp từ Silicon Valley',
+    website: 'https://www.apple.com',
+    country: 'Mỹ',
+    isActive: true,
+    createdAt: new Date('2026-01-01T00:00:00.000Z'),
+    updatedAt: new Date('2026-01-01T00:00:00.000Z'),
+  },
+  {
+    id: 'brand_keychron',
+    name: 'Keychron',
+    slug: 'keychron',
+    logoUrl: 'https://images.unsplash.com/photo-1587829741301-dc798b83add3?auto=format&fit=crop&w=300&q=80',
+    description: 'Nhà sản xuất bàn phím cơ không dây Custom nổi tiếng thế giới',
+    website: 'https://www.keychron.com',
+    country: 'Hồng Kông',
+    isActive: true,
+    createdAt: new Date('2026-01-01T00:00:00.000Z'),
+    updatedAt: new Date('2026-01-01T00:00:00.000Z'),
+  },
+  {
+    id: 'brand_logitech',
+    name: 'Logitech',
+    slug: 'logitech',
+    logoUrl: 'https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?auto=format&fit=crop&w=300&q=80',
+    description: 'Chuyên gia phụ kiện máy tính, bàn phím và chuột công thái học',
+    website: 'https://www.logitech.com',
+    country: 'Thụy Sĩ',
+    isActive: true,
+    createdAt: new Date('2026-01-01T00:00:00.000Z'),
+    updatedAt: new Date('2026-01-01T00:00:00.000Z'),
+  },
+  {
+    id: 'brand_dell',
+    name: 'Dell',
+    slug: 'dell',
+    logoUrl: 'https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?auto=format&fit=crop&w=300&q=80',
+    description: 'Tập đoàn sản xuất màn hình đồ họa và máy tính doanh nghiệp',
+    website: 'https://www.dell.com',
+    country: 'Mỹ',
+    isActive: true,
+    createdAt: new Date('2026-01-01T00:00:00.000Z'),
+    updatedAt: new Date('2026-01-01T00:00:00.000Z'),
+  },
+  {
+    id: 'brand_bose',
+    name: 'Bose',
+    slug: 'bose',
+    logoUrl: 'https://images.unsplash.com/photo-1590658268037-6bf12165a8df?auto=format&fit=crop&w=300&q=80',
+    description: 'Thương hiệu thiết bị âm thanh và tai nghe cao cấp Hoa Kỳ',
+    website: 'https://www.bose.com',
+    country: 'Mỹ',
+    isActive: true,
+    createdAt: new Date('2026-01-01T00:00:00.000Z'),
+    updatedAt: new Date('2026-01-01T00:00:00.000Z'),
+  },
+  {
+    id: 'brand_samsung',
+    name: 'Samsung',
+    slug: 'samsung',
+    logoUrl: 'https://images.unsplash.com/photo-1610945415295-d9bbf067e59c?auto=format&fit=crop&w=300&q=80',
+    description: 'Tập đoàn công nghệ điện tử hàng đầu Hàn Quốc',
+    website: 'https://www.samsung.com',
+    country: 'Hàn Quốc',
+    isActive: true,
     createdAt: new Date('2026-01-01T00:00:00.000Z'),
     updatedAt: new Date('2026-01-01T00:00:00.000Z'),
   },
@@ -180,6 +270,7 @@ const SEED_PRODUCTS = [
     inventory: 45,
     category: 'Audio',
     categoryId: 'cat_sub_headphones',
+    brandId: 'brand_sony',
     imageUrl: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=800&q=80',
     createdAt: new Date('2026-01-10T08:00:00.000Z'),
     updatedAt: new Date('2026-01-10T08:00:00.000Z'),
@@ -192,6 +283,7 @@ const SEED_PRODUCTS = [
     inventory: 28,
     category: 'Wearables',
     categoryId: 'cat_wearables',
+    brandId: 'brand_apple',
     imageUrl: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=800&q=80',
     createdAt: new Date('2026-01-12T09:30:00.000Z'),
     updatedAt: new Date('2026-01-12T09:30:00.000Z'),
@@ -204,6 +296,7 @@ const SEED_PRODUCTS = [
     inventory: 15,
     category: 'Electronics',
     categoryId: 'cat_sub_laptops',
+    brandId: 'brand_apple',
     imageUrl: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=800&q=80',
     createdAt: new Date('2026-01-15T10:00:00.000Z'),
     updatedAt: new Date('2026-01-15T10:00:00.000Z'),
@@ -216,6 +309,7 @@ const SEED_PRODUCTS = [
     inventory: 60,
     category: 'Accessories',
     categoryId: 'cat_sub_keyboards',
+    brandId: 'brand_keychron',
     imageUrl: 'https://images.unsplash.com/photo-1587829741301-dc798b83add3?auto=format&fit=crop&w=800&q=80',
     createdAt: new Date('2026-01-18T14:15:00.000Z'),
     updatedAt: new Date('2026-01-18T14:15:00.000Z'),
@@ -228,6 +322,7 @@ const SEED_PRODUCTS = [
     inventory: 80,
     category: 'Accessories',
     categoryId: 'cat_sub_mice',
+    brandId: 'brand_logitech',
     imageUrl: 'https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?auto=format&fit=crop&w=800&q=80',
     createdAt: new Date('2026-01-20T11:00:00.000Z'),
     updatedAt: new Date('2026-01-20T11:00:00.000Z'),
@@ -240,6 +335,7 @@ const SEED_PRODUCTS = [
     inventory: 20,
     category: 'Displays',
     categoryId: 'cat_displays',
+    brandId: 'brand_dell',
     imageUrl: 'https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?auto=format&fit=crop&w=800&q=80',
     createdAt: new Date('2026-01-22T16:45:00.000Z'),
     updatedAt: new Date('2026-01-22T16:45:00.000Z'),
@@ -252,6 +348,7 @@ const SEED_PRODUCTS = [
     inventory: 35,
     category: 'Audio',
     categoryId: 'cat_sub_earbuds',
+    brandId: 'brand_bose',
     imageUrl: 'https://images.unsplash.com/photo-1590658268037-6bf12165a8df?auto=format&fit=crop&w=800&q=80',
     createdAt: new Date('2026-01-25T13:20:00.000Z'),
     updatedAt: new Date('2026-01-25T13:20:00.000Z'),
@@ -264,9 +361,133 @@ const SEED_PRODUCTS = [
     inventory: 18,
     category: 'Phones',
     categoryId: 'cat_phones',
+    brandId: 'brand_samsung',
     imageUrl: 'https://images.unsplash.com/photo-1610945415295-d9bbf067e59c?auto=format&fit=crop&w=800&q=80',
     createdAt: new Date('2026-01-28T07:10:00.000Z'),
     updatedAt: new Date('2026-01-28T07:10:00.000Z'),
+  },
+];
+
+const SEED_PRODUCT_IMAGES = [
+  // Images for prod_01 (Sony WH-1000XM5)
+  { id: 'img_p01_01', productId: 'prod_01', imageUrl: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=800&q=80', altText: 'Sony WH-1000XM5 Black Thumbnail', isThumbnail: true, sortOrder: 0 },
+  { id: 'img_p01_02', productId: 'prod_01', imageUrl: 'https://images.unsplash.com/photo-1583394838336-acd977736f90?auto=format&fit=crop&w=800&q=80', altText: 'Sony WH-1000XM5 Side View', isThumbnail: false, sortOrder: 1 },
+  { id: 'img_p01_03', productId: 'prod_01', imageUrl: 'https://images.unsplash.com/photo-1484704849700-f032a568e944?auto=format&fit=crop&w=800&q=80', altText: 'Sony WH-1000XM5 In Action', isThumbnail: false, sortOrder: 2 },
+
+  // Images for prod_02 (Apple Watch Ultra 2)
+  { id: 'img_p02_01', productId: 'prod_02', imageUrl: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=800&q=80', altText: 'Apple Watch Ultra 2 Front', isThumbnail: true, sortOrder: 0 },
+  { id: 'img_p02_02', productId: 'prod_02', imageUrl: 'https://images.unsplash.com/photo-1546868871-7041f2a55e12?auto=format&fit=crop&w=800&q=80', altText: 'Apple Watch Ultra 2 Strap', isThumbnail: false, sortOrder: 1 },
+
+  // Images for prod_03 (MacBook Air 15 M3)
+  { id: 'img_p03_01', productId: 'prod_03', imageUrl: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=800&q=80', altText: 'MacBook Air 15 M3 Open', isThumbnail: true, sortOrder: 0 },
+  { id: 'img_p03_02', productId: 'prod_03', imageUrl: 'https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?auto=format&fit=crop&w=800&q=80', altText: 'MacBook Air 15 M3 Keyboard', isThumbnail: false, sortOrder: 1 },
+
+  // Images for prod_04 (Keychron Q1 Pro)
+  { id: 'img_p04_01', productId: 'prod_04', imageUrl: 'https://images.unsplash.com/photo-1587829741301-dc798b83add3?auto=format&fit=crop&w=800&q=80', altText: 'Keychron Q1 Pro Top View', isThumbnail: true, sortOrder: 0 },
+  { id: 'img_p04_02', productId: 'prod_04', imageUrl: 'https://images.unsplash.com/photo-1618384887929-16ec33fab9ef?auto=format&fit=crop&w=800&q=80', altText: 'Keychron Q1 Pro Side Profile', isThumbnail: false, sortOrder: 1 },
+
+  // Images for prod_05 (Logitech MX Master 3S)
+  { id: 'img_p05_01', productId: 'prod_05', imageUrl: 'https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?auto=format&fit=crop&w=800&q=80', altText: 'Logitech MX Master 3S Front', isThumbnail: true, sortOrder: 0 },
+
+  // Images for prod_06 (Dell UltraSharp 27 4K)
+  { id: 'img_p06_01', productId: 'prod_06', imageUrl: 'https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?auto=format&fit=crop&w=800&q=80', altText: 'Dell UltraSharp 27 4K Front', isThumbnail: true, sortOrder: 0 },
+
+  // Images for prod_07 (Bose QuietComfort Ultra)
+  { id: 'img_p07_01', productId: 'prod_07', imageUrl: 'https://images.unsplash.com/photo-1590658268037-6bf12165a8df?auto=format&fit=crop&w=800&q=80', altText: 'Bose QuietComfort Ultra Earbuds Case', isThumbnail: true, sortOrder: 0 },
+
+  // Images for prod_08 (Samsung Galaxy S24 Ultra)
+  { id: 'img_p08_01', productId: 'prod_08', imageUrl: 'https://images.unsplash.com/photo-1610945415295-d9bbf067e59c?auto=format&fit=crop&w=800&q=80', altText: 'Samsung Galaxy S24 Ultra Front', isThumbnail: true, sortOrder: 0 },
+];
+
+const SEED_PRODUCT_VARIANTS = [
+  // Variants for prod_01 (Sony WH-1000XM5)
+  {
+    id: 'var_p01_black',
+    productId: 'prod_01',
+    sku: 'WH1000XM5-BLK',
+    name: 'Đen Tuyển (Black)',
+    colorName: 'Đen',
+    colorCode: '#1A1A1A',
+    specSummary: 'NC Auto / 30h Pin',
+    price: 8490000,
+    originalPrice: 8990000,
+    inventory: 25,
+    imageUrl: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=800&q=80',
+    isDefault: true,
+  },
+  {
+    id: 'var_p01_silver',
+    productId: 'prod_01',
+    sku: 'WH1000XM5-SLV',
+    name: 'Bạc Ánh Kim (Silver)',
+    colorName: 'Bạc',
+    colorCode: '#E5E5E7',
+    specSummary: 'NC Auto / 30h Pin',
+    price: 8490000,
+    originalPrice: 8990000,
+    inventory: 20,
+    imageUrl: 'https://images.unsplash.com/photo-1583394838336-acd977736f90?auto=format&fit=crop&w=800&q=80',
+    isDefault: false,
+  },
+
+  // Variants for prod_03 (MacBook Air 15 M3)
+  {
+    id: 'var_p03_16_512_midnight',
+    productId: 'prod_03',
+    sku: 'MBA15-M3-16-512-MID',
+    name: 'Midnight / 16GB RAM / 512GB SSD',
+    colorName: 'Xanh Đêm (Midnight)',
+    colorCode: '#2E3641',
+    specSummary: 'M3 8-Core CPU / 10-Core GPU / 16GB / 512GB',
+    price: 31990000,
+    originalPrice: 34990000,
+    inventory: 10,
+    imageUrl: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=800&q=80',
+    isDefault: true,
+  },
+  {
+    id: 'var_p03_24_1tb_starlight',
+    productId: 'prod_03',
+    sku: 'MBA15-M3-24-1TB-STL',
+    name: 'Starlight / 24GB RAM / 1TB SSD',
+    colorName: 'Vàng Ánh Kim (Starlight)',
+    colorCode: '#F0E4D3',
+    specSummary: 'M3 8-Core CPU / 10-Core GPU / 24GB / 1TB',
+    price: 41990000,
+    originalPrice: 44990000,
+    inventory: 5,
+    imageUrl: 'https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?auto=format&fit=crop&w=800&q=80',
+    isDefault: false,
+  },
+
+  // Variants for prod_08 (Samsung Galaxy S24 Ultra)
+  {
+    id: 'var_p08_256_titan_gray',
+    productId: 'prod_08',
+    sku: 'S24U-256-GRY',
+    name: 'Titanium Gray / 256GB',
+    colorName: 'Titan Xám',
+    colorCode: '#6B6D72',
+    specSummary: '12GB RAM / 256GB / Galaxy AI',
+    price: 29990000,
+    originalPrice: 33990000,
+    inventory: 12,
+    imageUrl: 'https://images.unsplash.com/photo-1610945415295-d9bbf067e59c?auto=format&fit=crop&w=800&q=80',
+    isDefault: true,
+  },
+  {
+    id: 'var_p08_512_titan_black',
+    productId: 'prod_08',
+    sku: 'S24U-512-BLK',
+    name: 'Titanium Black / 512GB',
+    colorName: 'Titan Đen',
+    colorCode: '#2B2C2E',
+    specSummary: '12GB RAM / 512GB / Galaxy AI',
+    price: 33990000,
+    originalPrice: 37990000,
+    inventory: 6,
+    imageUrl: 'https://images.unsplash.com/photo-1610945415295-d9bbf067e59c?auto=format&fit=crop&w=800&q=80',
+    isDefault: false,
   },
 ];
 
@@ -378,6 +599,19 @@ export async function initializeDatabase(): Promise<boolean> {
         updated_at TIMESTAMP NOT NULL DEFAULT NOW()
       );
 
+      CREATE TABLE IF NOT EXISTS brands (
+        id TEXT PRIMARY KEY,
+        name VARCHAR(100) NOT NULL UNIQUE,
+        slug VARCHAR(100) NOT NULL UNIQUE,
+        logo_url TEXT,
+        description TEXT,
+        website VARCHAR(255),
+        country VARCHAR(100),
+        is_active BOOLEAN NOT NULL DEFAULT true,
+        created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMP NOT NULL DEFAULT NOW()
+      );
+
       CREATE TABLE IF NOT EXISTS categories (
         id TEXT PRIMARY KEY,
         name VARCHAR(255) NOT NULL,
@@ -399,7 +633,35 @@ export async function initializeDatabase(): Promise<boolean> {
         inventory INTEGER NOT NULL DEFAULT 0,
         category VARCHAR(100) NOT NULL,
         category_id TEXT REFERENCES categories(id) ON DELETE SET NULL,
+        brand_id TEXT REFERENCES brands(id) ON DELETE SET NULL,
         image_url TEXT,
+        created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMP NOT NULL DEFAULT NOW()
+      );
+
+      CREATE TABLE IF NOT EXISTS product_images (
+        id TEXT PRIMARY KEY,
+        product_id TEXT NOT NULL REFERENCES products(id) ON DELETE CASCADE,
+        image_url TEXT NOT NULL,
+        alt_text VARCHAR(255),
+        is_thumbnail BOOLEAN NOT NULL DEFAULT false,
+        sort_order INTEGER NOT NULL DEFAULT 0,
+        created_at TIMESTAMP NOT NULL DEFAULT NOW()
+      );
+
+      CREATE TABLE IF NOT EXISTS product_variants (
+        id TEXT PRIMARY KEY,
+        product_id TEXT NOT NULL REFERENCES products(id) ON DELETE CASCADE,
+        sku VARCHAR(100) NOT NULL UNIQUE,
+        name VARCHAR(150) NOT NULL,
+        color_name VARCHAR(50),
+        color_code VARCHAR(20),
+        spec_summary VARCHAR(255),
+        price INTEGER NOT NULL,
+        original_price INTEGER,
+        inventory INTEGER NOT NULL DEFAULT 0,
+        image_url TEXT,
+        is_default BOOLEAN NOT NULL DEFAULT false,
         created_at TIMESTAMP NOT NULL DEFAULT NOW(),
         updated_at TIMESTAMP NOT NULL DEFAULT NOW()
       );
@@ -434,9 +696,25 @@ export async function initializeDatabase(): Promise<boolean> {
         subtotal INTEGER NOT NULL,
         created_at TIMESTAMP NOT NULL DEFAULT NOW()
       );
+
+      -- Ensure brand_id column exists if products table already existed
+      ALTER TABLE products ADD COLUMN IF NOT EXISTS brand_id TEXT REFERENCES brands(id) ON DELETE SET NULL;
     `);
 
-    // 2. Seed Categories if not present
+    // 2. Seed Brands if not present
+    for (const brand of SEED_BRANDS) {
+      const existing = await db
+        .select()
+        .from(brandsTable)
+        .where(eq(brandsTable.id, brand.id))
+        .limit(1);
+
+      if (existing.length === 0) {
+        await db.insert(brandsTable).values(brand);
+      }
+    }
+
+    // 3. Seed Categories if not present
     for (const cat of SEED_CATEGORIES) {
       const existing = await db
         .select()
@@ -449,7 +727,7 @@ export async function initializeDatabase(): Promise<boolean> {
       }
     }
 
-    // 3. Seed Users if not present
+    // 4. Seed Users if not present
     for (const user of SEED_USERS) {
       const existing = await db
         .select()
@@ -462,7 +740,7 @@ export async function initializeDatabase(): Promise<boolean> {
       }
     }
 
-    // 4. Seed Products if not present
+    // 5. Seed Products if not present
     for (const prod of SEED_PRODUCTS) {
       const existing = await db
         .select()
@@ -473,15 +751,40 @@ export async function initializeDatabase(): Promise<boolean> {
       if (existing.length === 0) {
         await db.insert(productsTable).values(prod);
       } else {
-        // Update product price & categoryId if needed to keep VNĐ aligned
         await db
           .update(productsTable)
-          .set({ price: prod.price, categoryId: prod.categoryId })
+          .set({ price: prod.price, categoryId: prod.categoryId, brandId: prod.brandId })
           .where(eq(productsTable.id, prod.id));
       }
     }
 
-    // 5. Seed Demo Orders for customer account if not present
+    // 6. Seed Product Images if not present
+    for (const img of SEED_PRODUCT_IMAGES) {
+      const existing = await db
+        .select()
+        .from(productImagesTable)
+        .where(eq(productImagesTable.id, img.id))
+        .limit(1);
+
+      if (existing.length === 0) {
+        await db.insert(productImagesTable).values(img);
+      }
+    }
+
+    // 7. Seed Product Variants if not present
+    for (const variant of SEED_PRODUCT_VARIANTS) {
+      const existing = await db
+        .select()
+        .from(productVariantsTable)
+        .where(eq(productVariantsTable.id, variant.id))
+        .limit(1);
+
+      if (existing.length === 0) {
+        await db.insert(productVariantsTable).values(variant);
+      }
+    }
+
+    // 8. Seed Demo Orders for customer account if not present
     for (const { order, items } of SEED_ORDERS) {
       const existing = await db
         .select()
@@ -497,11 +800,12 @@ export async function initializeDatabase(): Promise<boolean> {
       }
     }
 
-    console.log('[DB Init] Database, categories hierarchy, and initial trust seeds initialized successfully.');
+    console.log('[DB Init] Database schema (brands, product_images, product_variants) & seed data initialized successfully.');
     return true;
   } catch (error) {
     console.error('[DB Init] Error initializing database tables/seeds:', error);
     return false;
   }
 }
+
 

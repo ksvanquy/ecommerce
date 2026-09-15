@@ -44,6 +44,7 @@ export const productFiltersSchema = z.object({
   page: z.coerce.number().int().positive().optional().default(1),
   limit: z.coerce.number().int().positive().max(100).optional().default(8),
   category: z.string().optional(),
+  brandId: z.string().optional(),
   search: z.string().optional(),
   minPrice: z.coerce.number().nonnegative().optional(),
   maxPrice: z.coerce.number().positive().optional(),
@@ -119,6 +120,7 @@ export interface ProductFilters {
   page?: number;
   limit?: number;
   category?: string;
+  brandId?: string;
   search?: string;
   minPrice?: number;
   maxPrice?: number;
@@ -171,6 +173,46 @@ export interface CategoryTreeNode extends Category {
   productCount?: number;
 }
 
+export interface Brand {
+  id: string;
+  name: string;
+  slug: string;
+  logoUrl?: string;
+  description?: string;
+  website?: string;
+  country?: string;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ProductImage {
+  id: string;
+  productId: string;
+  imageUrl: string;
+  altText?: string;
+  isThumbnail: boolean;
+  sortOrder: number;
+  createdAt: string;
+}
+
+export interface ProductVariant {
+  id: string;
+  productId: string;
+  sku: string;
+  name: string;
+  colorName?: string;
+  colorCode?: string;
+  specSummary?: string;
+  price: number;
+  originalPrice?: number;
+  inventory: number;
+  imageUrl?: string;
+  isDefault: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface Product {
   id: string;
   name: string;
@@ -179,7 +221,11 @@ export interface Product {
   inventory: number;
   category: string;
   categoryId?: string | null;
+  brandId?: string | null;
+  brand?: Brand;
   imageUrl?: string;
+  images?: ProductImage[];
+  variants?: ProductVariant[];
   createdAt: string;
   updatedAt: string;
 }

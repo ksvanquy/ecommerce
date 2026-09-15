@@ -1,5 +1,6 @@
 import { pgTable, text, timestamp, varchar, integer } from 'drizzle-orm/pg-core';
 import { categoriesTable } from './categories.ts';
+import { brandsTable } from './brands.ts';
 
 export const productsTable = pgTable('products', {
   id: text('id').primaryKey(),
@@ -9,6 +10,7 @@ export const productsTable = pgTable('products', {
   inventory: integer('inventory').notNull().default(0),
   category: varchar('category', { length: 100 }).notNull(),
   categoryId: text('category_id').references(() => categoriesTable.id),
+  brandId: text('brand_id').references(() => brandsTable.id),
   imageUrl: text('image_url'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),

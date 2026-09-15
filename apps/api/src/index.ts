@@ -3,6 +3,7 @@ import { healthRouter } from './routes/health.router.ts';
 import { authRouter } from './users/index.ts';
 import { productsRouter } from './products/index.ts';
 import { categoriesRouter } from './categories/index.ts';
+import { brandsRouter } from './brands/index.ts';
 import { ordersRouter } from './orders/index.ts';
 import { errorHandler, notFoundHandler } from './shared/middlewares/error.middleware.ts';
 import { initializeDatabase } from './init-db.ts';
@@ -35,6 +36,10 @@ app.use('/api', healthRouter);
 // Auth & Users routes (/auth and /api/auth)
 app.use('/auth', authRouter);
 app.use('/api/auth', authRouter);
+
+// Brands routes (/brands and /api/brands)
+app.use('/brands', brandsRouter);
+app.use('/api/brands', brandsRouter);
 
 // Products catalog routes (/products and /api/products)
 app.use('/products', productsRouter);

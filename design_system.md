@@ -5,18 +5,34 @@
 
 ---
 
-## 🏗️ 1. Triết lý Thiết kế & Nguyên tắc "Nền Tảng Trước - Trang Sau"
+## 🏗️ 1. Triết lý Thiết kế & Kiến trúc 3 Tầng Dùng Chung (3-Tier Shared Architecture)
 
-Để giải quyết triệt để tình trạng giao diện bất đồng nhất giữa các trang (khác biệt về khoảng cách, kiểu chữ, màu sắc, bo góc hay cấu trúc header/footer), TechStore áp dụng quy trình thiết kế theo cấp độ **Atomic & Layered Architecture**:
+### 1.1 Chiến lược Tái sử dụng Mã nguồn giữa Storefront (Web) & Quản trị (Admin)
+Khi ứng dụng mở rộng mô-đun Quản trị (**Admin Portal**), việc cả Storefront (`apps/web`) và Admin Portal (`apps/admin`) áp dụng chiến lược **3-Tier Shared Architecture** giúp cân bằng giữa **tái sử dụng tối đa mã nguồn** và **đáp ứng trải nghiệm đặc thù cho từng nhóm người dùng**:
 
 ```
-[Tier 0: Tokens] ➔ [Tier 1: Core Primitives] ➔ [Tier 2: Composite Patterns] ➔ [Tier 3: Layout Shells] ➔ [Tier 4: Page Views]
+ ┌────────────────────────────────────────────────────────────────────────┐
+ │ 🟢 TẦNG 1: SHARED CORE (Dùng chung 100% cho cả Web & Admin)            │
+ │ - Shared Tokens: Color Palette (slate/blue), Typography, Radius        │
+ │ - Core UI Primitives: Button, Input, Badge, Modal, Switch, Card, Toast │
+ │ - Shared Utilities: formatCurrency (VNĐ), formatDate, cn()             │
+ └───────────────────┬────────────────────────────────┬───────────────────┘
+                     │                                │
+ ┌───────────────────▼──────────────────┐   ┌─────────▼──────────────────────────┐
+ │ 🔵 TẦNG 2A: WEB STOREFRONT PATTERNS  │   │ 🟣 TẦNG 2B: ADMIN DENSE PATTERNS   │
+ │ (Tối ưu cho Khách hàng - Visual thoáng)│   │ (Tối ưu cho Quản trị - Mật độ cao) │
+ │ - ProductCard, HeroBanner, CartDrawer│   │ - AdminDataTable (Bảng 20-30 dòng) │
+ │ - Sticky Navigation Header/Footer    │   │ - AdminSidebar, MetricStatCard     │
+ └──────────────────────────────────────┘   └────────────────────────────────────┘
 ```
 
-### Nguyên tắc vàng trong xây dựng giao diện:
-1. **Tuyệt đối không tạo UI ad-hoc:** Mọi trang mới hoặc tính năng mới **bắt buộc** phải sử dụng lại 100% các thành phần từ Tier 0 đến Tier 3. Không tự ý tạo thêm variant màu sắc, kiểu font hoặc bố cục khung khác chuẩn.
-2. **Khung Layout toàn cục thống nhất:** Tất cả các trang thuộc ứng dụng đều nằm trong khung `MainLayout` chung (Sticky Header + Flexible Main Content Canvas + Standard Footer).
-3. **Thang nhịp điệu toán học (Consistent Rhythm):** Mọi khoảng cách padding/margin, font-size và border-radius đều tuân thủ các mốc quy định trong Design System.
+### 1.2 Bảng Phân loại Chi tiết Component & Utilities
+
+| Tầng Kiến trúc | Thành phần / Module | Vị trí Đặt (Location) | Đặc điểm & Quy tắc Tái sử dụng |
+| :--- | :--- | :--- | :--- |
+| **🟢 Tầng 1: Shared Core** | Design Tokens (`blue`, `slate`), `Button`, `Badge`, `Input`, `Select`, `Modal`, `formatCurrency`, `cn` | `src/components/ui/` & `src/utils/` | **Dùng chung 100%** giữa Web và Admin. Tuyệt đối không tạo bản sao. |
+| **🔵 Tầng 2A: Web Storefront** | `Header`, `Footer`, `ProductCard`, `CategoryBar`, `CartDrawer`, `CheckoutProgress` | `apps/web/src/components/` | Tối ưu trải nghiệm thị giác cho người mua hàng (khoảng cách rộng, hình ảnh to, CTA nổi bật). |
+| **🟣 Tầng 2B: Admin Dense** | `AdminSidebar`, `AdminDataTable`, `MetricStatCard`, `BulkActionBar`, `OrderEditDrawer` | `apps/admin/src/components/` | Tối ưu mật độ thông tin cao cho nhân viên quản trị (padding nhỏ gọn `py-1`, thao tác nhanh). |
 
 ---
 
@@ -91,7 +107,7 @@ Sử dụng bộ font không chân chuẩn hệ thống (System Sans-serif / Int
 
 ## 🏛️ 5. Kiến trúc Layout Toàn cục (Global Layout Architecture)
 
-Tất cả các trang trong TechStore **bắt buộc** phải tuân thủ chuẩn cấu trúc khung (Layout Shell) duy nhất dưới đây để tránh lệch giao diện:
+Tất cả các trang trong TechStore Storefront **bắt buộc** phải tuân thủ chuẩn cấu trúc khung (Layout Shell) duy nhất dưới đây:
 
 ```
 ┌────────────────────────────────────────────────────────────────────────┐
@@ -134,7 +150,7 @@ Tất cả các trang trong TechStore **bắt buộc** phải tuân thủ chuẩ
 
 ## 🧩 6. Quy chuẩn Linh kiện UI Cốt lõi (Core UI Components Tier 1 & 2)
 
-### 6.1 Nút bấm (Button Primitive - Tier 1)
+### 6.1 Nút bấm (Button Primitive - Tier 1 Shared)
 Thành phần tương tác chính, bao gồm 5 Variant và 3 Size chuẩn:
 
 ```tsx
@@ -151,7 +167,7 @@ md : text-sm px-4 py-2 h-10
 lg : text-base px-5 py-2.5 h-12
 ```
 
-### 6.2 Nhãn trạng thái (Badge Primitive - Tier 1)
+### 6.2 Nhãn trạng thái (Badge Primitive - Tier 1 Shared)
 ```tsx
 success : bg-emerald-50 text-emerald-700 border-emerald-200
 warning : bg-amber-50 text-amber-700 border-amber-200
@@ -160,7 +176,7 @@ neutral : bg-slate-100 text-slate-700 border-slate-200
 danger  : bg-rose-50 text-rose-700 border-rose-200
 ```
 
-### 6.3 Thẻ sản phẩm (ProductCard Molecule - Tier 2)
+### 6.3 Thẻ sản phẩm (ProductCard Molecule - Tier 2A Web)
 Mọi sản phẩm hiển thị trên trang chủ, danh sách tìm kiếm hay sản phẩm liên quan **bắt buộc** dùng chung mẫu `ProductCard`:
 * Khung Card: `bg-white rounded-2xl border border-slate-200/80 shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all overflow-hidden flex flex-col`.
 * Hình ảnh: Aspect ratio `aspect-square bg-slate-100 overflow-hidden relative`.
@@ -239,52 +255,58 @@ Toàn bộ giá trị tiền tệ trong hệ thống (Sản phẩm, Giỏ hàng,
 
 ## 🗺️ 9. Lộ trình Triển khai & Danh sách Task Cụ thể (Roadmap & Actionable Tasks)
 
-Roadmap được chia làm 4 Giai đoạn phát triển theo thứ tự từ Nền tảng đến Trang chi tiết, có checklist theo dõi tiến độ công việc:
+Roadmap phát triển được cập nhật theo chiến lược **3-Tier Shared Architecture**:
 
-### 📍 Giai đoạn 1: Chuẩn hóa Tokens & Core UI Primitives (Tier 0 & Tier 1)
-- [x] **Task 1.1 — Chuẩn hóa Design Tokens & Tailwind Theme:** Khai báo bảng màu `slate` (neutrals) và `blue` (primary) trong cấu hình Tailwind CSS.
-- [x] **Task 1.2 — Hoàn thiện Core Component `Button.tsx`:** Hỗ trợ 5 Variant (`primary`, `secondary`, `outline`, `ghost`, `danger`), 3 Kích thước (`sm`, `md`, `lg`), trạng thái `isLoading` spinner và focus ring accessibility.
-- [x] **Task 1.3 — Hoàn thiện Core Component `Badge.tsx`:** Hỗ trợ 5 Semantic Variants (`success`, `warning`, `info`, `neutral`, `danger`) với viền và màu nền mềm mại.
-- [x] **Task 1.4 — Hoàn thiện Core Component `Card.tsx`:** Đóng gói container chuẩn bo góc `rounded-2xl`, viền `border-slate-200/80` và đổ bóng nhẹ `shadow-xs`.
-- [x] **Task 1.5 — Hoàn thiện Core Component `Input.tsx`:** Đóng gói ô nhập liệu có nhãn label, helper text, trạng thái báo lỗi và icon đi kèm.
-- [x] **Task 1.6 — Hoàn thiện Core Component `Modal.tsx`:** Đóng gói khung cửa sổ nổi với backdrop mờ `backdrop-blur-xs` và nút đóng chuẩn.
+### 📍 Giai đoạn 1: Chuẩn hóa Shared Core Primitives & Tokens (Tầng 1 — Shared Core)
+- [x] **Task 1.1 — Chuẩn hóa Shared Design Tokens:** Khai báo màu `slate` (neutrals) và `blue` (primary) dùng chung cho Web & Admin.
+- [x] **Task 1.2 — Hoàn thiện Shared `Button.tsx`:** Support 5 Variants (`primary`, `secondary`, `outline`, `ghost`, `danger`), 3 Kích thước, `isLoading` state.
+- [x] **Task 1.3 — Hoàn thiện Shared `Badge.tsx`:** Support 5 Semantic Variants (`success`, `warning`, `info`, `neutral`, `danger`).
+- [x] **Task 1.4 — Hoàn thiện Shared `Card.tsx`:** Khung container `rounded-2xl`, viền `border-slate-200/80`, bóng nhẹ `shadow-xs`.
+- [x] **Task 1.5 — Hoàn thiện Shared `Input.tsx`:** Ô nhập liệu hỗ trợ label, helperText, error state, leading/trailing icons.
+- [x] **Task 1.6 — Hoàn thiện Shared `Modal.tsx`:** Cửa sổ nổi hỗ trợ backdrop mờ `backdrop-blur-xs` và nút đóng chuẩn.
+- [x] **Task 1.7 — Hoàn thiện Shared Utilities (`currency.ts`):** Hàm `formatCurrency` xuất định dạng `8.490.000 VNĐ` cho cả Web & Admin.
 
-### 📍 Giai đoạn 2: Chuẩn hóa Layout Shells & Structural Patterns (Tier 2 & Tier 3)
-- [x] **Task 2.1 — Xây dựng Sticky Navigation `Header.tsx`:** Đóng gói thanh điều hướng cố định đỉnh màn hình `sticky top-0 z-40 bg-white/95 backdrop-blur-md` chứa Logo, Menu điều hướng, Mini-Cart badge và User Dropdown.
-- [x] **Task 2.2 — Xây dựng Value Props `Footer.tsx`:** Đóng gói chân trang chứa 4 cam kết thương hiệu (Giao hàng, Chính hãng, Đổi trả, Thanh toán) và cây liên kết danh mục.
-- [x] **Task 2.3 — Xây dựng Khung Container `MainLayout.tsx`:** Đóng gói canvas nội dung chính `max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6/10` dùng chung cho toàn bộ ứng dụng.
-- [x] **Task 2.4 — Chuẩn hóa Thẻ sản phẩm `ProductCard.tsx`:** Tái sử dụng mẫu Card duy nhất cho trang chủ, danh mục sản phẩm, tìm kiếm và gợi ý sản phẩm liên quan.
-- [x] **Task 2.5 — Đóng gói Slide-over `CartDrawer.tsx`:** Xây dựng giỏ hàng slide-over từ cạnh phải giúp xem nhanh sản phẩm và tiến hành thanh toán.
+### 📍 Giai đoạn 2: Đóng gói Structural Patterns & Shells cho Web Storefront (Tầng 2A — Web Patterns)
+- [x] **Task 2.1 — Đóng gói Navigation `Header.tsx`:** Thanh điều hướng dính đỉnh `sticky top-0 z-40 bg-white/95 backdrop-blur-md` chứa Logo, Menu, Mini-Cart badge và User Dropdown.
+- [x] **Task 2.2 — Đóng gói Value Props `Footer.tsx`:** Chân trang 4 cam kết giá trị + cây liên kết danh mục.
+- [x] **Task 2.3 — Đóng gói Canvas `MainLayout.tsx`:** Container `max-w-7xl mx-auto px-4/8 py-6/10` cho toàn bộ trang Web.
+- [x] **Task 2.4 — Đóng gói Thẻ sản phẩm `ProductCard.tsx`:** Mẫu Card dùng chung trên Trang chủ, Danh mục, Tìm kiếm & Gợi ý.
+- [x] **Task 2.5 — Đóng gói Slide-over `CartDrawer.tsx`:** Giỏ hàng nhanh trượt từ cạnh phải.
 
-### 📍 Giai đoạn 3: Chuẩn hóa & Lắp ráp Giao diện Các Trang (Tier 4 Page Views)
-- [ ] **Task 3.1 — Rà soát & Lắp ráp Trang Danh mục (`ProductList.tsx` / `/products`):**
-  - Tích hợp Hero Trust Banner.
-  - Tích hợp Thanh chọn danh mục cấp 1 & cấp 2 (`CategoryPills`).
-  - Chuẩn hóa thanh Công cụ (Tìm kiếm, Sắp xếp theo giá/mới nhất, Đếm tổng sản phẩm).
-  - Tái sử dụng Lưới sản phẩm `ProductCard` (4 cột Desktop, 2 cột Mobile).
-  - Chuẩn hóa thanh phân trang `PaginationControl`.
-- [ ] **Task 3.2 — Rà soát & Lắp ráp Trang Chi tiết Sản phẩm (`ProductDetailView.tsx` / `/products/:id`):**
-  - Tích hợp `BreadcrumbNav` (Trang chủ > Danh mục > Tên sản phẩm).
-  - Chuẩn hóa bố cục Spotlight 2 cột 50/50 (Bộ sưu tập ảnh bên trái + Thông tin đặt hàng bên phải).
-  - Thiết kế Bảng thông số kỹ thuật sản phẩm theo đúng token `slate-200` & `text-slate-700`.
-  - Tích hợp Lưới 4 Sản phẩm liên quan dùng lại `ProductCard`.
-- [ ] **Task 3.3 — Rà soát & Lắp ráp Trang Giỏ hàng & Thanh toán (`CartView.tsx`, `CheckoutModal.tsx`):**
-  - Tích hợp Thanh tiến trình Checkout (Giỏ hàng ➔ Giao hàng ➔ Hoàn tất).
-  - Bố cục Split Layout (2/3 Danh sách sản phẩm ➔ 1/3 Thẻ Sticky Summary).
-  - Form nhập thông tin giao hàng & Phương thức thanh toán (COD / Chuyển khoản QR) chuẩn hóa `Input` & `Button`.
-- [ ] **Task 3.4 — Rà soát & Lắp ráp Trang Lịch sử Đơn hàng (`OrderHistoryView.tsx` / `/orders`):**
-  - Banner chào thành viên & tổng số đơn.
-  - Thanh tab chuyển đổi trạng thái (Tất cả, Chờ xử lý, Đã giao, Đã hủy).
-  - Danh sách Order Cards hiển thị mã `#ORD`, ngày đặt, Badge trạng thái chuẩn, và chi tiết từng món.
-- [ ] **Task 3.5 — Rà soát & Lắp ráp Trang Tài khoản (`AuthView.tsx` / `/account`):**
-  - Thiết kế Form Đăng nhập / Đăng ký dùng lại `Card`, `Input`, `Button`.
-  - Giao diện Thông tin cá nhân & Thẻ Khách hàng thân thiết.
+### 📍 Giai đoạn 3: Lắp ráp & Hoàn thiện Các Trang Web Storefront (Tier 4 Page Views)
+- [x] **Task 3.1 — Trang Danh mục Sản phẩm (`ProductList.tsx`, `ProductFiltersBar.tsx` / `/products`):**
+  - Tích hợp Hero Trust Banner & Thanh tìm kiếm + Bộ lọc danh mục.
+  - Tái sử dụng Lưới sản phẩm `ProductCard` & Phân trang `Pagination`.
+- [x] **Task 3.2 — Trang Chi tiết Sản phẩm (`ProductDetailView.tsx` / `/products/:id`):**
+  - `BreadcrumbNav` (Trang chủ > Danh mục > Tên sản phẩm).
+  - Bố cục Spotlight 2 cột (Bộ sưu tập ảnh + Khối đặt hàng VNĐ).
+  - Bảng thông số kỹ thuật sản phẩm & badges cam kết bảo hành.
+- [x] **Task 3.3 — Trang Giỏ hàng & Thanh toán (`CartView.tsx`, `CheckoutModal.tsx`, `CartDrawer.tsx`):**
+  - Giỏ hàng trượt nhanh `CartDrawer` + Trang giỏ hàng đầy đủ `CartView`.
+  - Split Layout 2 cột (Danh sách món + Thẻ Sticky Order Summary).
+  - Modal thanh toán COD / QR với form nhập địa chỉ giao hàng.
+- [x] **Task 3.4 — Trang Lịch sử Đơn hàng (`OrderHistoryView.tsx` / `/orders`):**
+  - Bộ lọc trạng thái đơn hàng (Tất cả, Chờ xử lý, Đã giao, Đã hủy).
+  - Card hiển thị mã đơn `#ORD`, ngày đặt, Badge trạng thái chuẩn và tổng tiền VNĐ.
+- [x] **Task 3.5 — Trang Tài khoản & Xác thực (`AuthView.tsx`, `LoginForm.tsx`, `RegisterForm.tsx` / `/login`, `/register`, `/profile`):**
+  - Form Đăng nhập / Đăng ký dùng lại `Card`, `Input`, `Button`.
+  - Giao diện Thông tin cá nhân & Quản lý địa chỉ giao hàng.
 
-### 📍 Giai đoạn 4: Tối ưu Trải nghiệm, Accessibility & Anti-Drift (Quality Assurance)
-- [ ] **Task 4.1 — Kiểm tra 100% Định dạng Tiền tệ VNĐ:** Rà soát toàn bộ component đảm bảo dùng `formatCurrency()` (dạng `8.490.000 VNĐ`), loại bỏ triệt để ký tự `$`.
-- [ ] **Task 4.2 — Kiểm tra Tính tương thích Responsive:** Verification hiển thị mượt mà trên Mobile (375px), Tablet (768px), Laptop (1280px) và Monitor (1920px).
-- [ ] **Task 4.3 — Kiểm thử Độ tương phản & Accessibility (WCAG AA):** Đảm bảo tỷ lệ tương phản chữ/nền tối thiểu 4.5:1.
-- [ ] **Task 4.4 — Verification Code & Build:** Kiểm thử định kỳ bằng `lint_applet` và `compile_applet`.
+### 📍 Giai đoạn 4: Chuẩn bị Khung Linh kiện Mật độ Cao cho Admin Portal (Tầng 2B — Admin Dense Patterns)
+- [ ] **Task 4.1 — Chuẩn bị Component `AdminDataTable.tsx`:**
+  - Thiết kế Bảng dữ liệu mật độ cao (High Density) hiển thị 20–30 dòng trên màn hình với padding nhỏ gọn (`py-1.5`).
+  - Tích hợp phân trang, bộ lọc cột, sắp xếp và chọn nhiều dòng (Bulk Selection).
+  - Tái sử dụng `Badge` (cho trạng thái đơn/sản phẩm), `Button` (cho hành động chỉnh sửa/xóa) và `Input` (tìm kiếm).
+- [ ] **Task 4.2 — Chuẩn bị Layout Khung Admin (`AdminLayout.tsx` & `AdminSidebar.tsx`):**
+  - Bố cục Sidebar thu gọn bên trái + Top Navbar thông báo + Canvas dữ liệu chính.
+- [ ] **Task 4.3 — Chuẩn bị Thẻ Chỉ số `MetricStatCard.tsx`:**
+  - Thẻ hiển thị doanh thu VNĐ, tổng đơn hàng, số khách hàng mới kèm biểu đồ xu hướng.
+
+### 📍 Giai đoạn 5: Tối ưu Trải nghiệm, Accessibility & Anti-Drift (Quality Assurance)
+- [x] **Task 5.1 — Audit 100% Tiền tệ VNĐ:** Rà soát toàn bộ component đảm bảo dùng `formatCurrency()` (dạng `8.490.000 VNĐ`), không sử dụng ký tự `$`.
+- [x] **Task 5.2 — Responsive Audit:** Kiểm thử hiển thị mượt mà từ Mobile 375px đến Monitor 1920px.
+- [x] **Task 5.3 — Accessibility Audit (WCAG AA):** Tỷ lệ tương phản chữ/nền tối thiểu 4.5:1.
+- [x] **Task 5.4 — Build & Lint Verification:** Kiểm thử định kỳ bằng `lint_applet` và `compile_applet`.
 
 ---
 

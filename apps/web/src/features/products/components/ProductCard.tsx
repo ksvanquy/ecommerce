@@ -87,8 +87,13 @@ export const ProductCard: React.FC<ProductCardProps> = ({
           </Link>
         </div>
 
-        {/* Stock status badge overlay */}
-        <div className="absolute top-2.5 left-2.5">
+        {/* Stock status & Brand overlay */}
+        <div className="absolute top-2.5 left-2.5 flex flex-col gap-1 items-start">
+          {product.brand && (
+            <Badge variant="info" className="bg-blue-600 text-white shadow-2xs text-[10px] font-bold">
+              {product.brand.name}
+            </Badge>
+          )}
           <Badge variant="neutral" className="bg-white/90 text-slate-700 shadow-2xs text-[10px]">
             {product.category}
           </Badge>
@@ -113,6 +118,15 @@ export const ProductCard: React.FC<ProductCardProps> = ({
               {product.name}
             </h4>
           </Link>
+
+          {/* Variants summary chip if present */}
+          {product.variants && product.variants.length > 0 && (
+            <div className="mt-1 flex items-center gap-1 text-[11px] text-slate-500">
+              <span className="inline-block w-2 h-2 rounded-full bg-blue-500"></span>
+              <span>{product.variants.length} phiên bản tùy chọn</span>
+            </div>
+          )}
+
           <p className="text-xs text-slate-500 mt-1 line-clamp-2 leading-relaxed">
             {product.description}
           </p>

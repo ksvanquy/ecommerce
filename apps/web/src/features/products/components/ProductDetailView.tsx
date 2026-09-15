@@ -27,7 +27,36 @@ export const ProductDetailView: React.FC = () => {
   const [quantity, setQuantity] = useState(1);
   const [addedSuccess, setAddedSuccess] = useState(false);
 
+  // Variant & Gallery Image selection state
+  const [selectedVariantId, setSelectedVariantId] = useState<string | null>(null);
+  const [activeImage, setActiveImage] = useState<string | null>(null);
+
   const addItem = useCartStore((state) => state.addItem);
+
+  // Derive current active variant or fallback to base product
+  const activeVariant = React.useMemo(() => {
+    if (!product?.variants || product.variants.length === 0) return null;
+    if (selectedVariantId) {
+      return product.variants.find((v) => v.id === selectedVariantId) || product.variants[0];
+    }
+    return product.variants.find((v) => v.isDefault) || product.variants[0];
+  }, [product, selectedVariantId]);
+
+  // Derive display price, image, inventory, and SKU
+  const currentPrice = activeVariant ? activeVariant.price : (product?.price ?? 0);
+  const currentInventory = activeVariant ? activeVariant.inventory : (product?.inventory ?? 0);
+  const currentImageUrl = activeImage || activeVariant?.imageUrl || product?.imageUrl;
+
+  const isOutOfStock = currentInventory <= 0;
+  const isLowStock = currentInventory > 0 && currentInventory <= 10;
+
+  // Auto-set initial active image when product loads
+  React.useEffect(() => {
+    if (product) {
+      const thumbnailObj = product.images?.find((img) => img.isThumbnail);
+      setActiveImage(thumbnailObj?.imageUrl || product.imageUrl || null);
+    }
+  }, [product]);
 
   if (isLoading) {
     return (
@@ -70,15 +99,26 @@ export const ProductDetailView: React.FC = () => {
     );
   }
 
-  const isOutOfStock = product.inventory <= 0;
-  const isLowStock = product.inventory > 0 && product.inventory <= 10;
-
   const handleAddToCart = () => {
     if (isOutOfStock) return;
-    addItem(product, quantity);
+    // Pass product with variant info override for cart
+    const itemToAdd = {
+      ...product,
+      price: currentPrice,
+      inventory: currentInventory,
+      imageUrl: currentImageUrl || product.imageUrl,
+      name: activeVariant ? `${product.name} (${activeVariant.name})` : product.name,
+    };
+    addItem(itemToAdd, quantity);
     setAddedSuccess(true);
     setTimeout(() => setAddedSuccess(false), 2500);
   };
+
+  const galleryImages = product.images && product.images.length > 0
+    ? product.images
+    : product.imageUrl
+    ? [{ id: 'default', productId: product.id, imageUrl: product.imageUrl, isThumbnail: true, sortOrder: 0 }]
+    : [];
 
   return (
     <div className="space-y-6 max-w-5xl mx-auto py-2">
@@ -112,12 +152,12 @@ export const ProductDetailView: React.FC = () => {
       {/* Main Detail Card */}
       <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-xs">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-8 p-6 lg:p-8">
-          {/* Left Column: Product Image Showcase */}
-          <div className="md:col-span-6 flex flex-col items-center justify-center">
+          {/* Left Column: Product Image Showcase & Gallery */}
+          <div className="md:col-span-6 flex flex-col items-center justify-between">
             <div className="w-full h-80 sm:h-96 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center p-6 relative overflow-hidden group">
-              {product.imageUrl ? (
+              {currentImageUrl ? (
                 <img
-                  src={product.imageUrl}
+                  src={currentImageUrl}
                   alt={product.name}
                   className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-300"
                   referrerPolicy="no-referrer"
@@ -128,8 +168,13 @@ export const ProductDetailView: React.FC = () => {
                 </div>
               )}
 
-              <div className="absolute top-3 left-3">
-                <Badge variant="info" className="text-[11px] font-semibold">
+              <div className="absolute top-3 left-3 flex flex-col gap-1 items-start">
+                {product.brand && (
+                  <Badge variant="info" className="text-[11px] font-bold bg-blue-600 text-white">
+                    {product.brand.name}
+                  </Badge>
+                )}
+                <Badge variant="neutral" className="text-[11px] font-semibold bg-white/90 text-slate-700">
                   {product.category}
                 </Badge>
               </div>
@@ -140,7 +185,7 @@ export const ProductDetailView: React.FC = () => {
                 </div>
               ) : isLowStock ? (
                 <div className="absolute top-3 right-3 bg-amber-500 text-white text-xs font-bold px-2.5 py-1 rounded-md shadow-xs">
-                  Còn lại {product.inventory} cái
+                  Còn lại {currentInventory} cái
                 </div>
               ) : (
                 <div className="absolute top-3 right-3 bg-emerald-600 text-white text-xs font-bold px-2.5 py-1 rounded-md shadow-xs">
@@ -148,6 +193,36 @@ export const ProductDetailView: React.FC = () => {
                 </div>
               )}
             </div>
+
+            {/* Gallery Thumbnails */}
+            {galleryImages.length > 1 && (
+              <div className="w-full mt-3 flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+                {galleryImages.map((img) => (
+                  <button
+                    key={img.id}
+                    type="button"
+                    onClick={() => setActiveImage(img.imageUrl)}
+                    className={`relative w-16 h-16 rounded-lg border-2 overflow-hidden shrink-0 transition bg-slate-50 ${
+                      currentImageUrl === img.imageUrl
+                        ? 'border-blue-600 ring-2 ring-blue-500/20'
+                        : 'border-slate-200 opacity-70 hover:opacity-100 hover:border-slate-300'
+                    }`}
+                  >
+                    <img
+                      src={img.imageUrl}
+                      alt={img.altText || product.name}
+                      className="w-full h-full object-contain p-1"
+                      referrerPolicy="no-referrer"
+                    />
+                    {img.isThumbnail && (
+                      <span className="absolute bottom-0 inset-x-0 bg-blue-600/90 text-white text-[8px] font-bold text-center py-0.5">
+                        Ảnh bìa
+                      </span>
+                    )}
+                  </button>
+                ))}
+              </div>
+            )}
 
             {/* Micro badges below image */}
             <div className="grid grid-cols-3 gap-2 w-full mt-4 text-[11px] text-slate-500">
@@ -170,13 +245,24 @@ export const ProductDetailView: React.FC = () => {
           <div className="md:col-span-6 flex flex-col justify-between space-y-6">
             <div className="space-y-4">
               <div>
-                <div className="flex items-center gap-2 mb-1">
+                <div className="flex items-center gap-2 mb-1 flex-wrap">
                   <span className="text-[11px] font-mono text-slate-400">ID: {product.id}</span>
-                  <span className="text-slate-300">•</span>
-                  <span className="text-[11px] text-slate-400 flex items-center gap-1">
-                    <Calendar className="w-3 h-3" />
-                    {new Date(product.createdAt).toLocaleDateString()}
-                  </span>
+                  {activeVariant?.sku && (
+                    <>
+                      <span className="text-slate-300">•</span>
+                      <span className="text-[11px] font-mono text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded">
+                        SKU: {activeVariant.sku}
+                      </span>
+                    </>
+                  )}
+                  {product.brand && (
+                    <>
+                      <span className="text-slate-300">•</span>
+                      <span className="text-[11px] text-blue-600 font-semibold">
+                        Thương hiệu: {product.brand.name} ({product.brand.country})
+                      </span>
+                    </>
+                  )}
                 </div>
                 <h1 className="text-2xl font-bold text-slate-900 tracking-tight leading-snug">
                   {product.name}
@@ -187,12 +273,19 @@ export const ProductDetailView: React.FC = () => {
               <div className="p-4 rounded-xl bg-slate-50 border border-slate-100 flex items-baseline justify-between">
                 <div>
                   <span className="text-xs text-slate-500 block mb-0.5 font-medium">Giá bán niêm yết:</span>
-                  <span className="text-2xl sm:text-3xl font-extrabold text-blue-600 tracking-tight">
-                    {formatCurrency(product.price)}
-                  </span>
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-2xl sm:text-3xl font-extrabold text-blue-600 tracking-tight">
+                      {formatCurrency(currentPrice)}
+                    </span>
+                    {activeVariant?.originalPrice && activeVariant.originalPrice > currentPrice && (
+                      <span className="text-sm text-slate-400 line-through">
+                        {formatCurrency(activeVariant.originalPrice)}
+                      </span>
+                    )}
+                  </div>
                 </div>
                 <div className="text-right">
-                  <span className="text-xs text-slate-500 block mb-0.5 font-medium">Kho hàng:</span>
+                  <span className="text-xs text-slate-500 block mb-0.5 font-medium font-mono">Trạng thái kho:</span>
                   <span
                     className={`text-xs font-semibold px-2 py-0.5 rounded ${
                       isOutOfStock
@@ -202,10 +295,58 @@ export const ProductDetailView: React.FC = () => {
                         : 'bg-emerald-100 text-emerald-700'
                     }`}
                   >
-                    {product.inventory} sản phẩm có sẵn
+                    {currentInventory} sản phẩm có sẵn
                   </span>
                 </div>
               </div>
+
+              {/* Product Variants Selection (Color / Specs) */}
+              {product.variants && product.variants.length > 0 && (
+                <div className="space-y-2 p-3 bg-blue-50/50 border border-blue-100 rounded-xl">
+                  <span className="text-xs font-semibold text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
+                    <Layers className="w-3.5 h-3.5 text-blue-600" />
+                    <span>Chọn phiên bản ({product.variants.length} tùy chọn):</span>
+                  </span>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    {product.variants.map((v) => {
+                      const isSelected = activeVariant?.id === v.id;
+                      return (
+                        <button
+                          key={v.id}
+                          type="button"
+                          onClick={() => {
+                            setSelectedVariantId(v.id);
+                            if (v.imageUrl) setActiveImage(v.imageUrl);
+                          }}
+                          className={`p-2.5 rounded-lg border text-left transition flex items-center justify-between ${
+                            isSelected
+                              ? 'bg-white border-blue-600 ring-2 ring-blue-500/20 shadow-xs'
+                              : 'bg-white border-slate-200 hover:border-slate-300'
+                          }`}
+                        >
+                          <div className="flex items-center gap-2">
+                            {v.colorCode && (
+                              <span
+                                className="w-3.5 h-3.5 rounded-full border border-slate-300 shrink-0"
+                                style={{ backgroundColor: v.colorCode }}
+                              />
+                            )}
+                            <div>
+                              <p className="text-xs font-semibold text-slate-900">{v.name}</p>
+                              {v.specSummary && (
+                                <p className="text-[10px] text-slate-500">{v.specSummary}</p>
+                              )}
+                            </div>
+                          </div>
+                          <span className="text-xs font-bold text-blue-600 ml-2 whitespace-nowrap">
+                            {formatCurrency(v.price)}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
 
               {/* Description */}
               <div className="space-y-1.5">
@@ -216,6 +357,29 @@ export const ProductDetailView: React.FC = () => {
                   {product.description}
                 </p>
               </div>
+
+              {/* Brand Information Section */}
+              {product.brand && (
+                <div className="p-3 bg-slate-50 border border-slate-200/80 rounded-xl flex items-center gap-3">
+                  {product.brand.logoUrl && (
+                    <img
+                      src={product.brand.logoUrl}
+                      alt={product.brand.name}
+                      className="w-10 h-10 object-cover rounded-lg border border-slate-200 bg-white"
+                      referrerPolicy="no-referrer"
+                    />
+                  )}
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h4 className="text-xs font-bold text-slate-900">{product.brand.name}</h4>
+                      <span className="text-[10px] bg-slate-200 text-slate-700 px-1.5 py-0.2 rounded font-medium">
+                        {product.brand.country}
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-slate-500 line-clamp-1">{product.brand.description}</p>
+                  </div>
+                </div>
+              )}
 
               {/* Highlights */}
               <div className="space-y-2 pt-2 border-t border-slate-100">
@@ -249,15 +413,15 @@ export const ProductDetailView: React.FC = () => {
                   </span>
                   <button
                     type="button"
-                    onClick={() => setQuantity((q) => Math.min(product.inventory, q + 1))}
-                    disabled={quantity >= product.inventory || isOutOfStock}
+                    onClick={() => setQuantity((q) => Math.min(currentInventory, q + 1))}
+                    disabled={quantity >= currentInventory || isOutOfStock}
                     className="w-8 h-8 flex items-center justify-center text-slate-600 hover:bg-slate-200 disabled:opacity-40 transition font-bold"
                   >
                     +
                   </button>
                 </div>
                 <span className="text-[11px] text-slate-400">
-                  (Tổng: {formatCurrency(product.price * quantity)})
+                  (Tổng: {formatCurrency(currentPrice * quantity)})
                 </span>
               </div>
 

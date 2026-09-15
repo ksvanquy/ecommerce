@@ -1,8 +1,8 @@
 import React from 'react';
-import { Search, X, ArrowUpDown, Tag, SlidersHorizontal } from 'lucide-react';
+import { Search, X, ArrowUpDown, Tag, SlidersHorizontal, Award } from 'lucide-react';
 import { useCategoryTree } from '../api/useCategories.ts';
+import { useBrands } from '../api/useBrands.ts';
 import type { ProductFilters } from '../types.ts';
-import type { CategoryTreeNode } from '@repo/shared-types';
 
 interface ProductFiltersBarProps {
   filters: ProductFilters;
@@ -19,15 +19,20 @@ export const ProductFiltersBar: React.FC<ProductFiltersBarProps> = ({
   totalProducts,
 }) => {
   const { data: categoryTree = [] } = useCategoryTree();
+  const { data: brandsList = [] } = useBrands();
 
   const isCategoryActive = filters.category && filters.category !== 'all';
+  const isBrandActive = Boolean(filters.brandId);
   const hasActiveFilters = Boolean(
     isCategoryActive ||
+      isBrandActive ||
       filters.search ||
       (filters.sortBy && filters.sortBy !== 'newest') ||
       filters.minPrice ||
       filters.maxPrice
   );
+
+  const activeBrandName = brandsList.find((b) => b.id === filters.brandId)?.name;
 
   // Helper to find category name & hierarchy from tree
   const getActiveCategoryLabel = (): { rootName?: string; subName?: string; fullName: string } => {
@@ -93,13 +98,36 @@ export const ProductFiltersBar: React.FC<ProductFiltersBarProps> = ({
           )}
         </div>
 
-        {/* Sort & Count */}
-        <div className="flex items-center gap-2.5 shrink-0 justify-between sm:justify-end">
+        {/* Sort, Brand & Count */}
+        <div className="flex items-center gap-2.5 shrink-0 justify-between sm:justify-end flex-wrap">
           {/* Total products badge */}
           {totalProducts !== undefined && (
             <span className="text-xs font-medium text-slate-500 hidden md:inline-block">
               Tổng <strong className="text-slate-900 font-semibold">{totalProducts}</strong> sản phẩm
             </span>
+          )}
+
+          {/* Brand Dropdown */}
+          {brandsList.length > 0 && (
+            <div className="relative shrink-0">
+              <div className="flex items-center space-x-1.5 px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-700">
+                <Award className="w-3.5 h-3.5 text-blue-600" />
+                <select
+                  id="select-product-brand"
+                  value={filters.brandId || ''}
+                  onChange={(e) => onFilterChange({ brandId: e.target.value || undefined, page: 1 })}
+                  aria-label="Lọc theo thương hiệu"
+                  className="bg-transparent border-none text-xs text-slate-800 font-semibold focus:outline-none cursor-pointer pr-2"
+                >
+                  <option value="">Tất cả thương hiệu</option>
+                  {brandsList.map((b) => (
+                    <option key={b.id} value={b.id}>
+                      {b.name} ({b.country})
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
           )}
 
           {/* Sort Dropdown */}
@@ -189,6 +217,22 @@ export const ProductFiltersBar: React.FC<ProductFiltersBarProps> = ({
             <SlidersHorizontal className="w-3.5 h-3.5 text-blue-600" />
             <span>Đang lọc:</span>
           </span>
+
+          {/* Active Brand Chip */}
+          {isBrandActive && activeBrandName && (
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-indigo-50 text-indigo-800 border border-indigo-200 font-medium">
+              <Award className="w-3 h-3 text-indigo-600" />
+              <span>Thương hiệu: {activeBrandName}</span>
+              <button
+                type="button"
+                onClick={() => onFilterChange({ brandId: undefined, page: 1 })}
+                className="p-0.5 hover:bg-indigo-200/60 rounded-full transition text-indigo-700"
+                title="Bỏ lọc thương hiệu"
+              >
+                <X className="w-3 h-3" />
+              </button>
+            </span>
+          )}
 
           {/* Active Category Chip */}
           {isCategoryActive && (
