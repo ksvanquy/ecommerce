@@ -101,6 +101,16 @@ VITE_APP_NAME=TechStore
 npm install
 ```
 
+```bash
+npm approve-scripts esbuild
+npm approve-scripts @google/genai
+npm approve-scripts protobufjs
+```
+
+```bash
+npm rebuild
+```
+
 ### 2. Chạy môi trường phát triển (Development)
 ```bash
 # Khởi động ứng dụng đầy đủ (API + Web trên port 3000)
