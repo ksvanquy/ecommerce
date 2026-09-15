@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { Button } from '../../../components/ui/Button.tsx';
 import { Input } from '../../../components/ui/Input.tsx';
 import { useLogin } from '../api/useLogin.ts';
-import { AlertCircle, LogIn, KeyRound, Sparkles } from 'lucide-react';
+import { loginSchema } from '@repo/shared-types';
+import { AlertCircle, LogIn, Sparkles } from 'lucide-react';
 
 interface LoginFormProps {
   onSuccess?: () => void;
@@ -20,13 +21,20 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSuccess, onSwitchToRegis
     e.preventDefault();
     setClientError(null);
 
-    if (!email || !password) {
-      setClientError('Vui lòng nhập đầy đủ email và mật khẩu.');
+    // Validate using shared Zod schema
+    const validationResult = loginSchema.safeParse({
+      email: email.trim(),
+      password,
+    });
+
+    if (!validationResult.success) {
+      const firstIssue = validationResult.error.issues[0];
+      setClientError(firstIssue?.message || 'Thông tin đăng nhập không hợp lệ.');
       return;
     }
 
     try {
-      await loginMutation.mutateAsync({ email: email.trim(), password });
+      await loginMutation.mutateAsync(validationResult.data);
       if (onSuccess) onSuccess();
     } catch (err: any) {
       const msg = err?.response?.data?.message || err?.message || 'Đăng nhập không thành công. Vui lòng kiểm tra lại thông tin.';

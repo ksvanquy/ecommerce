@@ -24,6 +24,12 @@
       "@repo/shared-types": [
         "./packages/shared-types/src/index.ts"
       ],
+      "@ecommerce/shared-types": [
+        "./packages/shared-types/src/index.ts"
+      ],
+      "@ecommerce/shared-types/*": [
+        "./packages/shared-types/src/*"
+      ],
       "@apps/api/*": [
         "./apps/api/src/*"
       ],

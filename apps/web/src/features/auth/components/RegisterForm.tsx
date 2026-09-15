@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Button } from '../../../components/ui/Button.tsx';
 import { Input } from '../../../components/ui/Input.tsx';
 import { useRegister } from '../api/useRegister.ts';
-import { UserRole } from '../types.ts';
+import { UserRole, registerSchema } from '@repo/shared-types';
 import { AlertCircle, CheckCircle2, UserCheck, Shield } from 'lucide-react';
 
 interface RegisterFormProps {
@@ -23,28 +23,22 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ onSuccess, onSwitchT
     e.preventDefault();
     setClientError(null);
 
-    if (!fullName.trim()) {
-      setClientError('Vui lòng nhập họ và tên.');
-      return;
-    }
+    // Validate using shared Zod schema
+    const validationResult = registerSchema.safeParse({
+      fullName: fullName.trim(),
+      email: email.trim().toLowerCase(),
+      password,
+      role,
+    });
 
-    if (!email.trim() || !email.includes('@')) {
-      setClientError('Vui lòng nhập địa chỉ email hợp lệ.');
-      return;
-    }
-
-    if (!password || password.length < 6) {
-      setClientError('Mật khẩu phải có tối thiểu 6 ký tự.');
+    if (!validationResult.success) {
+      const firstIssue = validationResult.error.issues[0];
+      setClientError(firstIssue?.message || 'Thông tin đăng ký không hợp lệ.');
       return;
     }
 
     try {
-      await registerMutation.mutateAsync({
-        fullName: fullName.trim(),
-        email: email.trim().toLowerCase(),
-        password,
-        role,
-      });
+      await registerMutation.mutateAsync(validationResult.data);
 
       if (onSuccess) {
         onSuccess();
@@ -96,7 +90,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ onSuccess, onSwitchT
         value={password}
         onChange={(e) => setPassword(e.target.value)}
         required
-        helperText="Nên chứa cả chữ hoa, chữ thường và số"
+        helperText="Nên chứa cả chữ hoa, chữ thường và số (tối thiểu 6 ký tự)"
         autoComplete="new-password"
       />
 

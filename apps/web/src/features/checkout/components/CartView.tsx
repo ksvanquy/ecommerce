@@ -454,14 +454,14 @@ export const CartView: React.FC = () => {
                   variant="primary"
                   size="md"
                   className="w-full justify-center text-sm font-semibold"
-                  onClick={() => setShowOrderPreviewModal(true)}
+                  onClick={() => setIsCheckoutModalOpen(true)}
                 >
                   <span>Tiến hành Đặt hàng</span>
                   <ArrowRight className="w-4 h-4 ml-1.5" />
                 </Button>
 
                 <p className="text-[11px] text-center text-slate-400">
-                  Phần tạo và lưu đơn hàng vào database sẽ được kích hoạt ở <strong>Giai đoạn 4 (Module Orders)</strong>.
+                  Thực hiện transaction kiểm tra tồn kho & tạo đơn hàng an toàn.
                 </p>
               </div>
             </div>
@@ -469,51 +469,25 @@ export const CartView: React.FC = () => {
         </div>
       )}
 
-      {/* Phase 4 Integration Preview Modal */}
-      <Modal
-        isOpen={showOrderPreviewModal}
-        onClose={() => setShowOrderPreviewModal(false)}
-        title="Xem trước Payload Đơn hàng (Giai đoạn 4 chuẩn bị)"
-      >
-        <div className="space-y-4 text-xs">
-          <div className="p-3 bg-blue-50 border border-blue-100 rounded-xl text-blue-900 leading-relaxed">
-            <p className="font-semibold flex items-center gap-1 text-sm text-blue-950 mb-1">
-              <Check className="w-4 h-4 text-blue-600" />
-              Sẵn sàng cho Giai đoạn 4 — Module Orders!
-            </p>
-            Giỏ hàng phía client (Giai đoạn 3) đã đóng gói toàn bộ trạng thái sản phẩm, số lượng, giảm giá và tổng tiền. Khi triển khai Giai đoạn 4, dữ liệu này sẽ được gửi tới backend API <code>POST /orders</code> để kiểm tra tồn kho và transaction tạo đơn hàng trong PostgreSQL.
-          </div>
+      {/* Checkout Modal */}
+      <CheckoutModal
+        isOpen={isCheckoutModalOpen}
+        onClose={() => setIsCheckoutModalOpen(false)}
+        onOrderSuccess={(order) => {
+          setCreatedOrder(order);
+          setIsSuccessModalOpen(true);
+        }}
+      />
 
-          <div>
-            <span className="font-semibold text-slate-800 block mb-1.5">
-              Payload dự kiến gửi lên API backend:
-            </span>
-            <pre className="p-3 bg-slate-900 text-slate-100 rounded-xl font-mono text-[11px] overflow-x-auto max-h-60 scrollbar-thin">
-              {JSON.stringify(phase4Payload, null, 2)}
-            </pre>
-          </div>
-
-          <div className="pt-2 flex justify-end gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setShowOrderPreviewModal(false)}
-            >
-              Đóng xem trước
-            </Button>
-            <Button
-              variant="primary"
-              size="sm"
-              onClick={() => {
-                setShowOrderPreviewModal(false);
-                navigate('/products');
-              }}
-            >
-              Tiếp tục mua hàng
-            </Button>
-          </div>
-        </div>
-      </Modal>
+      {/* Order Success Modal */}
+      <OrderSuccessModal
+        isOpen={isSuccessModalOpen}
+        onClose={() => {
+          setIsSuccessModalOpen(false);
+          setCreatedOrder(null);
+        }}
+        order={createdOrder}
+      />
     </div>
   );
 };

@@ -1,6 +1,6 @@
 {
-  "name": "Ecommerce",
-  "description": "E-commerce platform monorepo with React, Vite, Express, Drizzle ORM, and Turborepo tooling.",
+  "name": "TechStore",
+  "description": "Nền tảng mua sắm thiết bị công nghệ, phụ kiện và đồ gia dụng thông minh chính hãng.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

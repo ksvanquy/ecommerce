@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useCartStore } from '../store/cartStore.ts';
 import { useCreateOrder } from '../api/useCreateOrder.ts';
 import { useAuthStore } from '../../auth/store/authStore.ts';
 import { Modal } from '../../../components/ui/Modal.tsx';
 import { Button } from '../../../components/ui/Button.tsx';
+import { createOrderSchema } from '@repo/shared-types';
 import {
   ShoppingBag,
   Truck,
@@ -19,8 +19,6 @@ import {
   MapPin,
   FileText,
   Tag,
-  ArrowRight,
-  Sparkles,
 } from 'lucide-react';
 import type { Order, PaymentMethod } from '../types.ts';
 
@@ -35,7 +33,6 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
   onClose,
   onOrderSuccess,
 }) => {
-  const navigate = useNavigate();
   const user = useAuthStore((state) => state.user);
   const items = useCartStore((state) => state.items);
   const couponCode = useCartStore((state) => state.couponCode);
@@ -66,26 +63,6 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
     e.preventDefault();
     setValidationError(null);
 
-    if (items.length === 0) {
-      setValidationError('Giỏ hàng của bạn đang trống.');
-      return;
-    }
-
-    if (!customerName.trim()) {
-      setValidationError('Vui lòng nhập họ và tên người nhận hàng.');
-      return;
-    }
-
-    if (!customerPhone.trim() || customerPhone.trim().length < 8) {
-      setValidationError('Vui lòng nhập số điện thoại hợp lệ (ít nhất 8 chữ số).');
-      return;
-    }
-
-    if (!shippingAddress.trim() || shippingAddress.trim().length < 5) {
-      setValidationError('Vui lòng nhập địa chỉ giao hàng chi tiết.');
-      return;
-    }
-
     const payload = {
       items: items.map((i) => ({
         productId: i.product.id,
@@ -99,7 +76,15 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
       paymentMethod,
     };
 
-    createOrder(payload, {
+    // Client-side validation using shared Zod schema
+    const validationResult = createOrderSchema.safeParse(payload);
+    if (!validationResult.success) {
+      const firstIssue = validationResult.error.issues[0];
+      setValidationError(firstIssue?.message || 'Thông tin đơn hàng chưa đầy đủ hoặc không hợp lệ.');
+      return;
+    }
+
+    createOrder(validationResult.data, {
       onSuccess: (newOrder) => {
         clearCart();
         onClose();
@@ -117,7 +102,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="Xác nhận & Hoàn tất Đặt hàng (Giai đoạn 4)"
+      title="Xác nhận & Hoàn tất Đặt hàng"
       size="lg"
     >
       <form onSubmit={handleSubmit} className="space-y-6 text-slate-800">

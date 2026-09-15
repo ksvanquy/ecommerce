@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import { useOrders } from '../api/useOrders.ts';
 import { useCancelOrder } from '../api/useCancelOrder.ts';
 import { useCartStore } from '../store/cartStore.ts';
+import { useAuthStore } from '../../auth/store/authStore.ts';
+import { useLogin } from '../../auth/api/useLogin.ts';
 import { Button } from '../../../components/ui/Button.tsx';
 import { Modal } from '../../../components/ui/Modal.tsx';
 import {
@@ -26,6 +28,8 @@ import {
   ExternalLink,
   ChevronDown,
   ChevronUp,
+  LogIn,
+  ShieldCheck,
 } from 'lucide-react';
 import type { Order, OrderStatus } from '../types.ts';
 
@@ -35,6 +39,10 @@ export const OrderHistoryView: React.FC = () => {
   const [cancelModalOrder, setCancelModalOrder] = useState<Order | null>(null);
   const [detailModalOrder, setDetailModalOrder] = useState<Order | null>(null);
   const [feedbackMessage, setFeedbackMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+
+  const user = useAuthStore((state) => state.user);
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const { mutate: loginMutate, isPending: isLoggingIn } = useLogin();
 
   const addItem = useCartStore((state) => state.addItem);
   const setOpenCart = useCartStore((state) => state.setOpen);
@@ -148,18 +156,18 @@ export const OrderHistoryView: React.FC = () => {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <div className="flex items-center space-x-2">
-              <span className="bg-blue-400/20 text-blue-300 text-[11px] font-bold px-2 py-0.5 rounded font-mono uppercase tracking-wider border border-blue-400/30">
-                Giai đoạn 4 Hoàn thiện
+              <span className="bg-blue-400/20 text-blue-300 text-[11px] font-bold px-2 py-0.5 rounded uppercase tracking-wider border border-blue-400/30">
+                TechStore Quản Lý
               </span>
               <span className="text-slate-300 text-xs font-medium">
-                Module Orders • Transaction Drizzle & Trừ Tồn Kho Nguyên Tử
+                Quản lý & Theo dõi Đơn hàng
               </span>
             </div>
             <h1 className="text-2xl font-bold mt-2 tracking-tight">
-              Lịch sử Đơn hàng (Order Management)
+              Lịch sử Đơn hàng
             </h1>
             <p className="text-slate-300 text-xs mt-1 max-w-2xl leading-relaxed">
-              Theo dõi toàn bộ các đơn hàng đã đặt, trạng thái giao vận, chi tiết sản phẩm, giá tính toán phía máy chủ và khả năng hủy đơn có hoàn trả tồn kho tự động.
+              Theo dõi tình trạng đơn hàng đã đặt, tiến độ giao nhận, thông tin thanh toán và quản lý yêu cầu hủy đơn hàng.
             </p>
           </div>
 
@@ -169,7 +177,7 @@ export const OrderHistoryView: React.FC = () => {
               className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-white text-xs font-semibold border border-white/20 transition"
             >
               <ShoppingBag className="w-3.5 h-3.5" />
-              <span>Tiếp tục mua hàng</span>
+              <span>Tiếp tục mua sắm</span>
             </Link>
           </div>
         </div>
@@ -237,6 +245,38 @@ export const OrderHistoryView: React.FC = () => {
         </div>
       )}
 
+      {/* Guest Mode Notification & Quick Login */}
+      {!isAuthenticated && (
+        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200/80 rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="flex items-start gap-3">
+            <div className="w-9 h-9 rounded-xl bg-blue-600 text-white flex items-center justify-center shrink-0 shadow-xs">
+              <ShieldCheck className="w-5 h-5" />
+            </div>
+            <div>
+              <h4 className="text-xs font-bold text-slate-900">
+                Chế độ Khách (Chưa đăng nhập)
+              </h4>
+              <p className="text-[11px] text-slate-600 mt-0.5 max-w-xl leading-relaxed">
+                Để bảo mật quyền riêng tư, danh sách đơn hàng cá nhân chỉ hiển thị khi bạn đăng nhập tài khoản. Khách vãng lai có thể tra cứu đơn hàng bằng <strong>Mã đơn (#ORD-...)</strong> hoặc <strong>Số điện thoại</strong> ở ô tìm kiếm.
+              </p>
+            </div>
+          </div>
+
+          <div className="shrink-0 flex items-center gap-2 w-full sm:w-auto">
+            <Button
+              variant="primary"
+              size="sm"
+              isLoading={isLoggingIn}
+              onClick={() => loginMutate({ email: 'customer@ecommerce.com', password: 'password123' })}
+              className="w-full sm:w-auto text-xs"
+            >
+              <LogIn className="w-3.5 h-3.5 mr-1.5" />
+              <span>Đăng nhập Demo (Khách hàng)</span>
+            </Button>
+          </div>
+        </div>
+      )}
+
       {/* Filters and Search Bar */}
       <div className="bg-white border border-slate-200/80 rounded-xl p-3 flex flex-col md:flex-row items-center justify-between gap-3 shadow-2xs">
         {/* Status Tabs */}
@@ -270,7 +310,7 @@ export const OrderHistoryView: React.FC = () => {
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Tìm theo mã đơn, sản phẩm..."
+            placeholder="Tra cứu mã đơn #ORD, SĐT..."
             className="w-full pl-8 pr-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
           />
         </div>
@@ -288,18 +328,35 @@ export const OrderHistoryView: React.FC = () => {
             <Package className="w-8 h-8" />
           </div>
           <div>
-            <h3 className="text-lg font-bold text-slate-800">Không tìm thấy đơn hàng nào</h3>
-            <p className="text-xs text-slate-500 max-w-sm mx-auto mt-1">
-              Bạn chưa có đơn hàng nào phù hợp với bộ lọc hiện tại. Hãy tiến hành đặt sản phẩm để trải nghiệm luồng Transaction Giai đoạn 4.
+            <h3 className="text-base sm:text-lg font-bold text-slate-800">
+              {searchTerm ? 'Không tìm thấy đơn hàng phù hợp' : !isAuthenticated ? 'Chưa có đơn hàng nào được hiển thị' : 'Bạn chưa có đơn hàng nào'}
+            </h3>
+            <p className="text-xs text-slate-500 max-w-md mx-auto mt-1 leading-relaxed">
+              {!isAuthenticated
+                ? 'Đăng nhập vào tài khoản để xem các đơn hàng đã đặt của bạn, hoặc nhập chính xác Mã đơn hàng / Số điện thoại để tra cứu.'
+                : 'Bạn chưa có đơn hàng nào phù hợp với bộ lọc hiện tại. Hãy thêm sản phẩm vào giỏ và tiến hành đặt hàng nhé.'}
             </p>
           </div>
-          <Link
-            to="/products"
-            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-blue-600 text-white text-xs font-semibold hover:bg-blue-700 transition"
-          >
-            <ShoppingBag className="w-3.5 h-3.5" />
-            <span>Khám phá sản phẩm ngay</span>
-          </Link>
+          <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+            {!isAuthenticated && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => loginMutate({ email: 'customer@ecommerce.com', password: 'password123' })}
+                className="text-xs"
+              >
+                <LogIn className="w-3.5 h-3.5 mr-1.5" />
+                Đăng nhập tài khoản Demo
+              </Button>
+            )}
+            <Link
+              to="/products"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-blue-600 text-white text-xs font-semibold hover:bg-blue-700 transition"
+            >
+              <ShoppingBag className="w-3.5 h-3.5" />
+              <span>Khám phá sản phẩm</span>
+            </Link>
+          </div>
         </div>
       ) : (
         <div className="space-y-4">

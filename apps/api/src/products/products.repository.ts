@@ -1,7 +1,8 @@
-import { eq, ilike, and, gte, lte, desc, asc, sql } from 'drizzle-orm';
+import { eq, ilike, and, gte, lte, desc, asc, sql, inArray } from 'drizzle-orm';
 import { db } from '../db.ts';
 import { checkDatabaseConnection } from '../connection.ts';
 import { productsTable, ProductDb, NewProductDb } from './products.schema.ts';
+import { categoriesRepository } from '../categories/categories.repository.ts';
 import type {
   Product,
   ProductFilters,
@@ -181,7 +182,21 @@ export class ProductsRepository {
         const conditions = [];
 
         if (filters.category && filters.category !== 'all') {
-          conditions.push(eq(productsTable.category, filters.category));
+          // Get all descendant category IDs and slugs
+          const allDescendantIds = await categoriesRepository.getAllDescendantCategoryIds(filters.category);
+          const allCategories = await categoriesRepository.findAll();
+          const targetCats = allCategories.filter((c) => allDescendantIds.includes(c.id));
+          const allowedSlugs = targetCats.map((c) => c.slug.toLowerCase());
+          const allowedNames = targetCats.map((c) => c.name.toLowerCase());
+          const allowedIds = targetCats.map((c) => c.id);
+
+          conditions.push(
+            sql`(${inArray(productsTable.categoryId, allowedIds)} OR lower(${productsTable.category}) = ANY(ARRAY[${sql.raw(
+              [...allowedSlugs, ...allowedNames, filters.category.toLowerCase()]
+                .map((s) => `'${s.replace(/'/g, "''")}'`)
+                .join(',')
+            )}]))`
+          );
         }
 
         if (filters.search && filters.search.trim() !== '') {
@@ -232,6 +247,7 @@ export class ProductsRepository {
           price: row.price,
           inventory: row.inventory,
           category: row.category,
+          categoryId: row.categoryId,
           imageUrl: row.imageUrl || undefined,
           createdAt: row.createdAt.toISOString(),
           updatedAt: row.updatedAt.toISOString(),
@@ -252,10 +268,23 @@ export class ProductsRepository {
     // Memory Store Processing
     let all = Array.from(inMemoryProducts.values());
 
-    // Filter by category
+    // Filter by category (including subcategories)
     if (filters.category && filters.category !== 'all') {
-      const catLower = filters.category.toLowerCase();
-      all = all.filter((p) => p.category.toLowerCase() === catLower);
+      const allDescendantIds = await categoriesRepository.getAllDescendantCategoryIds(filters.category);
+      const allCategories = await categoriesRepository.findAll();
+      const targetCats = allCategories.filter((c) => allDescendantIds.includes(c.id));
+      const matchSet = new Set<string>([
+        filters.category.toLowerCase(),
+        ...targetCats.map((c) => c.slug.toLowerCase()),
+        ...targetCats.map((c) => c.name.toLowerCase()),
+        ...targetCats.map((c) => c.id.toLowerCase()),
+      ]);
+
+      all = all.filter(
+        (p) =>
+          (p.categoryId && matchSet.has(p.categoryId.toLowerCase())) ||
+          matchSet.has(p.category.toLowerCase())
+      );
     }
 
     // Filter by search term
@@ -321,6 +350,7 @@ export class ProductsRepository {
             price: row.price,
             inventory: row.inventory,
             category: row.category,
+            categoryId: row.categoryId,
             imageUrl: row.imageUrl || undefined,
             createdAt: row.createdAt.toISOString(),
             updatedAt: row.updatedAt.toISOString(),
@@ -369,6 +399,7 @@ export class ProductsRepository {
       price: Math.max(0, Math.round(data.price)),
       inventory: Math.max(0, Math.round(data.inventory)),
       category: data.category.trim(),
+      categoryId: (data as any).categoryId || null,
       imageUrl: data.imageUrl?.trim() || undefined,
       createdAt: now.toISOString(),
       updatedAt: now.toISOString(),
@@ -385,6 +416,7 @@ export class ProductsRepository {
           price: newProduct.price,
           inventory: newProduct.inventory,
           category: newProduct.category,
+          categoryId: newProduct.categoryId,
           imageUrl: newProduct.imageUrl,
           createdAt: now,
           updatedAt: now,
@@ -410,6 +442,7 @@ export class ProductsRepository {
       price: data.price !== undefined ? Math.max(0, Math.round(data.price)) : existing.price,
       inventory: data.inventory !== undefined ? Math.max(0, Math.round(data.inventory)) : existing.inventory,
       category: data.category !== undefined ? data.category.trim() : existing.category,
+      categoryId: (data as any).categoryId !== undefined ? (data as any).categoryId : existing.categoryId,
       imageUrl: data.imageUrl !== undefined ? data.imageUrl.trim() : existing.imageUrl,
       updatedAt: now.toISOString(),
     };
@@ -426,6 +459,7 @@ export class ProductsRepository {
             price: updated.price,
             inventory: updated.inventory,
             category: updated.category,
+            categoryId: updated.categoryId,
             imageUrl: updated.imageUrl,
             updatedAt: now,
           })

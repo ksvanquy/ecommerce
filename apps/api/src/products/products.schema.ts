@@ -7,6 +7,7 @@ export const productsTable = pgTable('products', {
   price: integer('price').notNull(),
   inventory: integer('inventory').notNull().default(0),
   category: varchar('category', { length: 100 }).notNull(),
+  categoryId: text('category_id'),
   imageUrl: text('image_url'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
