@@ -21,7 +21,7 @@ export const AuthView: React.FC = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="max-w-5xl mx-auto space-y-6 py-4">
+    <div className="w-full space-y-6 py-4">
       {/* Account Hero Banner */}
       <div className="bg-gradient-to-r from-slate-900 via-blue-950 to-indigo-900 text-white rounded-2xl p-6 sm:p-8 shadow-sm">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">

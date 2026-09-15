@@ -58,7 +58,7 @@ export const ProductDetailView: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="space-y-6 max-w-5xl mx-auto py-6">
+      <div className="space-y-6 w-full py-6">
         <div className="h-6 w-32 bg-slate-200 rounded animate-pulse" />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 bg-white p-6 rounded-2xl border border-slate-200">
           <div className="h-80 bg-slate-100 rounded-xl animate-pulse" />
@@ -119,7 +119,7 @@ export const ProductDetailView: React.FC = () => {
     : [];
 
   return (
-    <div className="space-y-6 max-w-5xl mx-auto py-2">
+    <div className="space-y-6 w-full py-2">
       {/* Breadcrumb & Navigation */}
       <div className="flex items-center justify-between flex-wrap gap-2 text-xs">
         <div className="flex items-center space-x-2 text-slate-500">
