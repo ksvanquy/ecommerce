@@ -91,23 +91,59 @@ export interface CartItem {
 }
 
 export type OrderStatus = 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
+export type PaymentMethod = 'cod' | 'bank_transfer' | 'credit_card';
+export type PaymentStatus = 'unpaid' | 'paid' | 'refunded';
 
 export interface OrderItem {
   id: string;
+  orderId?: string;
   productId: string;
   productName: string;
+  productImage?: string;
   price: number;
   quantity: number;
+  subtotal: number;
 }
 
 export interface Order {
   id: string;
   userId: string;
+  customerName: string;
+  customerPhone: string;
+  shippingAddress: string;
+  customerNote?: string;
   items: OrderItem[];
+  subtotal: number;
+  discountAmount: number;
+  shippingFee: number;
+  couponCode?: string | null;
   totalAmount: number;
   status: OrderStatus;
-  shippingAddress: string;
+  paymentMethod: PaymentMethod;
+  paymentStatus: PaymentStatus;
   createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateOrderPayload {
+  items: {
+    productId: string;
+    quantity: number;
+  }[];
+  customerName: string;
+  customerPhone: string;
+  shippingAddress: string;
+  customerNote?: string;
+  couponCode?: string;
+  paymentMethod?: PaymentMethod;
+}
+
+export interface OrderFilters {
+  page?: number;
+  limit?: number;
+  userId?: string;
+  status?: OrderStatus;
+  search?: string;
 }
 
 export interface RegisterPayload {

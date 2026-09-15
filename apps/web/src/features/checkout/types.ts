@@ -1,4 +1,22 @@
 import type { Product } from '../products/types.ts';
+import type {
+  Order,
+  OrderItem,
+  OrderStatus,
+  PaymentMethod,
+  PaymentStatus,
+  CreateOrderPayload as SharedCreateOrderPayload,
+  OrderFilters,
+} from '@repo/shared-types';
+
+export type {
+  Order,
+  OrderItem,
+  OrderStatus,
+  PaymentMethod,
+  PaymentStatus,
+  OrderFilters,
+};
 
 export interface CartItem {
   product: Product;
@@ -24,11 +42,5 @@ export interface CartState {
   totalPrice: () => number;
 }
 
-export interface CreateOrderPayload {
-  items: {
-    productId: string;
-    quantity: number;
-    price: number;
-  }[];
-  shippingAddress: string;
-}
+export type CreateOrderPayload = SharedCreateOrderPayload;
+

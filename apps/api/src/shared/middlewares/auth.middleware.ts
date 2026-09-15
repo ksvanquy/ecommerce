@@ -81,3 +81,19 @@ export function requireRole(allowedRoles: UserRole[]) {
     next();
   };
 }
+
+export function optionalAuthMiddleware(req: AuthenticatedRequest, _res: Response, next: NextFunction): void {
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return next();
+  }
+
+  const token = authHeader.split(' ')[1];
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET) as TokenPayload;
+    req.user = decoded;
+  } catch {
+    // If token is expired or invalid, silently proceed as guest in optional auth mode
+  }
+  next();
+}

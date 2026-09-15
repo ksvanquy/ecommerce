@@ -5,6 +5,9 @@ import { Button } from '../../../components/ui/Button.tsx';
 import { Badge } from '../../../components/ui/Badge.tsx';
 import { Card } from '../../../components/ui/Card.tsx';
 import { Modal } from '../../../components/ui/Modal.tsx';
+import { CheckoutModal } from './CheckoutModal.tsx';
+import { OrderSuccessModal } from './OrderSuccessModal.tsx';
+import type { Order } from '../types.ts';
 import {
   ShoppingBag,
   Trash2,
@@ -22,6 +25,7 @@ import {
   RotateCcw,
   Check,
   AlertCircle,
+  Package,
 } from 'lucide-react';
 
 export const CartView: React.FC = () => {
@@ -48,7 +52,9 @@ export const CartView: React.FC = () => {
     message: string;
   }>({ type: null, message: '' });
 
-  const [showOrderPreviewModal, setShowOrderPreviewModal] = useState(false);
+  const [isCheckoutModalOpen, setIsCheckoutModalOpen] = useState(false);
+  const [createdOrder, setCreatedOrder] = useState<Order | null>(null);
+  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
 
   const count = totalItems();
   const subtotal = subtotalPrice();

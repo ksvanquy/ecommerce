@@ -2,6 +2,7 @@ import express, { json } from 'express';
 import { healthRouter } from './routes/health.router.ts';
 import { authRouter } from './users/users.controller.ts';
 import { productsRouter } from './products/products.controller.ts';
+import { ordersRouter } from './orders/orders.controller.ts';
 
 export const app = express();
 
@@ -19,11 +20,15 @@ app.use('/api/auth', authRouter);
 app.use('/products', productsRouter);
 app.use('/api/products', productsRouter);
 
+// Support both /orders and /api/orders
+app.use('/orders', ordersRouter);
+app.use('/api/orders', ordersRouter);
+
 // Root greeting & status
 app.get('/api/info', (_req, res) => {
   res.json({
     name: 'ecommerce-api',
-    phase: 'Phase 2 - Module Products',
+    phase: 'Phase 4 - Module Orders (Transaction & Inventory)',
     status: 'operational',
     timestamp: new Date().toISOString(),
   });
