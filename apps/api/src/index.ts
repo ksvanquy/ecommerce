@@ -1,9 +1,9 @@
 import express, { json } from 'express';
 import { healthRouter } from './routes/health.router.ts';
-import { authRouter } from './users/users.controller.ts';
-import { productsRouter } from './products/products.controller.ts';
-import { categoriesRouter } from './categories/categories.controller.ts';
-import { ordersRouter } from './orders/orders.controller.ts';
+import { authRouter } from './users/index.ts';
+import { productsRouter } from './products/index.ts';
+import { categoriesRouter } from './categories/index.ts';
+import { ordersRouter } from './orders/index.ts';
 import { errorHandler, notFoundHandler } from './shared/middlewares/error.middleware.ts';
 import { initializeDatabase } from './init-db.ts';
 

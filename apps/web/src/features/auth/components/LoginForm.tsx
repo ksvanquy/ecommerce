@@ -3,7 +3,7 @@ import { Button } from '../../../components/ui/Button.tsx';
 import { Input } from '../../../components/ui/Input.tsx';
 import { useLogin } from '../api/useLogin.ts';
 import { loginSchema } from '@repo/shared-types';
-import { AlertCircle, LogIn, Sparkles } from 'lucide-react';
+import { AlertCircle, LogIn } from 'lucide-react';
 
 interface LoginFormProps {
   onSuccess?: () => void;
@@ -42,14 +42,9 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSuccess, onSwitchToRegis
     }
   };
 
-  const handleQuickFill = (type: 'admin' | 'customer') => {
-    if (type === 'admin') {
-      setEmail('admin@ecommerce.com');
-      setPassword('password123');
-    } else {
-      setEmail('customer@ecommerce.com');
-      setPassword('password123');
-    }
+  const handleQuickFill = () => {
+    setEmail('customer@ecommerce.com');
+    setPassword('password123');
     setClientError(null);
   };
 
@@ -57,33 +52,17 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSuccess, onSwitchToRegis
 
   return (
     <div className="space-y-4">
-      {/* Quick demo accounts bar */}
-      <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg">
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-[11px] font-semibold text-slate-600 flex items-center gap-1.5 uppercase tracking-wider">
-            <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-            Tài khoản mẫu thử nghiệm:
-          </span>
-          <span className="text-[10px] text-slate-400 font-mono">Pass: password123</span>
-        </div>
-        <div className="flex gap-2">
-          <button
-            type="button"
-            id="btn-quick-admin"
-            onClick={() => handleQuickFill('admin')}
-            className="flex-1 py-1.5 px-2 bg-white hover:bg-slate-100 border border-slate-300 rounded text-xs font-medium text-slate-700 transition"
-          >
-            Quản trị (admin)
-          </button>
-          <button
-            type="button"
-            id="btn-quick-customer"
-            onClick={() => handleQuickFill('customer')}
-            className="flex-1 py-1.5 px-2 bg-white hover:bg-slate-100 border border-slate-300 rounded text-xs font-medium text-slate-700 transition"
-          >
-            Khách hàng (customer)
-          </button>
-        </div>
+      {/* Quick fill for testing */}
+      <div className="flex items-center justify-between p-2.5 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-600">
+        <span>Tài khoản khách mẫu: <code className="font-mono text-slate-800 font-semibold">customer@ecommerce.com</code></span>
+        <button
+          type="button"
+          id="btn-quick-fill-customer"
+          onClick={handleQuickFill}
+          className="text-blue-600 hover:text-blue-800 font-semibold underline text-xs ml-2 cursor-pointer"
+        >
+          Điền nhanh
+        </button>
       </div>
 
       <form id="login-form" onSubmit={handleSubmit} className="space-y-4">

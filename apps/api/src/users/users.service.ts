@@ -2,7 +2,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { User, UserRole, RegisterPayload, LoginPayload } from '@repo/shared-types';
 import { usersRepository, UsersRepository } from './users.repository.ts';
-import { UserDb } from './users.schema.ts';
+import { UserDb } from '../db/schema/index.ts';
 import { JWT_SECRET, TokenPayload } from '../shared/middlewares/auth.middleware.ts';
 
 export class UsersService {

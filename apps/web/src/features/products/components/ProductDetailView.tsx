@@ -14,7 +14,6 @@ import {
   RotateCcw,
   Sparkles,
   Layers,
-  Code2,
   Calendar,
   Package,
 } from 'lucide-react';
@@ -26,7 +25,6 @@ export const ProductDetailView: React.FC = () => {
 
   const [quantity, setQuantity] = useState(1);
   const [addedSuccess, setAddedSuccess] = useState(false);
-  const [showJson, setShowJson] = useState(false);
 
   const addItem = useCartStore((state) => state.addItem);
 
@@ -297,36 +295,10 @@ export const ProductDetailView: React.FC = () => {
                     Xem giỏ hàng &rarr;
                   </Button>
                 )}
-
-                <Button
-                  id="btn-inspect-api"
-                  variant="outline"
-                  size="md"
-                  onClick={() => setShowJson(!showJson)}
-                  title="Kiểm tra API response"
-                >
-                  <Code2 className="w-4 h-4 mr-1" />
-                  {showJson ? 'Ẩn JSON' : 'Xem JSON API'}
-                </Button>
               </div>
             </div>
           </div>
         </div>
-
-        {/* Optional JSON Inspection for Developer / Evaluator */}
-        {showJson && (
-          <div className="border-t border-slate-200 bg-slate-950 p-4 text-slate-200">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-mono text-emerald-400">
-                // GET /api/products/{product.id}
-              </span>
-              <span className="text-[11px] text-slate-400 font-mono">Status: 200 OK</span>
-            </div>
-            <pre className="text-[11px] font-mono overflow-x-auto p-2 bg-slate-900 rounded">
-              {JSON.stringify({ success: true, data: product }, null, 2)}
-            </pre>
-          </div>
-        )}
       </div>
     </div>
   );

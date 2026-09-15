@@ -1,5 +1,5 @@
 import { ordersRepository } from './orders.repository.ts';
-import { productsRepository } from '../products/products.repository.ts';
+import { productsRepository } from '../products/index.ts';
 import type {
   Order,
   OrderItem,

@@ -136,6 +136,52 @@ export const ProductFiltersBar: React.FC<ProductFiltersBarProps> = ({
         </div>
       </div>
 
+      {/* Category Pills Horizontal Scroll */}
+      <div className="pt-2 border-t border-slate-100">
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-1.5 scrollbar-none text-xs">
+          <button
+            type="button"
+            onClick={() => onFilterChange({ category: 'all', page: 1 })}
+            className={`px-3 py-1.5 rounded-xl font-semibold whitespace-nowrap transition cursor-pointer ${
+              !isCategoryActive
+                ? 'bg-blue-600 text-white shadow-xs'
+                : 'bg-slate-100 text-slate-700 hover:bg-slate-200/80 hover:text-slate-900'
+            }`}
+          >
+            Tất cả sản phẩm
+          </button>
+
+          {categoryTree.map((cat) => {
+            const isSelected =
+              filters.category === cat.id ||
+              filters.category === cat.slug ||
+              filters.category === cat.name;
+
+            return (
+              <button
+                key={cat.id}
+                type="button"
+                onClick={() => onFilterChange({ category: cat.slug, page: 1 })}
+                className={`px-3 py-1.5 rounded-xl font-semibold whitespace-nowrap transition cursor-pointer flex items-center gap-1.5 ${
+                  isSelected
+                    ? 'bg-blue-600 text-white shadow-xs'
+                    : 'bg-slate-100 text-slate-700 hover:bg-slate-200/80 hover:text-slate-900'
+                }`}
+              >
+                <span>{cat.name}</span>
+                {cat.children && cat.children.length > 0 && (
+                  <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${
+                    isSelected ? 'bg-blue-500 text-white' : 'bg-slate-200 text-slate-600'
+                  }`}>
+                    {cat.children.length}
+                  </span>
+                )}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
       {/* Active Filter Breadcrumbs / Status Bar */}
       {hasActiveFilters && (
         <div className="pt-2.5 border-t border-slate-100 flex flex-wrap items-center gap-2 text-xs">

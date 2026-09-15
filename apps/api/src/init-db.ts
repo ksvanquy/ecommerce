@@ -1,10 +1,13 @@
 import bcrypt from 'bcryptjs';
 import { getPostgresClient, checkDatabaseConnection } from './connection.ts';
-import { db } from './db.ts';
-import { usersTable } from './users/users.schema.ts';
-import { productsTable } from './products/products.schema.ts';
-import { categoriesTable } from './categories/categories.schema.ts';
-import { ordersTable, orderItemsTable } from './orders/orders.schema.ts';
+import { db } from './db/index.ts';
+import {
+  usersTable,
+  productsTable,
+  categoriesTable,
+  ordersTable,
+  orderItemsTable,
+} from './db/schema/index.ts';
 import { eq } from 'drizzle-orm';
 
 const DEFAULT_PASSWORD_HASH = bcrypt.hashSync('password123', 10);
@@ -350,7 +353,7 @@ const SEED_ORDERS = [
 export async function initializeDatabase(): Promise<boolean> {
   const isAvailable = await checkDatabaseConnection();
   if (!isAvailable.connected) {
-    console.log('[DB Init] PostgreSQL not connected, running in in-memory fallback mode.');
+    console.warn(`[DB Init] Could not connect to PostgreSQL: ${isAvailable.message}`);
     return false;
   }
 

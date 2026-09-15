@@ -6,7 +6,6 @@ import { Badge } from '../../../components/ui/Badge.tsx';
 import { LoginForm } from './LoginForm.tsx';
 import { RegisterForm } from './RegisterForm.tsx';
 import { useAuthStore } from '../store/authStore.ts';
-import { AdminCategoryManagement } from '../../admin/components/AdminCategoryManagement.tsx';
 import {
   User as UserIcon,
   LogOut,
@@ -14,12 +13,10 @@ import {
   ShieldCheck,
   Mail,
   ShoppingBag,
-  FolderTree,
 } from 'lucide-react';
 
 export const AuthView: React.FC = () => {
   const [formTab, setFormTab] = useState<'login' | 'register'>('login');
-  const [adminTab, setAdminTab] = useState<'profile' | 'categories'>('profile');
   const user = useAuthStore((state) => state.user);
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const logout = useAuthStore((state) => state.logout);
@@ -33,14 +30,14 @@ export const AuthView: React.FC = () => {
           <div>
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/20 text-blue-300 text-xs font-semibold border border-blue-400/30 mb-2 backdrop-blur-md">
               <ShieldCheck className="w-3.5 h-3.5 text-blue-300" />
-              <span>Tài khoản &amp; Bảo mật Thành viên</span>
+              <span>Tài khoản Khách hàng Thân thiết</span>
             </div>
             <h1 className="text-2xl font-bold tracking-tight text-white">
               {isAuthenticated && user ? `Xin chào, ${user.fullName}!` : 'Tài khoản TechStore'}
             </h1>
             <p className="text-slate-300 text-xs sm:text-sm mt-1 max-w-xl leading-relaxed">
               {isAuthenticated
-                ? 'Quản lý thông tin cá nhân, theo dõi trạng thái đơn hàng và phân cấp danh mục hệ thống.'
+                ? 'Quản lý thông tin nhận hàng, theo dõi hành trình đơn hàng và nhận ưu đãi bảo hành chính hãng.'
                 : 'Đăng nhập hoặc tạo tài khoản mới để nhận ưu đãi thành viên, tích lũy điểm và theo dõi đơn hàng.'}
             </p>
           </div>
@@ -59,166 +56,96 @@ export const AuthView: React.FC = () => {
             </div>
           )}
         </div>
-
-        {/* Admin Navigation Pills inside Banner if Admin */}
-        {isAuthenticated && user?.role === 'admin' && (
-          <div className="mt-5 pt-4 border-t border-white/10 flex items-center gap-2">
-            <span className="text-xs text-blue-300 font-semibold mr-1">Chế độ Quản trị:</span>
-            <button
-              type="button"
-              onClick={() => setAdminTab('profile')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition ${
-                adminTab === 'profile'
-                  ? 'bg-white text-blue-900 shadow-xs'
-                  : 'bg-white/10 text-white hover:bg-white/20'
-              }`}
-            >
-              Hồ sơ Quản trị
-            </button>
-            <button
-              type="button"
-              onClick={() => setAdminTab('categories')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition flex items-center gap-1.5 ${
-                adminTab === 'categories'
-                  ? 'bg-white text-blue-900 shadow-xs'
-                  : 'bg-white/10 text-white hover:bg-white/20'
-              }`}
-            >
-              <FolderTree className="w-3.5 h-3.5" />
-              <span>Quản trị Danh mục &amp; Mục con</span>
-            </button>
-          </div>
-        )}
       </div>
 
       {isAuthenticated && user ? (
         /* Logged in View */
-        user.role === 'admin' && adminTab === 'categories' ? (
-          <AdminCategoryManagement />
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* User Details */}
-            <div className="md:col-span-2 space-y-6">
-              <Card>
-                <h3 className="text-sm font-bold text-slate-900 mb-4 flex items-center gap-2">
-                  <UserIcon className="w-4 h-4 text-blue-600" />
-                  <span>Thông tin cá nhân</span>
-                </h3>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* User Details */}
+          <div className="md:col-span-2 space-y-6">
+            <Card>
+              <h3 className="text-sm font-bold text-slate-900 mb-4 flex items-center gap-2">
+                <UserIcon className="w-4 h-4 text-blue-600" />
+                <span>Thông tin cá nhân</span>
+              </h3>
 
-                <div className="flex items-start gap-4 pb-6 border-b border-slate-100">
-                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center font-bold text-2xl shadow-sm shrink-0">
-                    {user.fullName.charAt(0).toUpperCase()}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
-                      <h4 className="font-bold text-slate-900 text-lg">{user.fullName}</h4>
-                      <Badge variant={user.role === 'admin' ? 'info' : 'success'}>
-                        {user.role === 'admin' ? 'Quản trị viên Hệ thống' : 'Khách hàng thân thiết'}
-                      </Badge>
-                    </div>
-                    <p className="text-xs text-slate-500 mt-1 flex items-center gap-1.5">
-                      <Mail className="w-3.5 h-3.5 text-slate-400" />
-                      <span>{user.email}</span>
-                    </p>
-                    <p className="text-[11px] text-slate-400 font-mono mt-1">Mã thành viên: #{user.id}</p>
-                  </div>
+              <div className="flex items-start gap-4 pb-6 border-b border-slate-100">
+                <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center font-bold text-2xl shadow-sm shrink-0">
+                  {user.fullName.charAt(0).toUpperCase()}
                 </div>
-
-                <div className="pt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-100">
-                    <p className="text-xs text-slate-500 mb-1">Cấp bậc tài khoản</p>
-                    <p className="font-bold text-slate-900 text-sm">
-                      {user.role === 'admin' ? 'Administrator VIP 🛡️' : 'TechStore Member ⭐'}
-                    </p>
-                    <p className="text-[11px] text-emerald-600 mt-0.5">
-                      {user.role === 'admin' ? 'Toàn quyền cấu hình Catalog & Orders' : 'Tích lũy 1% cho mỗi đơn hàng'}
-                    </p>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2">
+                    <h4 className="font-bold text-slate-900 text-lg">{user.fullName}</h4>
+                    <Badge variant="success">
+                      Khách hàng thân thiết
+                    </Badge>
                   </div>
-
-                  <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-100">
-                    <p className="text-xs text-slate-500 mb-1">Phương thức bảo mật</p>
-                    <p className="font-bold text-slate-900 text-sm">Xác thực Drizzle PostgreSQL</p>
-                    <p className="text-[11px] text-blue-600 mt-0.5">Phiên làm việc JWT bảo vệ an toàn</p>
-                  </div>
+                  <p className="text-xs text-slate-500 mt-1 flex items-center gap-1.5">
+                    <Mail className="w-3.5 h-3.5 text-slate-400" />
+                    <span>{user.email}</span>
+                  </p>
+                  <p className="text-[11px] text-slate-400 font-mono mt-1">Mã thành viên: #{user.id}</p>
                 </div>
-              </Card>
-
-              {user.role === 'admin' && (
-                <Card>
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-                        <FolderTree className="w-4 h-4 text-blue-600" />
-                        <span>Cây danh mục sản phẩm</span>
-                      </h3>
-                      <p className="text-xs text-slate-500 mt-1">
-                        Cấu hình phân cấp danh mục đa tầng và bộ lọc sản phẩm.
-                      </p>
-                    </div>
-                    <Button
-                      variant="primary"
-                      size="sm"
-                      onClick={() => setAdminTab('categories')}
-                      className="text-xs"
-                    >
-                      Mở bảng quản lý &rarr;
-                    </Button>
-                  </div>
-                </Card>
-              )}
-            </div>
-
-            {/* Quick Shortcuts */}
-            <div className="space-y-4">
-              <Card>
-                <h3 className="text-sm font-bold text-slate-900 mb-3">Lối tắt Mua sắm &amp; Quản trị</h3>
-                <div className="space-y-2.5">
-                  <Button
-                    variant="primary"
-                    size="sm"
-                    className="w-full justify-start text-xs font-semibold"
-                    onClick={() => navigate('/orders')}
-                  >
-                    <Package className="w-4 h-4 mr-2" />
-                    <span>Xem Lịch sử Đơn hàng</span>
-                  </Button>
-
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="w-full justify-start text-xs font-semibold"
-                    onClick={() => navigate('/products')}
-                  >
-                    <ShoppingBag className="w-4 h-4 mr-2 text-blue-600" />
-                    <span>Duyệt Sản phẩm Mới</span>
-                  </Button>
-
-                  {user.role === 'admin' && (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="w-full justify-start text-xs font-semibold bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100"
-                      onClick={() => setAdminTab('categories')}
-                    >
-                      <FolderTree className="w-4 h-4 mr-2 text-blue-600" />
-                      <span>Quản trị Danh mục Con</span>
-                    </Button>
-                  )}
-                </div>
-              </Card>
-
-              <div className="p-4 bg-blue-50 border border-blue-100 rounded-2xl text-xs text-blue-900 space-y-2">
-                <p className="font-bold flex items-center gap-1.5 text-blue-950">
-                  <ShieldCheck className="w-4 h-4 text-blue-600" />
-                  Quyền lợi thành viên
-                </p>
-                <p className="text-[11px] leading-relaxed text-blue-800">
-                  Bảo hành điện tử tự động qua số điện thoại, theo dõi hành trình đơn hàng và hỗ trợ ưu tiên 24/7.
-                </p>
               </div>
+
+              <div className="pt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-100">
+                  <p className="text-xs text-slate-500 mb-1">Cấp bậc thành viên</p>
+                  <p className="font-bold text-slate-900 text-sm">
+                    TechStore Member ⭐
+                  </p>
+                  <p className="text-[11px] text-emerald-600 mt-0.5">
+                    Tích lũy 1% cho mỗi đơn hàng thành công
+                  </p>
+                </div>
+
+                <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-100">
+                  <p className="text-xs text-slate-500 mb-1">Phương thức bảo mật</p>
+                  <p className="font-bold text-slate-900 text-sm">Xác thực an toàn</p>
+                  <p className="text-[11px] text-blue-600 mt-0.5">Phiên làm việc JWT bảo vệ riêng tư</p>
+                </div>
+              </div>
+            </Card>
+          </div>
+
+          {/* Quick Shortcuts */}
+          <div className="space-y-4">
+            <Card>
+              <h3 className="text-sm font-bold text-slate-900 mb-3">Lối tắt Mua sắm</h3>
+              <div className="space-y-2.5">
+                <Button
+                  variant="primary"
+                  size="sm"
+                  className="w-full justify-start text-xs font-semibold"
+                  onClick={() => navigate('/orders')}
+                >
+                  <Package className="w-4 h-4 mr-2" />
+                  <span>Xem Lịch sử Đơn hàng</span>
+                </Button>
+
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="w-full justify-start text-xs font-semibold"
+                  onClick={() => navigate('/products')}
+                >
+                  <ShoppingBag className="w-4 h-4 mr-2 text-blue-600" />
+                  <span>Duyệt Sản phẩm Mới</span>
+                </Button>
+              </div>
+            </Card>
+
+            <div className="p-4 bg-blue-50 border border-blue-100 rounded-2xl text-xs text-blue-900 space-y-2">
+              <p className="font-bold flex items-center gap-1.5 text-blue-950">
+                <ShieldCheck className="w-4 h-4 text-blue-600" />
+                Quyền lợi thành viên
+              </p>
+              <p className="text-[11px] leading-relaxed text-blue-800">
+                Bảo hành điện tử tự động qua số điện thoại, theo dõi hành trình đơn hàng và hỗ trợ khách hàng 24/7.
+              </p>
             </div>
           </div>
-        )
+        </div>
       ) : (
         /* Guest Login / Register Form */
         <div className="max-w-md mx-auto">

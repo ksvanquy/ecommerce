@@ -1,7 +1,6 @@
 import { pgTable, text, timestamp, varchar, integer } from 'drizzle-orm/pg-core';
-import { relations } from 'drizzle-orm';
-import { usersTable } from '../users/users.schema.ts';
-import { productsTable } from '../products/products.schema.ts';
+import { usersTable } from './users.ts';
+import { productsTable } from './products.ts';
 
 export const ordersTable = pgTable('orders', {
   id: text('id').primaryKey(),
@@ -33,25 +32,6 @@ export const orderItemsTable = pgTable('order_items', {
   subtotal: integer('subtotal').notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });
-
-export const ordersRelations = relations(ordersTable, ({ one, many }) => ({
-  user: one(usersTable, {
-    fields: [ordersTable.userId],
-    references: [usersTable.id],
-  }),
-  items: many(orderItemsTable),
-}));
-
-export const orderItemsRelations = relations(orderItemsTable, ({ one }) => ({
-  order: one(ordersTable, {
-    fields: [orderItemsTable.orderId],
-    references: [ordersTable.id],
-  }),
-  product: one(productsTable, {
-    fields: [orderItemsTable.productId],
-    references: [productsTable.id],
-  }),
-}));
 
 export type OrderDb = typeof ordersTable.$inferSelect;
 export type NewOrderDb = typeof ordersTable.$inferInsert;

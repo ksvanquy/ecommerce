@@ -57,14 +57,6 @@ export const OrderHistoryView: React.FC = () => {
 
   const orders = data?.orders || [];
 
-  // Metrics calculation
-  const totalOrders = orders.length;
-  const pendingOrders = orders.filter((o) => o.status === 'pending').length;
-  const deliveredOrders = orders.filter((o) => o.status === 'delivered').length;
-  const totalSpent = orders
-    .filter((o) => o.status !== 'cancelled')
-    .reduce((sum, o) => sum + o.totalAmount, 0);
-
   const handleConfirmCancel = () => {
     if (!cancelModalOrder) return;
     setFeedbackMessage(null);
@@ -179,41 +171,6 @@ export const OrderHistoryView: React.FC = () => {
               <ShoppingBag className="w-3.5 h-3.5" />
               <span>Tiếp tục mua sắm</span>
             </Link>
-          </div>
-        </div>
-      </div>
-
-      {/* Metrics Bar */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <div className="bg-white border border-slate-200/80 rounded-xl p-4 shadow-2xs">
-          <span className="text-[11px] font-semibold text-slate-500 block">Tổng đơn hàng</span>
-          <div className="flex items-baseline justify-between mt-1">
-            <span className="text-2xl font-bold text-slate-900 font-mono">{totalOrders}</span>
-            <Package className="w-4 h-4 text-blue-500" />
-          </div>
-        </div>
-
-        <div className="bg-white border border-slate-200/80 rounded-xl p-4 shadow-2xs">
-          <span className="text-[11px] font-semibold text-slate-500 block">Chờ xử lý</span>
-          <div className="flex items-baseline justify-between mt-1">
-            <span className="text-2xl font-bold text-amber-600 font-mono">{pendingOrders}</span>
-            <Clock className="w-4 h-4 text-amber-500" />
-          </div>
-        </div>
-
-        <div className="bg-white border border-slate-200/80 rounded-xl p-4 shadow-2xs">
-          <span className="text-[11px] font-semibold text-slate-500 block">Giao thành công</span>
-          <div className="flex items-baseline justify-between mt-1">
-            <span className="text-2xl font-bold text-emerald-600 font-mono">{deliveredOrders}</span>
-            <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-          </div>
-        </div>
-
-        <div className="bg-white border border-slate-200/80 rounded-xl p-4 shadow-2xs">
-          <span className="text-[11px] font-semibold text-slate-500 block">Tổng thanh toán</span>
-          <div className="flex items-baseline justify-between mt-1">
-            <span className="text-2xl font-bold text-blue-600 font-mono">${totalSpent}</span>
-            <Banknote className="w-4 h-4 text-blue-500" />
           </div>
         </div>
       </div>

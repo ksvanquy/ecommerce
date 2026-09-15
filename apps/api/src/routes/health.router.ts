@@ -21,5 +21,5 @@ healthRouter.get('/health', async (_req: Request, res: Response) => {
     environment: process.env.NODE_ENV || 'development',
   };
 
-  res.status(200).json(response);
+  res.status(dbStatus.connected ? 200 : 503).json(response);
 });
