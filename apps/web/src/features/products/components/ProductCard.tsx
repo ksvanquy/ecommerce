@@ -4,7 +4,7 @@ import type { Product } from '../types.ts';
 import { useCartStore } from '../../checkout/store/cartStore.ts';
 import { Button } from '../../../components/ui/Button.tsx';
 import { Badge } from '../../../components/ui/Badge.tsx';
-import { Eye, ShoppingCart, Check, PackageCheck, AlertCircle } from 'lucide-react';
+import { Eye, ShoppingCart, Check } from 'lucide-react';
 import { formatCurrency } from '../../../utils/currency.ts';
 
 interface ProductCardProps {
@@ -67,24 +67,26 @@ export const ProductCard: React.FC<ProductCardProps> = ({
           </div>
         )}
 
-        {/* Hover Quick Actions */}
-        <div className="absolute inset-0 bg-slate-900/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 backdrop-blur-[2px]">
-          {onQuickView && (
+        {/* Hover Quick Actions - Single unified action */}
+        <div className="absolute inset-0 bg-slate-900/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-[2px]">
+          {onQuickView ? (
             <button
               type="button"
               onClick={handleQuickView}
-              className="p-2 rounded-full bg-white text-slate-800 hover:text-blue-600 hover:bg-slate-50 shadow-md transition transform -translate-y-2 group-hover:translate-y-0"
-              title="Xem nhanh"
+              className="px-4 py-2 rounded-full bg-blue-600 text-white text-xs font-semibold hover:bg-blue-700 shadow-md transition flex items-center gap-1.5 transform scale-95 group-hover:scale-100"
             >
-              <Eye className="w-4 h-4" />
+              <Eye className="w-3.5 h-3.5" />
+              <span>Xem chi tiết</span>
             </button>
+          ) : (
+            <Link
+              to={`/products/${product.id}`}
+              className="px-4 py-2 rounded-full bg-blue-600 text-white text-xs font-semibold hover:bg-blue-700 shadow-md transition flex items-center gap-1.5 transform scale-95 group-hover:scale-100"
+            >
+              <Eye className="w-3.5 h-3.5" />
+              <span>Xem chi tiết</span>
+            </Link>
           )}
-          <Link
-            to={`/products/${product.id}`}
-            className="px-3 py-1.5 rounded-full bg-blue-600 text-white text-xs font-semibold hover:bg-blue-700 shadow-md transition transform translate-y-2 group-hover:translate-y-0 flex items-center gap-1"
-          >
-            Chi tiết &rarr;
-          </Link>
         </div>
 
         {/* Stock status & Brand overlay */}
@@ -140,36 +142,26 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             </span>
           </div>
 
-          <div className="flex items-center gap-1.5">
-            <Link
-              to={`/products/${product.id}`}
-              className="p-1.5 text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition"
-              title="Xem chi tiết sản phẩm"
-            >
-              <Eye className="w-4 h-4" />
-            </Link>
-
-            <Button
-              id={`btn-add-cart-${product.id}`}
-              size="sm"
-              variant={addedAnimation ? 'primary' : 'outline'}
-              disabled={isOutOfStock}
-              onClick={handleAddToCart}
-              className={addedAnimation ? 'bg-emerald-600 hover:bg-emerald-700 text-white border-transparent' : ''}
-            >
-              {addedAnimation ? (
-                <>
-                  <Check className="w-3.5 h-3.5 mr-1" />
-                  Đã thêm
-                </>
-              ) : (
-                <>
-                  <ShoppingCart className="w-3.5 h-3.5 mr-1" />
-                  Thêm giỏ
-                </>
-              )}
-            </Button>
-          </div>
+          <Button
+            id={`btn-add-cart-${product.id}`}
+            size="sm"
+            variant={addedAnimation ? 'primary' : 'outline'}
+            disabled={isOutOfStock}
+            onClick={handleAddToCart}
+            className={addedAnimation ? 'bg-emerald-600 hover:bg-emerald-700 text-white border-transparent' : ''}
+          >
+            {addedAnimation ? (
+              <>
+                <Check className="w-3.5 h-3.5 mr-1" />
+                Đã thêm
+              </>
+            ) : (
+              <>
+                <ShoppingCart className="w-3.5 h-3.5 mr-1" />
+                Thêm giỏ
+              </>
+            )}
+          </Button>
         </div>
       </div>
     </div>
