@@ -153,14 +153,15 @@ export const CartView: React.FC = () => {
 
               {/* Items List */}
               <div className="divide-y divide-slate-100">
-                {items.map(({ product, quantity }) => {
+                {items.map((item) => {
+                  const { product, quantity, id: cartItemId } = item;
                   const maxStock = product.inventory > 0 ? product.inventory : 999;
                   const isMax = quantity >= maxStock;
 
                   return (
                     <div
-                      key={product.id}
-                      id={`cart-item-${product.id}`}
+                      key={cartItemId}
+                      id={`cart-item-${cartItemId}`}
                       className="p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-slate-50/60 transition"
                     >
                       {/* Product details & thumbnail */}
@@ -213,10 +214,10 @@ export const CartView: React.FC = () => {
                         <div className="flex items-center border border-slate-200 rounded-lg bg-slate-50 overflow-hidden shadow-2xs">
                           <Button
                             type="button"
-                            id={`btn-dec-qty-${product.id}`}
+                            id={`btn-dec-qty-${cartItemId}`}
                             variant="ghost"
                             size="xs"
-                            onClick={() => updateQuantity(product.id, quantity - 1)}
+                            onClick={() => updateQuantity(cartItemId, quantity - 1)}
                             className="w-8 h-8 flex items-center justify-center text-slate-600 hover:bg-slate-200 transition font-bold"
                             aria-label="Giảm số lượng"
                           >
@@ -227,10 +228,10 @@ export const CartView: React.FC = () => {
                           </span>
                           <Button
                             type="button"
-                            id={`btn-inc-qty-${product.id}`}
+                            id={`btn-inc-qty-${cartItemId}`}
                             variant="ghost"
                             size="xs"
-                            onClick={() => updateQuantity(product.id, quantity + 1)}
+                            onClick={() => updateQuantity(cartItemId, quantity + 1)}
                             disabled={isMax}
                             className="w-8 h-8 flex items-center justify-center text-slate-600 hover:bg-slate-200 disabled:opacity-40 disabled:hover:bg-transparent transition font-bold"
                             aria-label="Tăng số lượng"
@@ -250,9 +251,9 @@ export const CartView: React.FC = () => {
                         {/* Remove button */}
                         <Button
                           type="button"
-                          id={`btn-remove-item-${product.id}`}
+                          id={`btn-remove-item-${cartItemId}`}
                           variant="ghost"
-                          onClick={() => removeItem(product.id)}
+                          onClick={() => removeItem(cartItemId)}
                           className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition min-w-0 min-h-0"
                           title="Xóa sản phẩm này"
                         >

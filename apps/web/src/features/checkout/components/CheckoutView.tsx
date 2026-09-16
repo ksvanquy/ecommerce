@@ -87,6 +87,7 @@ export const CheckoutView: React.FC<CheckoutViewProps> = ({ onBackToCart }) => {
       items: items.map((i) => ({
         productId: i.product.id,
         quantity: i.quantity,
+        variantId: i.variantId || undefined,
       })),
       customerName: customerName.trim(),
       customerPhone: customerPhone.trim(),
@@ -545,7 +546,7 @@ export const CheckoutView: React.FC<CheckoutViewProps> = ({ onBackToCart }) => {
               {/* Items scroll list */}
               <div className="max-h-64 overflow-y-auto divide-y divide-slate-100 pr-1 space-y-2">
                 {items.map((item) => (
-                  <div key={item.product.id} className="pt-3 first:pt-0 flex items-center gap-3">
+                  <div key={item.id} className="pt-3 first:pt-0 flex items-center gap-3">
                     <img
                       src={item.product.imageUrl || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=100'}
                       alt={item.product.name}

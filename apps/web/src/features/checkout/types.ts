@@ -19,8 +19,10 @@ export type {
 };
 
 export interface CartItem {
+  id: string; // unique cart item ID
   product: Product;
   quantity: number;
+  variantId?: string | null;
 }
 
 export interface CartState {
@@ -28,9 +30,9 @@ export interface CartState {
   isOpen: boolean;
   couponCode: string | null;
   discountPercent: number;
-  addItem: (product: Product, quantity?: number) => void;
-  removeItem: (productId: string) => void;
-  updateQuantity: (productId: string, quantity: number) => void;
+  addItem: (product: Product, quantity?: number, variantId?: string | null) => void;
+  removeItem: (id: string) => void;
+  updateQuantity: (id: string, quantity: number) => void;
   clearCart: () => void;
   setOpen: (isOpen: boolean) => void;
   applyCoupon: (code: string) => { success: boolean; message: string };

@@ -107,7 +107,7 @@ export const ProductDetailView: React.FC = () => {
       imageUrl: currentImageUrl || product.imageUrl,
       name: activeVariant ? `${product.name} (${activeVariant.name})` : product.name,
     };
-    addItem(itemToAdd, quantity);
+    addItem(itemToAdd, quantity, activeVariant?.id);
     setAddedSuccess(true);
     setTimeout(() => setAddedSuccess(false), 2500);
   };
@@ -223,21 +223,6 @@ export const ProductDetailView: React.FC = () => {
               </div>
             )}
 
-            {/* Micro badges below image */}
-            <div className="grid grid-cols-3 gap-2 w-full mt-4 text-[11px] text-slate-500">
-              <div className="flex items-center gap-1.5 p-2 bg-slate-50 rounded-lg border border-slate-100">
-                <ShieldCheck className="w-3.5 h-3.5 text-blue-600 shrink-0" />
-                <span className="truncate">Chính hãng 100%</span>
-              </div>
-              <div className="flex items-center gap-1.5 p-2 bg-slate-50 rounded-lg border border-slate-100">
-                <Truck className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                <span className="truncate">Miễn phí ship</span>
-              </div>
-              <div className="flex items-center gap-1.5 p-2 bg-slate-50 rounded-lg border border-slate-100">
-                <RotateCcw className="w-3.5 h-3.5 text-purple-600 shrink-0" />
-                <span className="truncate">Đổi trả 30 ngày</span>
-              </div>
-            </div>
           </div>
 
           {/* Right Column: Product Meta & Purchase Controls */}
@@ -347,51 +332,6 @@ export const ProductDetailView: React.FC = () => {
                 </div>
               )}
 
-              {/* Description */}
-              <div className="space-y-1.5">
-                <h3 className="text-xs font-semibold text-slate-800 uppercase tracking-wider">
-                  Mô tả sản phẩm
-                </h3>
-                <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                  {product.description}
-                </p>
-              </div>
-
-              {/* Brand Information Section */}
-              {product.brand && (
-                <div className="p-3 bg-slate-50 border border-slate-200/80 rounded-xl flex items-center gap-3">
-                  {product.brand.logoUrl && (
-                    <img
-                      src={product.brand.logoUrl}
-                      alt={product.brand.name}
-                      className="w-10 h-10 object-cover rounded-lg border border-slate-200 bg-white"
-                      referrerPolicy="no-referrer"
-                    />
-                  )}
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <h4 className="text-xs font-bold text-slate-900">{product.brand.name}</h4>
-                      <span className="text-[10px] bg-slate-200 text-slate-700 px-1.5 py-0.2 rounded font-medium">
-                        {product.brand.country}
-                      </span>
-                    </div>
-                    <p className="text-[11px] text-slate-500 line-clamp-1">{product.brand.description}</p>
-                  </div>
-                </div>
-              )}
-
-              {/* Highlights */}
-              <div className="space-y-2 pt-2 border-t border-slate-100">
-                <h3 className="text-xs font-semibold text-slate-800 uppercase tracking-wider flex items-center gap-1">
-                  <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-                  <span>Đặc điểm nổi bật:</span>
-                </h3>
-                <ul className="text-xs text-slate-600 space-y-1 list-disc list-inside">
-                  <li>Thiết kế tiêu chuẩn cao cấp, độ hoàn thiện tinh xảo từng chi tiết.</li>
-                  <li>Phù hợp hoàn hảo cho hệ sinh thái công nghệ và làm việc hiện đại.</li>
-                  <li>Tích hợp đầy đủ tiêu chuẩn an toàn và tiết kiệm năng lượng.</li>
-                </ul>
-              </div>
             </div>
 
             {/* Quantity Selector & Action Buttons */}
@@ -463,6 +403,102 @@ export const ProductDetailView: React.FC = () => {
                     Xem giỏ hàng &rarr;
                   </Button>
                 )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Detailed Info Section Below (Option B) */}
+      <div className="mt-8 grid grid-cols-1 md:grid-cols-12 gap-8">
+        {/* Left Card: Detailed Description & Highlights */}
+        <div className="md:col-span-8 bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-xs space-y-8">
+          {/* Description */}
+          <div className="space-y-4">
+            <h3 className="text-sm font-extrabold text-slate-900 uppercase tracking-widest border-b border-slate-100 pb-3">
+              Mô tả chi tiết sản phẩm
+            </h3>
+            <p className="text-sm text-slate-600 leading-relaxed whitespace-pre-line">
+              {product.description}
+            </p>
+          </div>
+
+          {/* Highlights */}
+          <div className="space-y-4 pt-6 border-t border-slate-100">
+            <h3 className="text-sm font-extrabold text-slate-900 uppercase tracking-widest flex items-center gap-1.5">
+              <Sparkles className="w-4 h-4 text-amber-500" />
+              <span>Đặc điểm nổi bật của sản phẩm</span>
+            </h3>
+            <ul className="text-sm text-slate-600 space-y-3 list-disc list-inside">
+              <li className="leading-relaxed">Thiết kế tiêu chuẩn cao cấp, độ hoàn thiện tinh xảo từng chi tiết nhỏ nhất.</li>
+              <li className="leading-relaxed">Phù hợp hoàn hảo cho hệ sinh thái công nghệ, hỗ trợ tối đa công việc và giải trí hiện đại.</li>
+              <li className="leading-relaxed">Tích hợp đầy đủ các tiêu chuẩn an toàn quốc tế và công nghệ tiết kiệm năng lượng thông minh.</li>
+            </ul>
+          </div>
+        </div>
+
+        {/* Right Card: Brand Information & Trust badges */}
+        <div className="md:col-span-4 space-y-6">
+          {product.brand && (
+            <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-xs space-y-4">
+              <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+                Thương hiệu phân phối
+              </h3>
+              <div className="flex items-center gap-3">
+                {product.brand.logoUrl ? (
+                  <img
+                    src={product.brand.logoUrl}
+                    alt={product.brand.name}
+                    className="w-12 h-12 object-cover rounded-xl border border-slate-200 bg-white shadow-3xs"
+                    referrerPolicy="no-referrer"
+                  />
+                ) : (
+                  <div className="w-12 h-12 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center font-bold text-blue-600 text-lg shadow-3xs">
+                    {product.brand.name.charAt(0)}
+                  </div>
+                )}
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h4 className="text-sm font-extrabold text-slate-900">{product.brand.name}</h4>
+                    <span className="text-[10px] bg-slate-100 text-slate-600 border border-slate-200 px-1.5 py-0.5 rounded-full font-bold">
+                      {product.brand.country}
+                    </span>
+                  </div>
+                  <p className="text-xs text-slate-500 mt-0.5">Thương hiệu quốc tế uy tín</p>
+                </div>
+              </div>
+              <p className="text-xs text-slate-600 leading-relaxed border-t border-slate-50 pt-3">
+                {product.brand.description}
+              </p>
+            </div>
+          )}
+
+          {/* Premium trust badge list */}
+          <div className="bg-gradient-to-br from-blue-50/40 to-slate-50/60 border border-blue-100/50 rounded-2xl p-6 shadow-3xs space-y-4">
+            <h4 className="text-xs font-extrabold text-blue-800 uppercase tracking-wider">
+              An tâm mua sắm tại TechStore
+            </h4>
+            <div className="space-y-4">
+              <div className="flex gap-3">
+                <ShieldCheck className="w-5 h-5 text-blue-600 shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-xs font-bold text-slate-800">Cam kết chính hãng</p>
+                  <p className="text-[10px] text-slate-500 mt-0.5 leading-normal">Hoàn tiền 200% nếu phát hiện hàng giả, hàng nhái.</p>
+                </div>
+              </div>
+              <div className="flex gap-3">
+                <Truck className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-xs font-bold text-slate-800">Giao hàng hỏa tốc</p>
+                  <p className="text-[10px] text-slate-500 mt-0.5 leading-normal">Đóng gói cẩn thận, miễn phí vận chuyển toàn quốc.</p>
+                </div>
+              </div>
+              <div className="flex gap-3">
+                <RotateCcw className="w-5 h-5 text-purple-600 shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-xs font-bold text-slate-800">Đổi trả dễ dàng</p>
+                  <p className="text-[10px] text-slate-500 mt-0.5 leading-normal">Hỗ trợ đổi mới trong vòng 30 ngày nếu có lỗi NSX.</p>
+                </div>
               </div>
             </div>
           </div>

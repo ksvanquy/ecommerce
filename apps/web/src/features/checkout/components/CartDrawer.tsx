@@ -154,14 +154,15 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onNavigateToCart }) => {
                 </div>
               </div>
             ) : (
-              items.map(({ product, quantity }) => {
+              items.map((item) => {
+                const { product, quantity, id: cartItemId } = item;
                 const maxStock = product.inventory > 0 ? product.inventory : 999;
                 const isMax = quantity >= maxStock;
 
                 return (
                   <div
-                    key={product.id}
-                    id={`cart-drawer-item-${product.id}`}
+                    key={cartItemId}
+                    id={`cart-drawer-item-${cartItemId}`}
                     className="flex items-start gap-3 p-3 bg-slate-50/70 hover:bg-slate-50 rounded-xl border border-slate-200/80 transition group"
                   >
                     {/* Thumbnail */}
@@ -188,9 +189,9 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onNavigateToCart }) => {
                         </h5>
                         <Button
                           type="button"
-                          id={`btn-drawer-remove-${product.id}`}
+                          id={`btn-drawer-remove-${cartItemId}`}
                           variant="ghost"
-                          onClick={() => removeItem(product.id)}
+                          onClick={() => removeItem(cartItemId)}
                           className="text-slate-400 hover:text-rose-600 p-0.5 rounded transition opacity-60 group-hover:opacity-100 cursor-pointer min-w-0 min-h-0"
                           title="Xóa khỏi giỏ"
                         >
@@ -212,10 +213,10 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onNavigateToCart }) => {
                         <div className="flex items-center border border-slate-200 rounded-md bg-white shadow-2xs">
                           <Button
                             type="button"
-                            id={`btn-drawer-dec-${product.id}`}
+                            id={`btn-drawer-dec-${cartItemId}`}
                             variant="ghost"
                             size="xs"
-                            onClick={() => updateQuantity(product.id, quantity - 1)}
+                            onClick={() => updateQuantity(cartItemId, quantity - 1)}
                             className="w-6 h-6 flex items-center justify-center text-slate-600 hover:bg-slate-100 transition rounded-l cursor-pointer"
                             aria-label="Giảm số lượng"
                           >
@@ -226,10 +227,10 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onNavigateToCart }) => {
                           </span>
                           <Button
                             type="button"
-                            id={`btn-drawer-inc-${product.id}`}
+                            id={`btn-drawer-inc-${cartItemId}`}
                             variant="ghost"
                             size="xs"
-                            onClick={() => updateQuantity(product.id, quantity + 1)}
+                            onClick={() => updateQuantity(cartItemId, quantity + 1)}
                             disabled={isMax}
                             className="w-6 h-6 flex items-center justify-center text-slate-600 hover:bg-slate-100 disabled:opacity-40 disabled:hover:bg-transparent transition rounded-r cursor-pointer"
                             aria-label="Tăng số lượng"

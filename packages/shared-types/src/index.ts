@@ -74,6 +74,7 @@ export const paymentStatusSchema = z.enum([
 export const orderItemInputSchema = z.object({
   productId: z.string().min(1, 'Mã sản phẩm không được để trống'),
   quantity: z.number().int().positive('Số lượng đặt hàng phải lớn hơn 0'),
+  variantId: z.string().optional(),
 });
 
 export const createOrderSchema = z.object({

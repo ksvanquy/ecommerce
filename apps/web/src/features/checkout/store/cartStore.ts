@@ -19,11 +19,12 @@ export const useCartStore = create<CartState>()(
       couponCode: null,
       discountPercent: 0,
 
-      addItem: (product: Product, quantity = 1) => {
+      addItem: (product: Product, quantity = 1, variantId?: string | null) => {
         if (quantity <= 0) return;
 
         set((state) => {
-          const existingIndex = state.items.findIndex((i) => i.product.id === product.id);
+          const cartItemId = variantId ? `${product.id}-${variantId}` : product.id;
+          const existingIndex = state.items.findIndex((i) => i.id === cartItemId);
           const maxStock = product.inventory > 0 ? product.inventory : 999;
 
           if (existingIndex > -1) {
@@ -39,31 +40,34 @@ export const useCartStore = create<CartState>()(
 
           const initialQty = Math.min(maxStock, quantity);
           return {
-            items: [...state.items, { product, quantity: initialQty }],
+            items: [
+              ...state.items,
+              { id: cartItemId, product, quantity: initialQty, variantId },
+            ],
           };
         });
       },
 
-      removeItem: (productId: string) => {
+      removeItem: (id: string) => {
         set((state) => ({
-          items: state.items.filter((i) => i.product.id !== productId),
+          items: state.items.filter((i) => i.id !== id),
         }));
       },
 
-      updateQuantity: (productId: string, quantity: number) => {
+      updateQuantity: (id: string, quantity: number) => {
         if (quantity <= 0) {
-          get().removeItem(productId);
+          get().removeItem(id);
           return;
         }
 
         set((state) => {
-          const item = state.items.find((i) => i.product.id === productId);
+          const item = state.items.find((i) => i.id === id);
           const maxStock = item && item.product.inventory > 0 ? item.product.inventory : 999;
           const clampedQty = Math.min(maxStock, quantity);
 
           return {
             items: state.items.map((i) =>
-              i.product.id === productId ? { ...i, quantity: clampedQty } : i
+              i.id === id ? { ...i, quantity: clampedQty } : i
             ),
           };
         });

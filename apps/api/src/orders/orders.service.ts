@@ -46,23 +46,39 @@ export class OrdersService {
         throw new Error(`Sản phẩm mã ${reqItem.productId} không tồn tại trong hệ thống.`);
       }
 
+      let itemPrice = product.price;
+      let itemName = product.name;
+      let itemImage = product.imageUrl;
+      let itemInventory = product.inventory;
+
+      // Handle variant overrides if variantId is provided
+      if (reqItem.variantId && product.variants && product.variants.length > 0) {
+        const variant = product.variants.find((v) => v.id === reqItem.variantId);
+        if (variant) {
+          itemPrice = variant.price;
+          itemName = `${product.name} (${variant.name})`;
+          itemImage = variant.imageUrl || product.imageUrl;
+          itemInventory = variant.inventory;
+        }
+      }
+
       // Check stock availability
-      if (product.inventory < reqItem.quantity) {
+      if (itemInventory < reqItem.quantity) {
         throw new Error(
-          `Sản phẩm "${product.name}" không đủ tồn kho (còn ${product.inventory}, bạn yêu cầu ${reqItem.quantity}).`,
+          `Sản phẩm "${itemName}" không đủ tồn kho (còn ${itemInventory}, bạn yêu cầu ${reqItem.quantity}).`,
         );
       }
 
-      const itemSubtotal = product.price * reqItem.quantity;
+      const itemSubtotal = itemPrice * reqItem.quantity;
       calculatedSubtotal += itemSubtotal;
 
       orderItems.push({
         id: `item_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
         orderId,
         productId: product.id,
-        productName: product.name,
-        productImage: product.imageUrl,
-        price: product.price,
+        productName: itemName,
+        productImage: itemImage,
+        price: itemPrice,
         quantity: reqItem.quantity,
         subtotal: itemSubtotal,
       });
