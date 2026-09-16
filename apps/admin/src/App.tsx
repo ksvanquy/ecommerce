@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Shield, LayoutDashboard, ShoppingBag, CreditCard, LogOut, Package, RefreshCw, UserCheck } from 'lucide-react';
+import { LayoutDashboard, ShoppingBag, CreditCard, LogOut, Package, RefreshCw, UserCheck, Store, ChevronRight } from 'lucide-react';
 import axios from 'axios';
 import { User, Product, Order, PaymentTransaction } from '@repo/shared-types';
 import { AdminTab, AdminStats } from './types.ts';
@@ -122,18 +122,25 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col md:flex-row font-sans">
+    <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col md:flex-row font-sans">
       {/* Sidebar navigation */}
-      <aside className="w-full md:w-64 bg-slate-900 border-r border-slate-800 flex flex-col justify-between shrink-0">
+      <aside className="w-full md:w-64 bg-white border-r border-slate-200/80 flex flex-col justify-between shrink-0 shadow-sm">
         <div className="p-6 space-y-8">
-          {/* Logo */}
-          <div className="flex items-center gap-3">
-            <div className="p-2.5 bg-amber-500/10 text-amber-500 rounded-xl border border-amber-500/20">
-              <Shield className="w-5 h-5" />
+          {/* Brand Logo - Unified with TechStore Web Header */}
+          <div className="flex items-center space-x-3 select-none">
+            <div className="h-10 w-10 rounded-xl bg-blue-600 flex items-center justify-center text-white shadow-md shadow-blue-500/20 shrink-0">
+              <ShoppingBag className="w-5 h-5" />
             </div>
             <div>
-              <h1 className="text-sm font-black tracking-wider text-white">TECHSTORE</h1>
-              <p className="text-[10px] text-amber-500/80 font-bold uppercase tracking-widest">Admin Board</p>
+              <div className="flex items-center gap-1.5">
+                <span className="font-bold text-slate-900 tracking-tight text-lg">TechStore</span>
+                <span className="text-[10px] uppercase font-extrabold tracking-wider bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded-md">
+                  ADMIN
+                </span>
+              </div>
+              <p className="text-[11px] text-slate-500 font-medium">
+                Hệ thống quản trị cửa hàng
+              </p>
             </div>
           </div>
 
@@ -141,10 +148,10 @@ export default function App() {
           <nav className="space-y-1.5">
             <button
               onClick={() => setActiveTab('dashboard')}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-bold transition cursor-pointer ${
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-bold transition duration-150 cursor-pointer ${
                 activeTab === 'dashboard'
-                  ? 'bg-amber-500 text-slate-950 shadow-lg shadow-amber-500/5'
-                  : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-200'
+                  ? 'bg-blue-600 text-white shadow-md shadow-blue-500/20'
+                  : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 font-medium'
               }`}
             >
               <LayoutDashboard className="w-4 h-4 shrink-0" />
@@ -153,10 +160,10 @@ export default function App() {
 
             <button
               onClick={() => setActiveTab('orders')}
-              className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-xs font-bold transition cursor-pointer ${
+              className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-xs font-bold transition duration-150 cursor-pointer ${
                 activeTab === 'orders'
-                  ? 'bg-amber-500 text-slate-950 shadow-lg shadow-amber-500/5'
-                  : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-200'
+                  ? 'bg-blue-600 text-white shadow-md shadow-blue-500/20'
+                  : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 font-medium'
               }`}
             >
               <span className="flex items-center gap-3">
@@ -164,7 +171,7 @@ export default function App() {
                 <span>Đơn hàng & Phê duyệt</span>
               </span>
               {pendingTransactions > 0 && (
-                <span className={`text-[10px] px-2 py-0.5 rounded-full font-extrabold ${activeTab === 'orders' ? 'bg-slate-950 text-amber-500' : 'bg-amber-500 text-slate-950'}`}>
+                <span className={`text-[10px] px-2 py-0.5 rounded-full font-extrabold ${activeTab === 'orders' ? 'bg-white text-blue-700' : 'bg-amber-100 text-amber-800'}`}>
                   {pendingTransactions}
                 </span>
               )}
@@ -172,32 +179,48 @@ export default function App() {
 
             <button
               onClick={() => setActiveTab('products')}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-bold transition cursor-pointer ${
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-bold transition duration-150 cursor-pointer ${
                 activeTab === 'products'
-                  ? 'bg-amber-500 text-slate-950 shadow-lg shadow-amber-500/5'
-                  : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-200'
+                  ? 'bg-blue-600 text-white shadow-md shadow-blue-500/20'
+                  : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 font-medium'
               }`}
             >
               <Package className="w-4 h-4 shrink-0" />
               <span>Quản lý Kho hàng</span>
             </button>
           </nav>
+
+          {/* Quick link to Storefront */}
+          <div className="pt-2">
+            <a
+              href="/"
+              target="_blank"
+              rel="noreferrer"
+              className="w-full flex items-center justify-between px-4 py-2.5 bg-blue-50 hover:bg-blue-100/80 text-blue-700 border border-blue-200/80 rounded-xl text-xs font-semibold transition group"
+            >
+              <span className="flex items-center gap-2">
+                <Store className="w-3.5 h-3.5" />
+                <span>Trang bán hàng (Store)</span>
+              </span>
+              <ChevronRight className="w-3.5 h-3.5 text-blue-500 group-hover:translate-x-0.5 transition-transform" />
+            </a>
+          </div>
         </div>
 
         {/* User control in sidebar bottom */}
-        <div className="p-6 border-t border-slate-800/60 space-y-4">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-slate-800 rounded-lg text-slate-300">
+        <div className="p-5 border-t border-slate-200/80 bg-slate-50/50 space-y-3.5">
+          <div className="flex items-center gap-3 bg-white p-2.5 rounded-xl border border-slate-200/80 shadow-xs">
+            <div className="p-2 bg-blue-50 text-blue-600 rounded-lg">
               <UserCheck className="w-4 h-4" />
             </div>
-            <div className="min-w-0">
-              <p className="text-xs font-bold text-white truncate">{adminUser.fullName}</p>
+            <div className="min-w-0 flex-1">
+              <p className="text-xs font-bold text-slate-900 truncate">{adminUser.fullName}</p>
               <p className="text-[10px] text-slate-500 truncate">{adminUser.email}</p>
             </div>
           </div>
           <button
             onClick={handleLogout}
-            className="w-full flex items-center justify-center gap-2 py-2.5 bg-slate-950 hover:bg-rose-950/20 text-slate-400 hover:text-rose-400 border border-slate-800 hover:border-rose-900/30 rounded-xl text-xs font-bold transition cursor-pointer"
+            className="w-full flex items-center justify-center gap-2 py-2 bg-white hover:bg-rose-50 text-slate-700 hover:text-rose-600 border border-slate-200 hover:border-rose-200 rounded-xl text-xs font-semibold transition cursor-pointer shadow-xs"
           >
             <LogOut className="w-3.5 h-3.5" />
             <span>Đăng xuất</span>
@@ -208,14 +231,14 @@ export default function App() {
       {/* Main content viewport */}
       <main className="flex-1 p-6 md:p-8 space-y-6 overflow-y-auto">
         {isLoading && (
-          <div className="p-4 bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs rounded-xl flex items-center gap-2 animate-pulse">
-            <RefreshCw className="w-4 h-4 animate-spin" />
-            <span>Đang tải và đồng bộ hóa thông tin thời gian thực...</span>
+          <div className="p-3.5 bg-blue-50 border border-blue-200 text-blue-700 text-xs font-medium rounded-xl flex items-center gap-2.5 shadow-xs">
+            <RefreshCw className="w-4 h-4 animate-spin text-blue-600 shrink-0" />
+            <span>Đang đồng bộ dữ liệu thời gian thực từ hệ thống TechStore...</span>
           </div>
         )}
 
         {error && (
-          <div className="p-4 bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs rounded-xl">
+          <div className="p-3.5 bg-rose-50 border border-rose-200 text-rose-700 text-xs font-medium rounded-xl shadow-xs">
             {error}
           </div>
         )}
