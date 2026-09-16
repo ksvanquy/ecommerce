@@ -39,7 +39,7 @@ export class UsersService {
    * Đăng ký người dùng mới
    */
   async register(payload: RegisterPayload): Promise<{ user: User; token: string }> {
-    const { email, password, fullName, role } = payload;
+    const { email, password, fullName } = payload;
 
     if (!email || !email.includes('@')) {
       throw new Error('Email không hợp lệ.');

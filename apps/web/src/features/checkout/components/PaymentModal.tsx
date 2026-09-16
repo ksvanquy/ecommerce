@@ -99,6 +99,33 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
     }
   };
 
+  const handleSimulateAutoSuccess = async () => {
+    if (!paymentData?.transaction?.transactionCode) return;
+    setIsConfirming(true);
+    try {
+      await paymentsApi.confirmPayment(
+        paymentData.transaction.transactionCode,
+        `SIM-GW-${Date.now()}`,
+        false
+      );
+      setIsPaid(true);
+      toast.success('Mô phỏng Webhook thanh toán thành công!', {
+        description: 'Cổng thanh toán đã tự động duyệt đơn hàng của bạn sang Đang xử lý.',
+      });
+      if (onPaymentSuccess) {
+        onPaymentSuccess();
+      }
+    } catch (err: any) {
+      const msg = err?.response?.data?.message || 'Không thể mô phỏng giao dịch lúc này.';
+      setErrorMessage(msg);
+      toast.error('Mô phỏng thất bại', {
+        description: msg,
+      });
+    } finally {
+      setIsConfirming(false);
+    }
+  };
+
   const transferInfo = paymentData?.transferInfo;
 
   return (
@@ -288,6 +315,39 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                   </div>
                 </div>
               )}
+
+              {/* Sandbox Developer Testing Tools */}
+              <div className="p-3.5 bg-amber-50/50 border border-amber-200/60 rounded-xl space-y-2 mt-2">
+                <div className="flex items-center gap-1.5 text-xs font-bold text-amber-800">
+                  <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+                  <span>Môi trường thử nghiệm Sandbox</span>
+                </div>
+                <p className="text-[11px] text-amber-700 leading-relaxed">
+                  Để bạn dễ dàng kiểm thử 2 luồng xử lý nghiệp vụ của TechStore, hãy nhấn chọn:
+                </p>
+                <div className="grid grid-cols-2 gap-2 mt-1">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="xs"
+                    disabled={isConfirming}
+                    onClick={handleManualConfirm}
+                    className="border-amber-300 text-amber-900 bg-white hover:bg-amber-100 text-[11px] font-semibold flex items-center justify-center py-1.5 cursor-pointer"
+                  >
+                    1. Báo cáo thủ công (Cần duyệt)
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="primary"
+                    size="xs"
+                    disabled={isConfirming}
+                    onClick={handleSimulateAutoSuccess}
+                    className="bg-amber-600 hover:bg-amber-700 text-white text-[11px] font-semibold flex items-center justify-center py-1.5 cursor-pointer border-none"
+                  >
+                    2. Webhook tự động (Duyệt ngay)
+                  </Button>
+                </div>
+              </div>
             </>
           )}
         </div>

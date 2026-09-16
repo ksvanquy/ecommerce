@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Button, Input } from '@repo/ui';
 import { useRegister } from '../api/useRegister.ts';
-import { UserRole, registerSchema } from '@repo/shared-types';
-import { AlertCircle, CheckCircle2, UserCheck, Shield } from 'lucide-react';
+import { registerSchema } from '@repo/shared-types';
+import { AlertCircle, CheckCircle2 } from 'lucide-react';
 
 interface RegisterFormProps {
   onSuccess?: () => void;
