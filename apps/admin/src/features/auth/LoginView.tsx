@@ -24,7 +24,14 @@ export default function LoginView({ onLoginSuccess }: LoginViewProps) {
     setError(null);
 
     try {
-      const response = await axios.post('/api/users/login', { email, password });
+      let response;
+      try {
+        response = await axios.post('/api/auth/login', { email, password });
+      } catch (e: any) {
+        // Fallback endpoint
+        response = await axios.post('/api/users/login', { email, password });
+      }
+      
       const data = response.data;
 
       if (data.success && data.data) {
@@ -46,6 +53,12 @@ export default function LoginView({ onLoginSuccess }: LoginViewProps) {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleQuickFill = (adminEmail: string) => {
+    setEmail(adminEmail);
+    setPassword('password123');
+    setError(null);
   };
 
   return (
@@ -105,7 +118,7 @@ export default function LoginView({ onLoginSuccess }: LoginViewProps) {
             </div>
           </div>
 
-          <div className="pt-2">
+          <div className="pt-2 space-y-3">
             <button
               type="submit"
               disabled={isLoading}
@@ -120,6 +133,27 @@ export default function LoginView({ onLoginSuccess }: LoginViewProps) {
                 'Đăng nhập Hệ thống'
               )}
             </button>
+
+            {/* Quick Fill Buttons */}
+            <div className="pt-2 border-t border-slate-800/60 space-y-2">
+              <p className="text-[10px] font-bold text-slate-500 text-center uppercase tracking-wider">Tài khoản Admin mẫu (Điền nhanh)</p>
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  onClick={() => handleQuickFill('admin@techstore.com')}
+                  className="px-3 py-2 bg-slate-950 hover:bg-amber-500/10 text-amber-400 border border-slate-800 hover:border-amber-500/30 rounded-xl text-[11px] font-medium transition cursor-pointer text-center truncate"
+                >
+                  ⚡ admin@techstore.com
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleQuickFill('admin@ecommerce.com')}
+                  className="px-3 py-2 bg-slate-950 hover:bg-amber-500/10 text-amber-400 border border-slate-800 hover:border-amber-500/30 rounded-xl text-[11px] font-medium transition cursor-pointer text-center truncate"
+                >
+                  ⚡ admin@ecommerce.com
+                </button>
+              </div>
+            </div>
           </div>
         </form>
 

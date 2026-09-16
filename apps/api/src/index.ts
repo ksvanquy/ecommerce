@@ -39,9 +39,11 @@ app.get('/api/info', (_req, res) => {
 app.use(healthRouter);
 app.use('/api', healthRouter);
 
-// Auth & Users routes (/auth and /api/auth)
+// Auth & Users routes (/auth, /api/auth, /users, /api/users)
 app.use('/auth', authRouter);
 app.use('/api/auth', authRouter);
+app.use('/users', authRouter);
+app.use('/api/users', authRouter);
 
 // Brands routes (/brands and /api/brands)
 app.use('/brands', brandsRouter);
