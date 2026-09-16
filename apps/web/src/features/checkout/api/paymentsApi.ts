@@ -37,10 +37,11 @@ export const paymentsApi = {
     return response.data.data;
   },
 
-  confirmPayment: async (transactionCode: string, gatewayTxNo?: string): Promise<{ transaction: PaymentTransaction; orderPaid: boolean }> => {
+  confirmPayment: async (transactionCode: string, gatewayTxNo?: string, isManualReport?: boolean): Promise<{ transaction: PaymentTransaction; orderPaid: boolean }> => {
     const response = await apiClient.post('/payments/confirm', {
       transactionCode,
       gatewayTxNo,
+      isManualReport,
     });
     return response.data.data;
   },

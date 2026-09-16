@@ -34,6 +34,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
   const [isLoading, setIsLoading] = useState(true);
   const [isConfirming, setIsConfirming] = useState(false);
   const [isPaid, setIsPaid] = useState(false);
+  const [isReported, setIsReported] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [copiedField, setCopiedField] = useState<string | null>(null);
 
@@ -82,20 +83,15 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
     if (!paymentData?.transaction?.transactionCode) return;
     setIsConfirming(true);
     try {
-      const result = await paymentsApi.confirmPayment(paymentData.transaction.transactionCode);
-      if (result.orderPaid) {
-        setIsPaid(true);
-        toast.success('Xác nhận thanh toán thành công!', {
-          description: `Đơn hàng #${order.id.slice(0, 8)} đã chuyển sang trạng thái đang xử lý.`,
-        });
-        setTimeout(() => {
-          onPaymentSuccess();
-        }, 1500);
-      }
+      await paymentsApi.confirmPayment(paymentData.transaction.transactionCode, undefined, true);
+      setIsReported(true);
+      toast.success('Gửi yêu cầu xác nhận thành công!', {
+        description: 'Thông tin thanh toán đã được gửi tới Ban quản trị để kiểm tra thủ công.',
+      });
     } catch (err: any) {
       const msg = err?.response?.data?.message || 'Không thể xác nhận giao dịch lúc này. Vui lòng kiểm tra lại.';
       setErrorMessage(msg);
-      toast.error('Chưa thể xác nhận giao dịch', {
+      toast.error('Chưa thể gửi yêu cầu', {
         description: msg,
       });
     } finally {
@@ -152,6 +148,21 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
               </h4>
               <p className="text-xs text-slate-500">
                 Hệ thống đã ghi nhận thanh toán cho đơn hàng #{order.id.slice(0, 8)}. Đang chuyển hướng...
+              </p>
+            </div>
+          ) : isReported ? (
+            <div className="py-10 text-center space-y-4 max-w-sm mx-auto">
+              <div className="w-14 h-14 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center mx-auto">
+                <CheckCircle2 className="w-8 h-8" />
+              </div>
+              <h4 className="font-bold text-base text-slate-900">
+                Gửi yêu cầu xác nhận thành công!
+              </h4>
+              <p className="text-xs text-slate-600 leading-relaxed">
+                Thông tin chuyển khoản của bạn đã được chuyển tới Ban quản trị. Đơn hàng của bạn đang ở trạng thái <strong className="text-amber-600">Chờ duyệt thanh toán</strong>.
+              </p>
+              <p className="text-[11px] text-slate-500 bg-slate-50 p-3 rounded-lg border border-slate-100 leading-relaxed">
+                Admin sẽ đối soát giao dịch thực tế trên tài khoản ngân hàng và kích hoạt đơn hàng trong vòng ít phút. Bạn có thể kiểm tra trạng thái trong mục <strong>Lịch sử đơn hàng</strong>.
               </p>
             </div>
           ) : errorMessage ? (
@@ -283,7 +294,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
 
         {/* Footer actions */}
         <div className="p-4 border-t border-slate-200 bg-slate-50 flex flex-col sm:flex-row gap-2">
-          {!isPaid && (
+          {!isPaid && !isReported && (
             <Button
               variant="primary"
               size="md"
@@ -294,7 +305,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
               {isConfirming ? (
                 <>
                   <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" />
-                  <span>Đang kiểm tra giao dịch...</span>
+                  <span>Đang gửi yêu cầu...</span>
                 </>
               ) : (
                 <>
@@ -309,9 +320,9 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
             variant="outline"
             size="md"
             onClick={onClose}
-            className="text-xs justify-center"
+            className="text-xs justify-center flex-1"
           >
-            {isPaid ? 'Đóng cửa sổ' : 'Thanh toán sau / Đóng'}
+            {isPaid || isReported ? 'Đóng cửa sổ' : 'Thanh toán sau / Đóng'}
           </Button>
         </div>
       </div>

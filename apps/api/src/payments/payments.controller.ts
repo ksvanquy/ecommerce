@@ -89,7 +89,7 @@ paymentsRouter.post(
   optionalAuthMiddleware,
   async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const { transactionCode, gatewayTxNo } = req.body;
+      const { transactionCode, gatewayTxNo, isManualReport } = req.body;
       if (!transactionCode) {
         res.status(400).json({
           success: false,
@@ -101,12 +101,15 @@ paymentsRouter.post(
       const result = await paymentsService.confirmPayment(
         transactionCode,
         gatewayTxNo,
-        req.body
+        req.body,
+        !!isManualReport
       );
 
       res.json({
         success: true,
-        message: 'Xác nhận thanh toán thành công. Đơn hàng đã chuyển sang trạng thái Đang xử lý.',
+        message: isManualReport
+          ? 'Yêu cầu đối soát thanh toán đã được tiếp nhận. Đơn hàng sẽ được Admin phê duyệt thủ công.'
+          : 'Xác nhận thanh toán thành công. Đơn hàng đã chuyển sang trạng thái Đang xử lý.',
         data: result,
         timestamp: new Date().toISOString(),
       });

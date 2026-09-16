@@ -90,7 +90,8 @@ export class PaymentsService {
   async confirmPayment(
     transactionCode: string,
     gatewayTransactionNo?: string,
-    rawPayload?: unknown
+    rawPayload?: unknown,
+    isManualReport: boolean = false
   ): Promise<{ transaction: PaymentTransaction; orderPaid: boolean }> {
     const transaction = await paymentsRepository.findByTransactionCode(transactionCode);
     if (!transaction) {
@@ -99,6 +100,21 @@ export class PaymentsService {
 
     if (transaction.status === 'success') {
       return { transaction, orderPaid: true };
+    }
+
+    if (isManualReport) {
+      // Đối với yêu cầu tự báo cáo chuyển khoản thủ công của khách hàng, ta KHÔNG tự động duyệt thành công!
+      // Giữ nguyên trạng thái giao dịch là 'pending' (chờ duyệt) và KHÔNG cập nhật trạng thái đơn hàng sang 'paid'
+      const updatedTx = await paymentsRepository.updateTransactionStatus(
+        transaction.id,
+        'pending',
+        gatewayTransactionNo || `MANUAL-REPORT-${Date.now()}`,
+        rawPayload
+      );
+      return {
+        transaction: updatedTx!,
+        orderPaid: false, // Vẫn là chưa thanh toán, admin sẽ đối soát và duyệt thủ công sau
+      };
     }
 
     const updatedTx = await paymentsRepository.updateTransactionStatus(
