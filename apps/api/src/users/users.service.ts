@@ -66,7 +66,7 @@ export class UsersService {
       email: email.trim().toLowerCase(),
       passwordHash,
       fullName: fullName.trim(),
-      role: role || 'customer',
+      role: 'customer', // Luôn ép vai trò mặc định là khách hàng (Customer), không cho phép tự đăng ký Admin
       createdAt: new Date(),
       updatedAt: new Date(),
     });

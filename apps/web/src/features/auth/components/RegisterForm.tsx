@@ -13,7 +13,6 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ onSuccess, onSwitchT
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [role, setRole] = useState<UserRole>('customer');
   const [clientError, setClientError] = useState<string | null>(null);
 
   const registerMutation = useRegister();
@@ -27,7 +26,6 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ onSuccess, onSwitchT
       fullName: fullName.trim(),
       email: email.trim().toLowerCase(),
       password,
-      role,
     });
 
     if (!validationResult.success) {
@@ -92,43 +90,6 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ onSuccess, onSwitchT
         helperText="Nên chứa cả chữ hoa, chữ thường và số (tối thiểu 6 ký tự)"
         autoComplete="new-password"
       />
-
-      <div>
-        <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">
-          Vai trò tài khoản
-        </label>
-        <div className="grid grid-cols-2 gap-3">
-          <Button
-            type="button"
-            id="role-btn-customer"
-            variant="ghost"
-            onClick={() => setRole('customer')}
-            className={`flex items-center justify-center gap-2 p-2.5 rounded-lg border text-xs font-medium transition-all ${
-              role === 'customer'
-                ? 'border-blue-600 bg-blue-50/60 text-blue-700 ring-1 ring-blue-600'
-                : 'border-slate-200 hover:border-slate-300 text-slate-700 bg-white'
-            }`}
-          >
-            <UserCheck className="w-4 h-4 text-blue-600" />
-            <span>Khách hàng (Customer)</span>
-          </Button>
-
-          <Button
-            type="button"
-            id="role-btn-admin"
-            variant="ghost"
-            onClick={() => setRole('admin')}
-            className={`flex items-center justify-center gap-2 p-2.5 rounded-lg border text-xs font-medium transition-all ${
-              role === 'admin'
-                ? 'border-purple-600 bg-purple-50/60 text-purple-700 ring-1 ring-purple-600'
-                : 'border-slate-200 hover:border-slate-300 text-slate-700 bg-white'
-            }`}
-          >
-            <Shield className="w-4 h-4 text-purple-600" />
-            <span>Quản trị viên (Admin)</span>
-          </Button>
-        </div>
-      </div>
 
       <Button
         id="btn-submit-register"
