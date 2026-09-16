@@ -6,5 +6,4 @@ export * from './api/useCancelOrder.ts';
 export * from './components/CartDrawer.tsx';
 export * from './components/CartView.tsx';
 export * from './components/OrderHistoryView.tsx';
-export * from './components/CheckoutModal.tsx';
-export * from './components/OrderSuccessModal.tsx';
+export * from './components/CheckoutView.tsx';

@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCartStore } from '../store/cartStore.ts';
-import { Button, Badge, Card, Modal } from '@repo/ui';
-import { CheckoutModal } from './CheckoutModal.tsx';
-import { OrderSuccessModal } from './OrderSuccessModal.tsx';
+import { Button, Badge, Card } from '@repo/ui';
 import { formatCurrency } from '../../../utils/currency.ts';
 import type { Order } from '../types.ts';
 import {
@@ -49,10 +47,6 @@ export const CartView: React.FC = () => {
     type: 'success' | 'error' | null;
     message: string;
   }>({ type: null, message: '' });
-
-  const [isCheckoutModalOpen, setIsCheckoutModalOpen] = useState(false);
-  const [createdOrder, setCreatedOrder] = useState<Order | null>(null);
-  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
 
   const count = totalItems();
   const subtotal = subtotalPrice();
@@ -433,7 +427,7 @@ export const CartView: React.FC = () => {
                   variant="primary"
                   size="md"
                   className="w-full justify-center text-sm font-semibold"
-                  onClick={() => setIsCheckoutModalOpen(true)}
+                  onClick={() => navigate('/checkout')}
                 >
                   <span>Tiến hành Đặt hàng</span>
                   <ArrowRight className="w-4 h-4 ml-1.5" />
@@ -447,26 +441,6 @@ export const CartView: React.FC = () => {
           </div>
         </div>
       )}
-
-      {/* Checkout Modal */}
-      <CheckoutModal
-        isOpen={isCheckoutModalOpen}
-        onClose={() => setIsCheckoutModalOpen(false)}
-        onOrderSuccess={(order) => {
-          setCreatedOrder(order);
-          setIsSuccessModalOpen(true);
-        }}
-      />
-
-      {/* Order Success Modal */}
-      <OrderSuccessModal
-        isOpen={isSuccessModalOpen}
-        onClose={() => {
-          setIsSuccessModalOpen(false);
-          setCreatedOrder(null);
-        }}
-        order={createdOrder}
-      />
     </div>
   );
 };

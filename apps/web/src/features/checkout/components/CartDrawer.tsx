@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   ShoppingBag,
@@ -14,10 +14,7 @@ import {
 } from 'lucide-react';
 import { useCartStore } from '../store/cartStore.ts';
 import { Button, Badge } from '@repo/ui';
-import { CheckoutModal } from './CheckoutModal.tsx';
-import { OrderSuccessModal } from './OrderSuccessModal.tsx';
 import { formatCurrency } from '../../../utils/currency.ts';
-import type { Order } from '../types.ts';
 
 interface CartDrawerProps {
   onNavigateToCart?: () => void;
@@ -40,20 +37,16 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onNavigateToCart }) => {
     couponCode,
   } = useCartStore();
 
-  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
-  const [createdOrder, setCreatedOrder] = useState<Order | null>(null);
-  const [isSuccessOpen, setIsSuccessOpen] = useState(false);
-
   // Close on Escape key
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isOpen && !isCheckoutOpen && !isSuccessOpen) {
+      if (e.key === 'Escape' && isOpen) {
         setOpen(false);
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, isCheckoutOpen, isSuccessOpen, setOpen]);
+  }, [isOpen, setOpen]);
 
   if (!isOpen) return null;
 
@@ -73,7 +66,8 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onNavigateToCart }) => {
   };
 
   const handleOpenCheckout = () => {
-    setIsCheckoutOpen(true);
+    setOpen(false);
+    navigate('/checkout');
   };
 
   return (
@@ -342,27 +336,6 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onNavigateToCart }) => {
           )}
         </div>
       </div>
-
-      {/* Direct Checkout Modal from Drawer */}
-      <CheckoutModal
-        isOpen={isCheckoutOpen}
-        onClose={() => setIsCheckoutOpen(false)}
-        onOrderSuccess={(order) => {
-          setCreatedOrder(order);
-          setIsSuccessOpen(true);
-        }}
-      />
-
-      {/* Order Success Modal */}
-      <OrderSuccessModal
-        isOpen={isSuccessOpen}
-        onClose={() => {
-          setIsSuccessOpen(false);
-          setCreatedOrder(null);
-          setOpen(false);
-        }}
-        order={createdOrder}
-      />
     </>
   );
 };

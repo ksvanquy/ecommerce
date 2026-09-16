@@ -18,6 +18,7 @@ import {
 import {
   CartView,
   OrderHistoryView,
+  CheckoutView,
 } from '../features/checkout/index.ts';
 import { ProtectedRoute } from './ProtectedRoute.tsx';
 import { LogOut, Package, User as UserIcon } from 'lucide-react';
@@ -84,7 +85,7 @@ function MainLayout({
  * Root Home Page with Tab Switcher
  */
 function HomePage() {
-  const [activeTab, setActiveTab] = useState<'products' | 'orders' | 'cart' | 'auth'>('products');
+  const [activeTab, setActiveTab] = useState<'products' | 'orders' | 'cart' | 'auth' | 'checkout'>('products');
 
   return (
     <MainLayout activeTab={activeTab} onSelectTab={(tab) => setActiveTab(tab as any)}>
@@ -92,6 +93,7 @@ function HomePage() {
       {activeTab === 'orders' && <OrderHistoryView />}
       {activeTab === 'cart' && <CartView />}
       {activeTab === 'auth' && <AuthView />}
+      {activeTab === 'checkout' && <CheckoutView onBackToCart={() => setActiveTab('cart')} />}
     </MainLayout>
   );
 }
@@ -233,6 +235,15 @@ function CartPage() {
   );
 }
 
+function CheckoutPage() {
+  const navigate = useNavigate();
+  return (
+    <MainLayout activeTab="cart" onSelectTab={(tab) => navigate(`/${tab === 'products' ? '' : tab}`)}>
+      <CheckoutView onBackToCart={() => navigate('/cart')} />
+    </MainLayout>
+  );
+}
+
 function OrdersPage() {
   const navigate = useNavigate();
   return (
@@ -258,6 +269,10 @@ export const router = createBrowserRouter([
   {
     path: '/cart',
     element: <CartPage />,
+  },
+  {
+    path: '/checkout',
+    element: <CheckoutPage />,
   },
   {
     path: '/orders',
