@@ -106,25 +106,27 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onNavigateToCart }) => {
 
             <div className="flex items-center space-x-1">
               {items.length > 0 && (
-                <button
+                <Button
                   type="button"
                   id="btn-drawer-clear"
+                  variant="ghost"
                   onClick={clearCart}
-                  className="text-[11px] text-slate-500 hover:text-rose-600 px-2 py-1 rounded hover:bg-rose-50 transition cursor-pointer"
+                  className="text-[11px] text-slate-500 hover:text-rose-600 px-2 py-1 rounded hover:bg-rose-50 transition cursor-pointer min-w-0 min-h-0"
                   title="Xóa tất cả sản phẩm"
                 >
                   Xóa tất cả
-                </button>
+                </Button>
               )}
-              <button
+              <Button
                 type="button"
                 id="btn-drawer-close"
+                variant="ghost"
                 onClick={() => setOpen(false)}
                 className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 transition cursor-pointer"
                 aria-label="Đóng giỏ hàng"
               >
                 <X className="w-4 h-4" />
-              </button>
+              </Button>
             </div>
           </div>
 
@@ -190,15 +192,16 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onNavigateToCart }) => {
                         <h5 className="font-medium text-xs text-slate-900 truncate pr-1" title={product.name}>
                           {product.name}
                         </h5>
-                        <button
+                        <Button
                           type="button"
                           id={`btn-drawer-remove-${product.id}`}
+                          variant="ghost"
                           onClick={() => removeItem(product.id)}
-                          className="text-slate-400 hover:text-rose-600 p-0.5 rounded transition opacity-60 group-hover:opacity-100 cursor-pointer"
+                          className="text-slate-400 hover:text-rose-600 p-0.5 rounded transition opacity-60 group-hover:opacity-100 cursor-pointer min-w-0 min-h-0"
                           title="Xóa khỏi giỏ"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
-                        </button>
+                        </Button>
                       </div>
 
                       <div className="flex items-center gap-2 mt-0.5">
@@ -213,28 +216,32 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onNavigateToCart }) => {
                       {/* Quantity controls & Line Total */}
                       <div className="flex items-center justify-between mt-2 pt-2 border-t border-slate-200/50">
                         <div className="flex items-center border border-slate-200 rounded-md bg-white shadow-2xs">
-                          <button
+                          <Button
                             type="button"
                             id={`btn-drawer-dec-${product.id}`}
+                            variant="ghost"
+                            size="xs"
                             onClick={() => updateQuantity(product.id, quantity - 1)}
                             className="w-6 h-6 flex items-center justify-center text-slate-600 hover:bg-slate-100 transition rounded-l cursor-pointer"
                             aria-label="Giảm số lượng"
                           >
                             <Minus className="w-3 h-3" />
-                          </button>
+                          </Button>
                           <span className="w-7 text-center font-mono text-xs font-semibold text-slate-800">
                             {quantity}
                           </span>
-                          <button
+                          <Button
                             type="button"
                             id={`btn-drawer-inc-${product.id}`}
+                            variant="ghost"
+                            size="xs"
                             onClick={() => updateQuantity(product.id, quantity + 1)}
                             disabled={isMax}
                             className="w-6 h-6 flex items-center justify-center text-slate-600 hover:bg-slate-100 disabled:opacity-40 disabled:hover:bg-transparent transition rounded-r cursor-pointer"
                             aria-label="Tăng số lượng"
                           >
                             <Plus className="w-3 h-3" />
-                          </button>
+                          </Button>
                         </div>
 
                         <div className="text-right font-mono font-bold text-xs text-slate-900">

@@ -1,5 +1,6 @@
 import React from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { Button } from '@repo/ui';
 
 interface PaginationProps {
   currentPage: number;
@@ -44,16 +45,18 @@ export const Pagination: React.FC<PaginationProps> = ({
       </div>
 
       <div className="flex items-center space-x-1">
-        <button
+        <Button
           type="button"
           id="btn-pagination-prev"
+          variant="outline"
+          size="sm"
           disabled={currentPage <= 1}
           onClick={() => onPageChange(currentPage - 1)}
-          className="p-1.5 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed transition"
+          className="p-1.5 min-w-8 h-8 rounded-lg cursor-pointer"
           aria-label="Trang trước"
         >
           <ChevronLeft className="w-4 h-4" />
-        </button>
+        </Button>
 
         {pages.map((p, idx) => {
           if (p === '...') {
@@ -68,32 +71,32 @@ export const Pagination: React.FC<PaginationProps> = ({
           const isActive = pageNum === currentPage;
 
           return (
-            <button
+            <Button
               key={`page-${pageNum}`}
               type="button"
               id={`btn-pagination-page-${pageNum}`}
+              variant={isActive ? 'primary' : 'outline'}
+              size="sm"
               onClick={() => onPageChange(pageNum)}
-              className={`min-w-8 h-8 px-2 rounded-lg font-medium transition ${
-                isActive
-                  ? 'bg-blue-600 text-white font-semibold shadow-xs'
-                  : 'text-slate-600 hover:bg-slate-100 border border-transparent'
-              }`}
+              className="min-w-8 h-8 font-medium rounded-lg cursor-pointer border border-transparent disabled:opacity-100"
             >
               {pageNum}
-            </button>
+            </Button>
           );
         })}
 
-        <button
+        <Button
           type="button"
           id="btn-pagination-next"
+          variant="outline"
+          size="sm"
           disabled={currentPage >= totalPages}
           onClick={() => onPageChange(currentPage + 1)}
-          className="p-1.5 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed transition"
+          className="p-1.5 min-w-8 h-8 rounded-lg cursor-pointer"
           aria-label="Trang sau"
         >
           <ChevronRight className="w-4 h-4" />
-        </button>
+        </Button>
       </div>
     </div>
   );

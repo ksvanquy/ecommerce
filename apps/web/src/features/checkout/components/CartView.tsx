@@ -145,15 +145,16 @@ export const CartView: React.FC = () => {
                     Sản phẩm trong giỏ ({count} món)
                   </h2>
                 </div>
-                <button
+                <Button
                   type="button"
                   id="btn-cart-clear-all"
+                  variant="ghost"
                   onClick={clearCart}
-                  className="text-xs text-slate-500 hover:text-rose-600 font-medium transition flex items-center gap-1"
+                  className="text-xs text-slate-500 hover:text-rose-600 font-medium transition flex items-center gap-1 p-1 hover:bg-slate-100 rounded"
                 >
                   <Trash2 className="w-3.5 h-3.5" />
                   <span>Xóa tất cả</span>
-                </button>
+                </Button>
               </div>
 
               {/* Items List */}
@@ -216,28 +217,32 @@ export const CartView: React.FC = () => {
                       <div className="flex items-center justify-between sm:justify-end space-x-6 shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-100">
                         {/* Stepper */}
                         <div className="flex items-center border border-slate-200 rounded-lg bg-slate-50 overflow-hidden shadow-2xs">
-                          <button
+                          <Button
                             type="button"
                             id={`btn-dec-qty-${product.id}`}
+                            variant="ghost"
+                            size="xs"
                             onClick={() => updateQuantity(product.id, quantity - 1)}
                             className="w-8 h-8 flex items-center justify-center text-slate-600 hover:bg-slate-200 transition font-bold"
                             aria-label="Giảm số lượng"
                           >
                             <Minus className="w-3.5 h-3.5" />
-                          </button>
+                          </Button>
                           <span className="w-10 text-center font-mono text-xs font-semibold text-slate-900">
                             {quantity}
                           </span>
-                          <button
+                          <Button
                             type="button"
                             id={`btn-inc-qty-${product.id}`}
+                            variant="ghost"
+                            size="xs"
                             onClick={() => updateQuantity(product.id, quantity + 1)}
                             disabled={isMax}
                             className="w-8 h-8 flex items-center justify-center text-slate-600 hover:bg-slate-200 disabled:opacity-40 disabled:hover:bg-transparent transition font-bold"
                             aria-label="Tăng số lượng"
                           >
                             <Plus className="w-3.5 h-3.5" />
-                          </button>
+                          </Button>
                         </div>
 
                         {/* Total per item */}
@@ -249,15 +254,16 @@ export const CartView: React.FC = () => {
                         </div>
 
                         {/* Remove button */}
-                        <button
+                        <Button
                           type="button"
                           id={`btn-remove-item-${product.id}`}
+                          variant="ghost"
                           onClick={() => removeItem(product.id)}
-                          className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition"
+                          className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition min-w-0 min-h-0"
                           title="Xóa sản phẩm này"
                         >
                           <Trash2 className="w-4 h-4" />
-                        </button>
+                        </Button>
                       </div>
                     </div>
                   );
@@ -366,13 +372,14 @@ export const CartView: React.FC = () => {
                     <span>Mã giảm giá (Coupon):</span>
                   </span>
                   {couponCode && (
-                    <button
+                    <Button
                       type="button"
+                      variant="ghost"
                       onClick={removeCoupon}
-                      className="text-[11px] text-rose-500 hover:text-rose-700 underline"
+                      className="text-[11px] text-rose-500 hover:text-rose-700 underline p-0 hover:bg-transparent inline h-auto"
                     >
                       Bỏ mã
-                    </button>
+                    </Button>
                   )}
                 </div>
 
@@ -401,21 +408,20 @@ export const CartView: React.FC = () => {
                 )}
 
                 {/* Quick Coupon Suggestions */}
-                <div className="pt-1 flex flex-wrap gap-1 text-[10px]">
+                <div className="pt-1 flex flex-wrap items-center gap-1 text-[10px]">
                   <span className="text-slate-400 mr-0.5">Gợi ý mã:</span>
                   {['GIAM10', 'WELCOME10', 'VIP20', 'FREESHIP'].map((code) => (
-                    <button
+                    <Button
                       key={code}
                       type="button"
+                      variant="pill"
+                      size="xs"
+                      isActive={couponCode === code}
                       onClick={() => handleQuickApplyCoupon(code)}
-                      className={`px-1.5 py-0.5 rounded font-mono font-medium border transition ${
-                        couponCode === code
-                          ? 'bg-blue-600 text-white border-blue-600'
-                          : 'bg-slate-100 text-slate-600 hover:bg-slate-200 border-slate-200'
-                      }`}
+                      className="font-mono font-medium"
                     >
                       {code}
-                    </button>
+                    </Button>
                   ))}
                 </div>
               </div>

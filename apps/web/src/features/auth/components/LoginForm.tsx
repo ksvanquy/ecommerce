@@ -54,14 +54,15 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSuccess, onSwitchToRegis
       {/* Quick fill for testing */}
       <div className="flex items-center justify-between p-2.5 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-600">
         <span>Tài khoản khách mẫu: <code className="font-mono text-slate-800 font-semibold">customer@ecommerce.com</code></span>
-        <button
+        <Button
           type="button"
           id="btn-quick-fill-customer"
+          variant="ghost"
           onClick={handleQuickFill}
-          className="text-blue-600 hover:text-blue-800 font-semibold underline text-xs ml-2 cursor-pointer"
+          className="text-blue-600 hover:text-blue-800 font-semibold underline text-xs ml-2 cursor-pointer p-0 hover:bg-transparent"
         >
           Điền nhanh
-        </button>
+        </Button>
       </div>
 
       <form id="login-form" onSubmit={handleSubmit} className="space-y-4">
@@ -108,14 +109,15 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSuccess, onSwitchToRegis
           <div className="text-center pt-2">
             <p className="text-xs text-slate-600">
               Chưa có tài khoản?{' '}
-              <button
+              <Button
                 type="button"
                 id="link-switch-to-register"
+                variant="ghost"
                 onClick={onSwitchToRegister}
-                className="text-blue-600 font-semibold hover:underline"
+                className="text-blue-600 font-semibold hover:underline p-0 hover:bg-transparent inline text-xs"
               >
                 Đăng ký tài khoản mới
-              </button>
+              </Button>
             </p>
           </div>
         )}

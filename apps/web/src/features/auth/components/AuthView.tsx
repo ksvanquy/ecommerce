@@ -150,9 +150,10 @@ export const AuthView: React.FC = () => {
           <Card>
             {/* Tab switch */}
             <div className="flex items-center p-1 bg-slate-100 rounded-xl mb-6">
-              <button
+              <Button
                 type="button"
                 id="btn-tab-login"
+                variant="ghost"
                 onClick={() => setFormTab('login')}
                 className={`flex-1 py-2 text-xs font-semibold rounded-lg transition-all ${
                   formTab === 'login'
@@ -161,10 +162,11 @@ export const AuthView: React.FC = () => {
                 }`}
               >
                 Đăng nhập
-              </button>
-              <button
+              </Button>
+              <Button
                 type="button"
                 id="btn-tab-register"
+                variant="ghost"
                 onClick={() => setFormTab('register')}
                 className={`flex-1 py-2 text-xs font-semibold rounded-lg transition-all ${
                   formTab === 'register'
@@ -173,7 +175,7 @@ export const AuthView: React.FC = () => {
                 }`}
               >
                 Đăng ký mới
-              </button>
+              </Button>
             </div>
 
             {formTab === 'login' ? (

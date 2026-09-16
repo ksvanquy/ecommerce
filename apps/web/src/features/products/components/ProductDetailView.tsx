@@ -196,11 +196,12 @@ export const ProductDetailView: React.FC = () => {
             {galleryImages.length > 1 && (
               <div className="w-full mt-3 flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
                 {galleryImages.map((img) => (
-                  <button
+                  <Button
                     key={img.id}
                     type="button"
+                    variant="ghost"
                     onClick={() => setActiveImage(img.imageUrl)}
-                    className={`relative w-16 h-16 rounded-lg border-2 overflow-hidden shrink-0 transition bg-slate-50 ${
+                    className={`relative w-16 h-16 rounded-lg border-2 overflow-hidden shrink-0 transition bg-slate-50 p-0 ${
                       currentImageUrl === img.imageUrl
                         ? 'border-blue-600 ring-2 ring-blue-500/20'
                         : 'border-slate-200 opacity-70 hover:opacity-100 hover:border-slate-300'
@@ -217,7 +218,7 @@ export const ProductDetailView: React.FC = () => {
                         Ảnh bìa
                       </span>
                     )}
-                  </button>
+                  </Button>
                 ))}
               </div>
             )}
@@ -309,14 +310,15 @@ export const ProductDetailView: React.FC = () => {
                     {product.variants.map((v) => {
                       const isSelected = activeVariant?.id === v.id;
                       return (
-                        <button
+                        <Button
                           key={v.id}
                           type="button"
+                          variant="ghost"
                           onClick={() => {
                             setSelectedVariantId(v.id);
                             if (v.imageUrl) setActiveImage(v.imageUrl);
                           }}
-                          className={`p-2.5 rounded-lg border text-left transition flex items-center justify-between ${
+                          className={`p-2.5 rounded-lg border text-left transition flex items-center justify-between cursor-pointer ${
                             isSelected
                               ? 'bg-white border-blue-600 ring-2 ring-blue-500/20 shadow-xs'
                               : 'bg-white border-slate-200 hover:border-slate-300'
@@ -339,7 +341,7 @@ export const ProductDetailView: React.FC = () => {
                           <span className="text-xs font-bold text-blue-600 ml-2 whitespace-nowrap">
                             {formatCurrency(v.price)}
                           </span>
-                        </button>
+                        </Button>
                       );
                     })}
                   </div>
@@ -398,25 +400,29 @@ export const ProductDetailView: React.FC = () => {
               <div className="flex items-center gap-3">
                 <span className="text-xs font-medium text-slate-700">Số lượng:</span>
                 <div className="flex items-center border border-slate-200 rounded-lg overflow-hidden bg-slate-50">
-                  <button
+                  <Button
                     type="button"
+                    variant="ghost"
+                    size="xs"
                     onClick={() => setQuantity((q) => Math.max(1, q - 1))}
                     disabled={quantity <= 1 || isOutOfStock}
                     className="w-8 h-8 flex items-center justify-center text-slate-600 hover:bg-slate-200 disabled:opacity-40 transition font-bold"
                   >
                     -
-                  </button>
+                  </Button>
                   <span className="w-10 text-center text-xs font-semibold text-slate-800 font-mono">
                     {quantity}
                   </span>
-                  <button
+                  <Button
                     type="button"
+                    variant="ghost"
+                    size="xs"
                     onClick={() => setQuantity((q) => Math.min(currentInventory, q + 1))}
                     disabled={quantity >= currentInventory || isOutOfStock}
                     className="w-8 h-8 flex items-center justify-center text-slate-600 hover:bg-slate-200 disabled:opacity-40 transition font-bold"
                   >
                     +
-                  </button>
+                  </Button>
                 </div>
                 <span className="text-[11px] text-slate-400">
                   (Tổng: {formatCurrency(currentPrice * quantity)})

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Search, X, ArrowUpDown, Tag, SlidersHorizontal, Award } from 'lucide-react';
+import { Button } from '@repo/ui';
 import { useCategoryTree } from '../api/useCategories.ts';
 import { useBrands } from '../api/useBrands.ts';
 import type { ProductFilters } from '../types.ts';
@@ -88,13 +89,14 @@ export const ProductFiltersBar: React.FC<ProductFiltersBarProps> = ({
             className="w-full pl-9 pr-8 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition"
           />
           {filters.search && (
-            <button
+            <Button
               type="button"
+              variant="ghost"
               onClick={() => onFilterChange({ search: '', page: 1 })}
-              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-0.5"
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-0.5 cursor-pointer"
             >
               <X className="w-3.5 h-3.5" />
-            </button>
+            </Button>
           )}
         </div>
 
@@ -151,15 +153,17 @@ export const ProductFiltersBar: React.FC<ProductFiltersBarProps> = ({
 
           {/* Clear Filters Button if any filter is active */}
           {hasActiveFilters && (
-            <button
+            <Button
               type="button"
               id="btn-reset-filters"
+              variant="outline"
+              size="sm"
               onClick={onReset}
               className="inline-flex items-center gap-1 px-3 py-2 text-xs font-semibold text-rose-600 hover:bg-rose-50 rounded-xl border border-rose-200 transition"
             >
               <X className="w-3.5 h-3.5" />
               <span>Xóa bộ lọc</span>
-            </button>
+            </Button>
           )}
         </div>
       </div>
@@ -167,17 +171,16 @@ export const ProductFiltersBar: React.FC<ProductFiltersBarProps> = ({
       {/* Category Pills Horizontal Scroll */}
       <div className="pt-2 border-t border-slate-100">
         <div className="flex items-center gap-1.5 overflow-x-auto pb-1.5 scrollbar-none text-xs">
-          <button
+          <Button
             type="button"
+            variant="pill"
+            size="sm"
+            isActive={!isCategoryActive}
             onClick={() => onFilterChange({ category: 'all', page: 1 })}
-            className={`px-3 py-1.5 rounded-xl font-semibold whitespace-nowrap transition cursor-pointer ${
-              !isCategoryActive
-                ? 'bg-blue-600 text-white shadow-xs'
-                : 'bg-slate-100 text-slate-700 hover:bg-slate-200/80 hover:text-slate-900'
-            }`}
+            className="font-semibold whitespace-nowrap"
           >
             Tất cả sản phẩm
-          </button>
+          </Button>
 
           {categoryTree.map((cat) => {
             const isSelected =
@@ -186,15 +189,14 @@ export const ProductFiltersBar: React.FC<ProductFiltersBarProps> = ({
               filters.category === cat.name;
 
             return (
-              <button
+              <Button
                 key={cat.id}
                 type="button"
+                variant="pill"
+                size="sm"
+                isActive={isSelected}
                 onClick={() => onFilterChange({ category: cat.slug, page: 1 })}
-                className={`px-3 py-1.5 rounded-xl font-semibold whitespace-nowrap transition cursor-pointer flex items-center gap-1.5 ${
-                  isSelected
-                    ? 'bg-blue-600 text-white shadow-xs'
-                    : 'bg-slate-100 text-slate-700 hover:bg-slate-200/80 hover:text-slate-900'
-                }`}
+                className="font-semibold whitespace-nowrap flex items-center gap-1.5"
               >
                 <span>{cat.name}</span>
                 {cat.children && cat.children.length > 0 && (
@@ -204,7 +206,7 @@ export const ProductFiltersBar: React.FC<ProductFiltersBarProps> = ({
                     {cat.children.length}
                   </span>
                 )}
-              </button>
+              </Button>
             );
           })}
         </div>
@@ -223,14 +225,15 @@ export const ProductFiltersBar: React.FC<ProductFiltersBarProps> = ({
             <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-indigo-50 text-indigo-800 border border-indigo-200 font-medium">
               <Award className="w-3 h-3 text-indigo-600" />
               <span>Thương hiệu: {activeBrandName}</span>
-              <button
+              <Button
                 type="button"
+                variant="ghost"
                 onClick={() => onFilterChange({ brandId: undefined, page: 1 })}
-                className="p-0.5 hover:bg-indigo-200/60 rounded-full transition text-indigo-700"
+                className="p-0.5 hover:bg-indigo-200/60 rounded-full transition text-indigo-700 min-h-0 min-w-0"
                 title="Bỏ lọc thương hiệu"
               >
                 <X className="w-3 h-3" />
-              </button>
+              </Button>
             </span>
           )}
 
@@ -239,14 +242,15 @@ export const ProductFiltersBar: React.FC<ProductFiltersBarProps> = ({
             <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-blue-50 text-blue-800 border border-blue-200 font-medium">
               <Tag className="w-3 h-3 text-blue-600" />
               <span>{activeCategoryInfo.fullName}</span>
-              <button
+              <Button
                 type="button"
+                variant="ghost"
                 onClick={() => onFilterChange({ category: 'all', page: 1 })}
-                className="p-0.5 hover:bg-blue-200/60 rounded-full transition text-blue-700"
+                className="p-0.5 hover:bg-blue-200/60 rounded-full transition text-blue-700 min-h-0 min-w-0"
                 title="Bỏ lọc danh mục"
               >
                 <X className="w-3 h-3" />
-              </button>
+              </Button>
             </span>
           )}
 
@@ -255,14 +259,15 @@ export const ProductFiltersBar: React.FC<ProductFiltersBarProps> = ({
             <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-50 text-amber-800 border border-amber-200 font-medium">
               <Search className="w-3 h-3 text-amber-600" />
               <span>Từ khóa: "{filters.search}"</span>
-              <button
+              <Button
                 type="button"
+                variant="ghost"
                 onClick={() => onFilterChange({ search: '', page: 1 })}
-                className="p-0.5 hover:bg-amber-200/60 rounded-full transition text-amber-700"
+                className="p-0.5 hover:bg-amber-200/60 rounded-full transition text-amber-700 min-h-0 min-w-0"
                 title="Bỏ tìm kiếm"
               >
                 <X className="w-3 h-3" />
-              </button>
+              </Button>
             </span>
           )}
         </div>

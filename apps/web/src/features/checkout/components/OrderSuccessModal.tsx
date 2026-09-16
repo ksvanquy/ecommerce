@@ -76,14 +76,15 @@ export const OrderSuccessModal: React.FC<OrderSuccessModalProps> = ({
                 <span className="text-sm font-mono font-bold text-blue-600">
                   #{order.id}
                 </span>
-                <button
+                <Button
                   type="button"
+                  variant="ghost"
                   onClick={handleCopyId}
-                  className="p-1 hover:bg-slate-200 rounded text-slate-400 hover:text-slate-700 transition"
+                  className="p-1 hover:bg-slate-200 rounded text-slate-400 hover:text-slate-700 transition min-w-0 min-h-0"
                   title="Sao chép mã đơn"
                 >
                   {copied ? <Check className="w-3 h-3 text-emerald-600" /> : <Copy className="w-3 h-3" />}
-                </button>
+                </Button>
               </div>
             </div>
 

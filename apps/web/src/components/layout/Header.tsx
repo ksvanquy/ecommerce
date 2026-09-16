@@ -79,46 +79,43 @@ export const Header: React.FC<HeaderProps> = ({
         {/* Right Side: Quick Navigation, Prominent Cart & Low-key Auth */}
         <div className="flex items-center space-x-2 sm:space-x-3">
           {/* Quick link: Products */}
-          <button
+          <Button
             type="button"
             id="btn-header-products"
+            variant="tab"
+            size="sm"
+            isActive={activeTab === 'products'}
             onClick={() => onSelectTab && onSelectTab('products')}
-            className={`px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 cursor-pointer shadow-2xs ${
-              activeTab === 'products'
-                ? 'bg-blue-600 text-white shadow-blue-200'
-                : 'bg-slate-100 text-slate-700 hover:bg-slate-200 hover:text-slate-900'
-            }`}
+            className={activeTab === 'products' ? 'shadow-blue-200' : ''}
           >
             <ShoppingBag className="w-4 h-4" />
             <span>Sản phẩm</span>
-          </button>
+          </Button>
 
           {/* Quick link: Orders (if authenticated) */}
           {isAuthenticated && (
-            <button
+            <Button
               type="button"
+              variant="tab"
+              size="sm"
+              isActive={activeTab === 'orders'}
               onClick={() => onSelectTab && onSelectTab('orders')}
-              className={`px-3.5 py-2 rounded-xl text-xs font-bold transition hidden sm:inline-flex items-center gap-1.5 cursor-pointer shadow-2xs ${
-                activeTab === 'orders'
-                  ? 'bg-blue-600 text-white shadow-blue-200'
-                  : 'bg-slate-100 text-slate-700 hover:bg-slate-200 hover:text-slate-900'
-              }`}
+              className={`hidden sm:inline-flex ${activeTab === 'orders' ? 'shadow-blue-200' : ''}`}
             >
               <Package className="w-4 h-4" />
               <span>Đơn hàng</span>
-            </button>
+            </Button>
           )}
 
           {/* Cart Header Button */}
-          <button
+          <Button
             id="btn-header-cart"
             type="button"
+            variant="tab"
+            size="sm"
+            isActive={activeTab === 'cart'}
             onClick={handleOpenCart}
-            className={`px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 cursor-pointer shadow-2xs ${
-              activeTab === 'cart'
-                ? 'bg-blue-600 text-white shadow-blue-200'
-                : 'bg-slate-100 text-slate-700 hover:bg-slate-200 hover:text-slate-900'
-            }`}
+            className={activeTab === 'cart' ? 'shadow-blue-200' : ''}
             title="Xem Giỏ hàng chi tiết"
             aria-label="Giỏ hàng"
           >
@@ -136,15 +133,16 @@ export const Header: React.FC<HeaderProps> = ({
                 {totalCartItems > 99 ? '99+' : totalCartItems}
               </span>
             )}
-          </button>
+          </Button>
 
           {/* User Account Menu OR Low-key De-emphasized Guest Auth Links */}
           <div className="relative pl-1 border-l border-slate-200/80" ref={profileMenuRef}>
             {isAuthenticated && user ? (
               <div>
-                <button
+                <Button
                   type="button"
                   id="btn-header-profile-menu"
+                  variant="ghost"
                   onClick={() => setIsProfileMenuOpen((prev) => !prev)}
                   className={`flex items-center space-x-2 px-3 py-1.5 rounded-xl border transition cursor-pointer ${
                     isProfileMenuOpen
@@ -166,7 +164,7 @@ export const Header: React.FC<HeaderProps> = ({
                       isProfileMenuOpen ? 'rotate-180 text-blue-600' : ''
                     }`}
                   />
-                </button>
+                </Button>
 
                 {/* Profile Popup Menu */}
                 {isProfileMenuOpen && (
@@ -183,9 +181,10 @@ export const Header: React.FC<HeaderProps> = ({
                     </div>
 
                     <div className="space-y-0.5">
-                      <button
+                      <Button
                         type="button"
                         id="profile-menu-products"
+                        variant="ghost"
                         onClick={() => {
                           setIsProfileMenuOpen(false);
                           if (onSelectTab) onSelectTab('products');
@@ -200,11 +199,12 @@ export const Header: React.FC<HeaderProps> = ({
                           <ShoppingBag className="w-4 h-4 text-blue-600" />
                           <span>Tất cả Sản phẩm</span>
                         </div>
-                      </button>
+                      </Button>
 
-                      <button
+                      <Button
                         type="button"
                         id="profile-menu-orders"
+                        variant="ghost"
                         onClick={() => {
                           setIsProfileMenuOpen(false);
                           if (onSelectTab) onSelectTab('orders');
@@ -219,11 +219,12 @@ export const Header: React.FC<HeaderProps> = ({
                           <Package className="w-4 h-4 text-indigo-600" />
                           <span>Đơn hàng của tôi</span>
                         </div>
-                      </button>
+                      </Button>
 
-                      <button
+                      <Button
                         type="button"
                         id="profile-menu-cart"
+                        variant="ghost"
                         onClick={() => {
                           setIsProfileMenuOpen(false);
                           if (onSelectTab) onSelectTab('cart');
@@ -243,11 +244,12 @@ export const Header: React.FC<HeaderProps> = ({
                             {totalCartItems}
                           </span>
                         )}
-                      </button>
+                      </Button>
 
-                      <button
+                      <Button
                         type="button"
                         id="profile-menu-account"
+                        variant="ghost"
                         onClick={() => {
                           setIsProfileMenuOpen(false);
                           if (onSelectTab) onSelectTab('auth');
@@ -262,13 +264,14 @@ export const Header: React.FC<HeaderProps> = ({
                           <UserIcon className="w-4 h-4 text-emerald-600" />
                           <span>Thông tin tài khoản</span>
                         </div>
-                      </button>
+                      </Button>
                     </div>
 
                     <div className="pt-2 mt-1 border-t border-slate-100">
-                      <button
+                      <Button
                         type="button"
                         id="btn-header-logout-dropdown"
+                        variant="ghost"
                         onClick={() => {
                           setIsProfileMenuOpen(false);
                           logout();
@@ -277,7 +280,7 @@ export const Header: React.FC<HeaderProps> = ({
                       >
                         <LogOut className="w-4 h-4 text-rose-500" />
                         <span>Đăng xuất tài khoản</span>
-                      </button>
+                      </Button>
                     </div>
                   </div>
                 )}
@@ -285,23 +288,25 @@ export const Header: React.FC<HeaderProps> = ({
             ) : (
               /* Guest State: De-emphasized simple lowercase text links */
               <div className="flex items-center space-x-1 text-xs text-slate-500 font-normal pl-1">
-                <button
+                <Button
                   type="button"
                   id="btn-header-login"
+                  variant="ghost"
                   onClick={() => onOpenAuthModal && onOpenAuthModal('login')}
-                  className="hover:text-slate-900 transition px-1.5 py-1 cursor-pointer hover:underline text-slate-600"
+                  className="hover:text-slate-900 transition px-1.5 py-1 cursor-pointer hover:underline text-slate-600 text-xs font-normal"
                 >
                   đăng nhập
-                </button>
+                </Button>
                 <span className="text-slate-300 select-none">/</span>
-                <button
+                <Button
                   type="button"
                   id="btn-header-register"
+                  variant="ghost"
                   onClick={() => onOpenAuthModal && onOpenAuthModal('register')}
-                  className="hover:text-slate-900 transition px-1.5 py-1 cursor-pointer hover:underline text-slate-600"
+                  className="hover:text-slate-900 transition px-1.5 py-1 cursor-pointer hover:underline text-slate-600 text-xs font-normal"
                 >
                   đăng ký
-                </button>
+                </Button>
               </div>
             )}
           </div>

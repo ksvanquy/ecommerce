@@ -98,9 +98,10 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ onSuccess, onSwitchT
           Vai trò tài khoản
         </label>
         <div className="grid grid-cols-2 gap-3">
-          <button
+          <Button
             type="button"
             id="role-btn-customer"
+            variant="ghost"
             onClick={() => setRole('customer')}
             className={`flex items-center justify-center gap-2 p-2.5 rounded-lg border text-xs font-medium transition-all ${
               role === 'customer'
@@ -110,11 +111,12 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ onSuccess, onSwitchT
           >
             <UserCheck className="w-4 h-4 text-blue-600" />
             <span>Khách hàng (Customer)</span>
-          </button>
+          </Button>
 
-          <button
+          <Button
             type="button"
             id="role-btn-admin"
+            variant="ghost"
             onClick={() => setRole('admin')}
             className={`flex items-center justify-center gap-2 p-2.5 rounded-lg border text-xs font-medium transition-all ${
               role === 'admin'
@@ -124,7 +126,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ onSuccess, onSwitchT
           >
             <Shield className="w-4 h-4 text-purple-600" />
             <span>Quản trị viên (Admin)</span>
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -142,14 +144,15 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ onSuccess, onSwitchT
         <div className="text-center pt-2">
           <p className="text-xs text-slate-600">
             Đã có tài khoản?{' '}
-            <button
+            <Button
               type="button"
               id="link-switch-to-login"
+              variant="ghost"
               onClick={onSwitchToLogin}
-              className="text-blue-600 font-semibold hover:underline"
+              className="text-blue-600 font-semibold hover:underline p-0 hover:bg-transparent inline text-xs"
             >
               Đăng nhập ngay
-            </button>
+            </Button>
           </p>
         </div>
       )}

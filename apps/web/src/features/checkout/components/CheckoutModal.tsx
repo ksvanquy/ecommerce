@@ -383,14 +383,15 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                 )}
               </Button>
 
-              <button
+              <Button
                 type="button"
+                variant="ghost"
                 onClick={onClose}
                 disabled={isPending}
                 className="w-full text-center py-1.5 text-xs text-slate-500 hover:text-slate-800 transition"
               >
                 Quay lại giỏ hàng
-              </button>
+              </Button>
             </div>
           </div>
         </div>

@@ -192,13 +192,14 @@ export const OrderHistoryView: React.FC = () => {
             )}
             <span>{feedbackMessage.text}</span>
           </div>
-          <button
+          <Button
             type="button"
+            variant="ghost"
             onClick={() => setFeedbackMessage(null)}
-            className="text-xs font-semibold ml-4 underline opacity-70 hover:opacity-100"
+            className="text-xs font-semibold ml-4 underline opacity-70 hover:opacity-100 p-0 hover:bg-transparent inline h-auto"
           >
             Đóng
-          </button>
+          </Button>
         </div>
       )}
 
@@ -246,17 +247,19 @@ export const OrderHistoryView: React.FC = () => {
             { id: 'delivered', label: 'Đã giao' },
             { id: 'cancelled', label: 'Đã hủy' },
           ].map((tab) => (
-            <button
+            <Button
               key={tab.id}
+              variant="ghost"
+              size="sm"
               onClick={() => setSelectedStatus(tab.id)}
               className={`px-3 py-1.5 rounded-lg text-xs font-medium transition ${
                 selectedStatus === tab.id
-                  ? 'bg-blue-600 text-white shadow-xs'
+                  ? 'bg-blue-600 text-white shadow-xs hover:bg-blue-700'
                   : 'text-slate-600 hover:bg-slate-100'
               }`}
             >
               {tab.label}
-            </button>
+            </Button>
           ))}
         </div>
 

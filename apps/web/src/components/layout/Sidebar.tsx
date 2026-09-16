@@ -1,5 +1,6 @@
 import React from 'react';
 import { Layers, Database, ShieldCheck, ShoppingCart, Package, HardDrive } from 'lucide-react';
+import { Button } from '@repo/ui';
 
 interface SidebarProps {
   activeSection: string;
@@ -26,8 +27,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeSection, onSelectSection
           const Icon = item.icon;
           const isActive = activeSection === item.id;
           return (
-            <button
+            <Button
               key={item.id}
+              variant="ghost"
               onClick={() => onSelectSection(item.id)}
               className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
                 isActive
@@ -46,7 +48,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeSection, onSelectSection
               >
                 {item.badge}
               </span>
-            </button>
+            </Button>
           );
         })}
       </nav>
