@@ -91,7 +91,7 @@ export const Header: React.FC<HeaderProps> = ({
   return (
     <header
       id="app-header"
-      className="sticky top-0 z-40 bg-white border-b border-slate-200/80"
+      className="sticky top-0 z-40 bg-white"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
         {/* Brand Logo */}
@@ -197,35 +197,27 @@ export const Header: React.FC<HeaderProps> = ({
           </Button>
 
           {/* User Account Menu OR Low-key De-emphasized Guest Auth Links */}
-          <div className="relative pl-1 border-l border-slate-200/80" ref={profileMenuRef}>
+          <div className="relative" ref={profileMenuRef}>
             {isAuthenticated && user ? (
               <div>
-                <Button
+                <button
                   type="button"
                   id="btn-header-profile-menu"
-                  variant="ghost"
                   onClick={() => setIsProfileMenuOpen((prev) => !prev)}
-                  className={`flex items-center space-x-2 px-3 py-1.5 rounded-xl border transition cursor-pointer ${
+                  className={`flex items-center justify-center w-9 h-9 rounded-full border transition cursor-pointer shrink-0 focus:outline-none ${
                     isProfileMenuOpen
-                      ? 'bg-blue-50 border-blue-300 text-blue-900'
-                      : 'bg-slate-100 hover:bg-slate-200/80 border-slate-200 text-slate-800'
+                      ? 'bg-blue-50 border-blue-500 text-blue-900'
+                      : 'bg-slate-100 hover:bg-slate-200/80 border-slate-200/80 text-slate-850'
                   }`}
+                  title="Menu tài khoản"
                 >
-                  <div className="w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center text-[10px] font-bold shadow-2xs">
-                    {user.fullName.charAt(0).toUpperCase()}
-                  </div>
-                  <div className="hidden sm:block text-left">
-                    <p className="text-xs font-bold text-slate-900 leading-tight truncate max-w-[120px]">
-                      {user.fullName}
-                    </p>
-                    <span className="text-[10px] font-medium text-slate-500">Thành viên</span>
-                  </div>
-                  <ChevronDown
-                    className={`w-3.5 h-3.5 text-slate-400 transition-transform ${
-                      isProfileMenuOpen ? 'rotate-180 text-blue-600' : ''
-                    }`}
+                  <img
+                    src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=80&h=80&fit=crop&crop=face"
+                    alt="Avatar"
+                    referrerPolicy="no-referrer"
+                    className="w-7 h-7 rounded-full object-cover shrink-0"
                   />
-                </Button>
+                </button>
 
                 {/* Profile Popup Menu */}
                 {isProfileMenuOpen && (

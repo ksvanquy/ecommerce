@@ -122,8 +122,6 @@ export const ProductFiltersBar: React.FC<ProductFiltersBarProps> = ({
           })}
         </div>
 
-        {/* Separator */}
-        <div className="h-5 w-[1px] bg-slate-200 shrink-0 mx-1"></div>
 
         {/* Custom smart tag pills from screenshot */}
         <div className="flex items-center gap-1.5 shrink-0 py-0.5">
@@ -157,7 +155,7 @@ export const ProductFiltersBar: React.FC<ProductFiltersBarProps> = ({
 
       {/* Advanced Filters Block (collapsible for Price Ranges etc) */}
       {showAdvanced && (
-        <div className="pt-3 border-t border-slate-100 grid grid-cols-1 sm:grid-cols-2 gap-4 animate-in fade-in duration-200">
+        <div className="pt-3 grid grid-cols-1 sm:grid-cols-2 gap-4 animate-in fade-in duration-200">
           <div>
             <label htmlFor="input-min-price" className="block text-xs font-bold text-slate-600 mb-1.5">
               Giá tối thiểu (VNĐ)
@@ -188,7 +186,7 @@ export const ProductFiltersBar: React.FC<ProductFiltersBarProps> = ({
       )}
 
       {/* 2nd Row: Flat Sorting Options */}
-      <div className="pt-3 border-t border-slate-100/80 flex flex-wrap items-center justify-between gap-3 text-xs">
+      <div className="pt-3 flex flex-wrap items-center justify-between gap-3 text-xs">
         <div className="flex flex-wrap items-center gap-1.5 text-slate-700">
           <span className="font-semibold text-slate-500">Sắp xếp theo:</span>
           
