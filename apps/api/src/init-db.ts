@@ -850,7 +850,7 @@ export async function initializeDatabase(): Promise<boolean> {
       CREATE TABLE IF NOT EXISTS coupon_usages (
         id TEXT PRIMARY KEY,
         coupon_id TEXT NOT NULL REFERENCES coupons(id) ON DELETE CASCADE,
-        user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        user_id TEXT REFERENCES users(id) ON DELETE SET NULL,
         order_id TEXT NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
         discount_applied INTEGER NOT NULL,
         used_at TIMESTAMP NOT NULL DEFAULT NOW()
@@ -889,6 +889,9 @@ export async function initializeDatabase(): Promise<boolean> {
 
       -- Ensure brand_id column exists if products table already existed
       ALTER TABLE products ADD COLUMN IF NOT EXISTS brand_id TEXT REFERENCES brands(id) ON DELETE SET NULL;
+
+      -- Allow guest users for coupon usages if table was previously created with NOT NULL
+      ALTER TABLE coupon_usages ALTER COLUMN user_id DROP NOT NULL;
 
       -- Indexes for performance optimization on Foreign Keys & Frequent Queries
       CREATE INDEX IF NOT EXISTS idx_products_category_id ON products(category_id);

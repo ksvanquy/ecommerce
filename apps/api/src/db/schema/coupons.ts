@@ -26,9 +26,7 @@ export const couponUsages = pgTable('coupon_usages', {
   couponId: text('coupon_id')
     .notNull()
     .references(() => coupons.id, { onDelete: 'cascade' }),
-  userId: text('user_id')
-    .notNull()
-    .references(() => usersTable.id, { onDelete: 'cascade' }),
+  userId: text('user_id').references(() => usersTable.id, { onDelete: 'set null' }),
   orderId: text('order_id')
     .notNull()
     .references(() => ordersTable.id, { onDelete: 'cascade' }),

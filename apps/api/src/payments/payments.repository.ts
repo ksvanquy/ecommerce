@@ -36,12 +36,14 @@ export class PaymentsRepository {
     const id = `tx_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
     const now = new Date();
 
+    const dbUserId = data.userId && !data.userId.startsWith('guest') ? data.userId : null;
+
     const [created] = await db
       .insert(paymentTransactionsTable)
       .values({
         id,
         orderId: data.orderId,
-        userId: data.userId || null,
+        userId: dbUserId,
         transactionCode: data.transactionCode,
         provider: data.provider,
         amount: data.amount,

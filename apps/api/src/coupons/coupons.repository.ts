@@ -97,10 +97,12 @@ export class CouponsRepository {
 
   async recordUsage(couponId: string, userId: string, orderId: string, discountApplied: number): Promise<void> {
     const id = `use_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+    const dbUserId = userId && !userId.startsWith('guest') ? userId : null;
+
     await db.insert(couponUsagesTable).values({
       id,
       couponId,
-      userId,
+      userId: dbUserId,
       orderId,
       discountApplied,
       usedAt: new Date(),

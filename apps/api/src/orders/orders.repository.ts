@@ -38,9 +38,12 @@ export class OrdersRepository {
       }
 
       // 2. Lưu thông tin đơn hàng chính
+      // Khách vãng lai (guest) hoặc không đăng nhập -> user_id trong database là null để thỏa mãn Foreign Key
+      const dbUserId = order.userId && !order.userId.startsWith('guest') ? order.userId : null;
+
       await tx.insert(ordersTable).values({
         id: order.id,
-        userId: order.userId,
+        userId: dbUserId,
         customerName: order.customerName,
         customerPhone: order.customerPhone,
         shippingAddress: order.shippingAddress,
