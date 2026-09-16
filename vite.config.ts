@@ -13,9 +13,28 @@ export default defineConfig(() => {
         name: 'api-server-middleware',
         configureServer(server) {
           server.middlewares.use(app);
+          
+          // Redirect /admin (without trailing slash) to /admin/ so that relative resolution works perfectly
           server.middlewares.use((req, res, next) => {
-            if (req.url && (req.url === '/admin' || req.url.startsWith('/admin/'))) {
-              req.url = '/apps/admin/index.html';
+            if (req.url && req.url.split('?')[0] === '/admin') {
+              const query = req.url.includes('?') ? req.url.substring(req.url.indexOf('?')) : '';
+              res.writeHead(302, { Location: '/admin/' + query });
+              res.end();
+              return;
+            }
+            next();
+          });
+
+          // Rewrite rules for /admin/ in development
+          server.middlewares.use((req, res, next) => {
+            if (req.url) {
+              const pathPart = req.url.split('?')[0];
+              if (pathPart === '/admin/' || pathPart === '/admin/index.html') {
+                req.url = '/apps/admin/index.html' + (req.url.includes('?') ? req.url.substring(req.url.indexOf('?')) : '');
+              } else if (req.url.startsWith('/admin/')) {
+                // Map /admin/src/main.tsx to /apps/admin/src/main.tsx, etc.
+                req.url = req.url.replace(/^\/admin\//, '/apps/admin/');
+              }
             }
             next();
           });
