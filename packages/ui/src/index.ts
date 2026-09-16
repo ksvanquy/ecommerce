@@ -3,3 +3,4 @@ export * from './Badge.tsx';
 export * from './Card.tsx';
 export * from './Input.tsx';
 export * from './Modal.tsx';
+export * from './Toast.tsx';

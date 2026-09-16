@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useProduct } from '../api/useProduct.ts';
 import { useCartStore } from '../../checkout/store/cartStore.ts';
-import { Button, Badge, Card } from '@repo/ui';
+import { Button, Badge, Card, toast } from '@repo/ui';
 import {
   ArrowLeft,
   ShoppingCart,
@@ -109,6 +109,7 @@ export const ProductDetailView: React.FC = () => {
     };
     addItem(itemToAdd, quantity, activeVariant?.id);
     setAddedSuccess(true);
+    toast.success(`Đã thêm ${quantity}x ${itemToAdd.name} vào giỏ hàng!`);
     setTimeout(() => setAddedSuccess(false), 2500);
   };
 
