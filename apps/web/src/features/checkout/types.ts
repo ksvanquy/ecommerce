@@ -7,6 +7,10 @@ import type {
   PaymentStatus,
   CreateOrderPayload as SharedCreateOrderPayload,
   OrderFilters,
+  Coupon,
+  PaymentTransaction,
+  Review,
+  ReviewSummary,
 } from '@repo/shared-types';
 
 export type {
@@ -16,33 +20,49 @@ export type {
   PaymentMethod,
   PaymentStatus,
   OrderFilters,
+  Coupon,
+  PaymentTransaction,
+  Review,
+  ReviewSummary,
 };
 
 export interface CartItem {
-  id: string; // unique cart item ID
+  id: string; // client/server cart item ID
+  productId: string;
   product: Product;
   quantity: number;
   variantId?: string | null;
+  isSelected: boolean;
+  serverItemId?: string;
 }
 
 export interface CartState {
   items: CartItem[];
   isOpen: boolean;
+  isLoading: boolean;
   couponCode: string | null;
+  appliedCoupon: Coupon | null;
   discountPercent: number;
-  addItem: (product: Product, quantity?: number, variantId?: string | null) => void;
-  removeItem: (id: string) => void;
-  updateQuantity: (id: string, quantity: number) => void;
-  clearCart: () => void;
+  discountCalculatedAmount: number;
+
+  addItem: (product: Product, quantity?: number, variantId?: string | null) => Promise<void>;
+  removeItem: (id: string) => Promise<void>;
+  updateQuantity: (id: string, quantity: number) => Promise<void>;
+  toggleSelectItem: (id: string, isSelected?: boolean) => Promise<void>;
+  toggleSelectAll: (select: boolean) => Promise<void>;
+  clearCart: () => Promise<void>;
+  syncWithServer: () => Promise<void>;
   setOpen: (isOpen: boolean) => void;
-  applyCoupon: (code: string) => { success: boolean; message: string };
+  applyCoupon: (code: string) => Promise<{ success: boolean; message: string }>;
   removeCoupon: () => void;
+
   totalItems: () => number;
-  subtotalPrice: () => number;
+  selectedItemsCount: () => number;
+  subtotalPrice: () => number; // Subtotal for selected items
+  allSubtotalPrice: () => number; // Subtotal for all items
   shippingFee: () => number;
   discountAmount: () => number;
   totalPrice: () => number;
 }
 
 export type CreateOrderPayload = SharedCreateOrderPayload;
-

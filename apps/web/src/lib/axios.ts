@@ -10,13 +10,32 @@ export const apiClient = axios.create({
   },
 });
 
-// Request interceptor: attach token
+// Helper to get or generate persistent guest session ID
+export function getOrCreateSessionId(): string {
+  try {
+    let sid = localStorage.getItem('techstore_session_id');
+    if (!sid) {
+      sid = `sess_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+      localStorage.setItem('techstore_session_id', sid);
+    }
+    return sid;
+  } catch {
+    return 'sess_fallback_default';
+  }
+}
+
+// Request interceptor: attach token & session ID
 apiClient.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     try {
       const token = localStorage.getItem('auth_token');
       if (token && config.headers) {
         config.headers.Authorization = `Bearer ${token}`;
+      }
+
+      const sessionId = getOrCreateSessionId();
+      if (sessionId && config.headers) {
+        config.headers['x-session-id'] = sessionId;
       }
     } catch {
       // Ignore localStorage read errors in SSR/isolated frames

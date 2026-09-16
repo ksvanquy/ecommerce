@@ -16,6 +16,7 @@ import {
   Package,
 } from 'lucide-react';
 import { formatCurrency } from '../../../utils/currency.ts';
+import { ProductReviewsSection } from './ProductReviewsSection.tsx';
 
 export const ProductDetailView: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -505,6 +506,9 @@ export const ProductDetailView: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Product Reviews & Ratings Section */}
+      <ProductReviewsSection productId={product.id} productName={product.name} />
     </div>
   );
 };

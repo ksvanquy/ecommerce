@@ -103,6 +103,57 @@ export const orderFiltersSchema = z.object({
   search: z.string().optional(),
 });
 
+// Cart Schemas
+export const addToCartSchema = z.object({
+  productId: z.string().min(1, 'Mã sản phẩm là bắt buộc'),
+  variantId: z.string().nullable().optional(),
+  quantity: z.number().int().positive('Số lượng phải lớn hơn 0').default(1),
+  isSelected: z.boolean().optional().default(true),
+});
+
+export const updateCartItemSchema = z.object({
+  quantity: z.number().int().positive('Số lượng phải lớn hơn 0').optional(),
+  isSelected: z.boolean().optional(),
+});
+
+// Coupon Schemas
+export const validateCouponSchema = z.object({
+  code: z.string().min(1, 'Vui lòng nhập mã giảm giá').trim().toUpperCase(),
+  orderSubtotal: z.number().nonnegative(),
+});
+
+export const createCouponSchema = z.object({
+  code: z.string().min(2, 'Mã coupon phải từ 2 ký tự').trim().toUpperCase(),
+  title: z.string().min(2, 'Tiêu đề coupon là bắt buộc').trim(),
+  description: z.string().optional(),
+  discountType: z.enum(['percentage', 'fixed_amount']),
+  discountValue: z.number().positive('Giá trị giảm phải lớn hơn 0'),
+  maxDiscountAmount: z.number().positive().nullable().optional(),
+  minOrderValue: z.number().nonnegative().optional().default(0),
+  usageLimit: z.number().int().positive().nullable().optional(),
+  userLimit: z.number().int().positive().optional().default(1),
+  startDate: z.string().or(z.date()),
+  endDate: z.string().or(z.date()),
+  isActive: z.boolean().optional().default(true),
+});
+
+// Review Schemas
+export const createReviewSchema = z.object({
+  productId: z.string().min(1, 'Mã sản phẩm là bắt buộc'),
+  orderId: z.string().nullable().optional(),
+  rating: z.number().int().min(1, 'Đánh giá tối thiểu 1 sao').max(5, 'Đánh giá tối đa 5 sao'),
+  title: z.string().max(255).optional(),
+  comment: z.string().min(5, 'Nội dung đánh giá tối thiểu 5 ký tự').trim(),
+  images: z.array(z.string().url()).optional().default([]),
+});
+
+// Payment Schemas
+export const createPaymentIntentSchema = z.object({
+  orderId: z.string().min(1, 'Mã đơn hàng là bắt buộc'),
+  provider: z.enum(['vnpay', 'momo', 'vietqr', 'stripe', 'zalopay', 'cod']),
+  bankCode: z.string().optional(),
+});
+
 // ==========================================
 // 2. TypeScript Types inferred from Zod
 // ==========================================
@@ -134,6 +185,15 @@ export type PaymentStatus = z.infer<typeof paymentStatusSchema>;
 
 export type CreateOrderPayload = z.infer<typeof createOrderSchema>;
 export type UpdateOrderStatusPayload = z.infer<typeof updateOrderStatusSchema>;
+
+export type AddToCartPayload = z.infer<typeof addToCartSchema>;
+export type UpdateCartItemPayload = z.infer<typeof updateCartItemSchema>;
+
+export type ValidateCouponPayload = z.infer<typeof validateCouponSchema>;
+export type CreateCouponPayload = z.infer<typeof createCouponSchema>;
+
+export type CreateReviewPayload = z.infer<typeof createReviewSchema>;
+export type CreatePaymentIntentPayload = z.infer<typeof createPaymentIntentSchema>;
 
 export interface OrderFilters {
   page?: number;
@@ -232,9 +292,95 @@ export interface Product {
 }
 
 export interface CartItem {
+  id?: string;
+  cartId?: string;
   productId: string;
+  variantId?: string | null;
   product: Product;
+  variant?: ProductVariant | null;
   quantity: number;
+  isSelected?: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface Cart {
+  id: string;
+  userId?: string | null;
+  sessionId?: string | null;
+  items: CartItem[];
+  totalQuantity: number;
+  selectedSubtotal: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Coupon {
+  id: string;
+  code: string;
+  title: string;
+  description?: string | null;
+  discountType: 'percentage' | 'fixed_amount';
+  discountValue: number;
+  maxDiscountAmount?: number | null;
+  minOrderValue: number;
+  usageLimit?: number | null;
+  usedCount: number;
+  userLimit: number;
+  startDate: string;
+  endDate: string;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CouponValidationResult {
+  valid: boolean;
+  message?: string;
+  coupon?: Coupon;
+  discountAmount: number;
+}
+
+export interface Review {
+  id: string;
+  userId: string;
+  user?: {
+    id: string;
+    fullName: string;
+    email: string;
+  };
+  productId: string;
+  orderId?: string | null;
+  rating: number;
+  title?: string | null;
+  comment: string;
+  images?: string[];
+  isVerifiedBuyer: boolean;
+  status: 'pending' | 'approved' | 'rejected';
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ReviewSummary {
+  averageRating: number;
+  totalReviews: number;
+  ratingDistribution: Record<number, number>;
+}
+
+export interface PaymentTransaction {
+  id: string;
+  orderId: string;
+  userId?: string | null;
+  transactionCode: string;
+  provider: 'vnpay' | 'momo' | 'vietqr' | 'stripe' | 'zalopay' | 'cod';
+  amount: number;
+  currency: string;
+  status: 'pending' | 'success' | 'failed' | 'refunded';
+  gatewayTransactionNo?: string | null;
+  rawPayload?: unknown;
+  paidAt?: string | null;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface OrderItem {

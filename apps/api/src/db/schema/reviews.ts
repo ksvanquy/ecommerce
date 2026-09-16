@@ -1,17 +1,17 @@
 import { pgTable, text, integer, varchar, boolean, timestamp, jsonb } from 'drizzle-orm/pg-core';
-import { users } from './users';
-import { products } from './products';
-import { orders } from './orders';
+import { usersTable } from './users.ts';
+import { productsTable } from './products.ts';
+import { ordersTable } from './orders.ts';
 
 export const reviews = pgTable('reviews', {
   id: text('id').primaryKey(),
   userId: text('user_id')
     .notNull()
-    .references(() => users.id, { onDelete: 'cascade' }),
+    .references(() => usersTable.id, { onDelete: 'cascade' }),
   productId: text('product_id')
     .notNull()
-    .references(() => products.id, { onDelete: 'cascade' }),
-  orderId: text('order_id').references(() => orders.id, { onDelete: 'set null' }),
+    .references(() => productsTable.id, { onDelete: 'cascade' }),
+  orderId: text('order_id').references(() => ordersTable.id, { onDelete: 'set null' }),
   rating: integer('rating').notNull(),
   title: varchar('title', { length: 255 }),
   comment: text('comment').notNull(),
@@ -24,3 +24,9 @@ export const reviews = pgTable('reviews', {
 
 export type Review = typeof reviews.$inferSelect;
 export type NewReview = typeof reviews.$inferInsert;
+
+export type ReviewDb = Review;
+export type NewReviewDb = NewReview;
+
+export const reviewsTable = reviews;
+

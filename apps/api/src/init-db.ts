@@ -10,6 +10,12 @@ import {
   categoriesTable,
   ordersTable,
   orderItemsTable,
+  couponsTable,
+  couponUsagesTable,
+  cartsTable,
+  cartItemsTable,
+  paymentTransactionsTable,
+  reviewsTable,
 } from './db/schema/index.ts';
 import { eq } from 'drizzle-orm';
 
@@ -571,6 +577,112 @@ const SEED_ORDERS = [
   },
 ];
 
+const SEED_COUPONS = [
+  {
+    id: 'cp_techstore10',
+    code: 'TECHSTORE10',
+    title: 'Giảm 10% đơn hàng công nghệ',
+    description: 'Ưu đãi giảm 10% giá trị đơn hàng, tối đa 500.000đ cho đơn từ 500.000đ',
+    discountType: 'percentage',
+    discountValue: 10,
+    maxDiscountAmount: 500000,
+    minOrderValue: 500000,
+    usageLimit: 100,
+    usedCount: 0,
+    userLimit: 2,
+    startDate: new Date('2026-01-01T00:00:00.000Z'),
+    endDate: new Date('2026-12-31T23:59:59.000Z'),
+    isActive: true,
+    createdAt: new Date('2026-01-01T00:00:00.000Z'),
+    updatedAt: new Date('2026-01-01T00:00:00.000Z'),
+  },
+  {
+    id: 'cp_giam50k',
+    code: 'GIAM50K',
+    title: 'Giảm ngay 50.000đ',
+    description: 'Giảm trực tiếp 50.000đ cho đơn hàng từ 300.000đ',
+    discountType: 'fixed_amount',
+    discountValue: 50000,
+    maxDiscountAmount: 50000,
+    minOrderValue: 300000,
+    usageLimit: 200,
+    usedCount: 0,
+    userLimit: 1,
+    startDate: new Date('2026-01-01T00:00:00.000Z'),
+    endDate: new Date('2026-12-31T23:59:59.000Z'),
+    isActive: true,
+    createdAt: new Date('2026-01-01T00:00:00.000Z'),
+    updatedAt: new Date('2026-01-01T00:00:00.000Z'),
+  },
+  {
+    id: 'cp_freeship',
+    code: 'FREESHIP',
+    title: 'Miễn phí vận chuyển 30.000đ',
+    description: 'Giảm 30.000đ phí giao hàng cho đơn từ 200.000đ',
+    discountType: 'fixed_amount',
+    discountValue: 30000,
+    maxDiscountAmount: 30000,
+    minOrderValue: 200000,
+    usageLimit: 500,
+    usedCount: 0,
+    userLimit: 3,
+    startDate: new Date('2026-01-01T00:00:00.000Z'),
+    endDate: new Date('2026-12-31T23:59:59.000Z'),
+    isActive: true,
+    createdAt: new Date('2026-01-01T00:00:00.000Z'),
+    updatedAt: new Date('2026-01-01T00:00:00.000Z'),
+  },
+  {
+    id: 'cp_viptech20',
+    code: 'VIPTECH20',
+    title: 'Voucher Khách Hàng VIP 20%',
+    description: 'Giảm 20% cho đơn hàng từ 2.000.000đ, tối đa 1.000.000đ',
+    discountType: 'percentage',
+    discountValue: 20,
+    maxDiscountAmount: 1000000,
+    minOrderValue: 2000000,
+    usageLimit: 50,
+    usedCount: 0,
+    userLimit: 1,
+    startDate: new Date('2026-01-01T00:00:00.000Z'),
+    endDate: new Date('2026-12-31T23:59:59.000Z'),
+    isActive: true,
+    createdAt: new Date('2026-01-01T00:00:00.000Z'),
+    updatedAt: new Date('2026-01-01T00:00:00.000Z'),
+  },
+];
+
+const SEED_REVIEWS = [
+  {
+    id: 'rev_demo_01',
+    userId: 'usr_customer_demo_02',
+    productId: 'prod_01',
+    orderId: 'ORD-2026-9901',
+    rating: 5,
+    title: 'Chống ồn đỉnh cao, âm thanh xuất sắc!',
+    comment: 'Tai nghe Sony WH-1000XM5 khử ồn siêu tốt khi đi máy bay và làm việc văn phòng. Đệm tai êm ái, pin trâu dùng cả tuần chưa hết.',
+    images: ['https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=600&q=80'],
+    isVerifiedBuyer: true,
+    status: 'approved',
+    createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
+    updatedAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
+  },
+  {
+    id: 'rev_demo_02',
+    userId: 'usr_customer_demo_02',
+    productId: 'prod_04',
+    orderId: 'ORD-2026-8802',
+    rating: 5,
+    title: 'Bàn phím cơ hoàn thiện nhôm CNC quá đầm tay',
+    comment: 'Keychron Q1 Pro gõ rất êm, switch được lube sẵn mượt mà. Kết nối Bluetooth nhanh chóng với cả Mac và Windows.',
+    images: ['https://images.unsplash.com/photo-1587829741301-dc798b83add3?auto=format&fit=crop&w=600&q=80'],
+    isVerifiedBuyer: true,
+    status: 'approved',
+    createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
+    updatedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
+  },
+];
+
 async function runExecDDL(ddlQuery: string): Promise<void> {
   if (getIsUsingPglite()) {
     await getPgliteInstance().exec(ddlQuery);
@@ -697,6 +809,84 @@ export async function initializeDatabase(): Promise<boolean> {
         created_at TIMESTAMP NOT NULL DEFAULT NOW()
       );
 
+      CREATE TABLE IF NOT EXISTS carts (
+        id TEXT PRIMARY KEY,
+        user_id TEXT REFERENCES users(id) ON DELETE CASCADE,
+        session_id VARCHAR(255),
+        created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMP NOT NULL DEFAULT NOW()
+      );
+
+      CREATE TABLE IF NOT EXISTS cart_items (
+        id TEXT PRIMARY KEY,
+        cart_id TEXT NOT NULL REFERENCES carts(id) ON DELETE CASCADE,
+        product_id TEXT NOT NULL REFERENCES products(id) ON DELETE CASCADE,
+        variant_id TEXT REFERENCES product_variants(id) ON DELETE SET NULL,
+        quantity INTEGER NOT NULL DEFAULT 1,
+        is_selected BOOLEAN NOT NULL DEFAULT true,
+        created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMP NOT NULL DEFAULT NOW()
+      );
+
+      CREATE TABLE IF NOT EXISTS coupons (
+        id TEXT PRIMARY KEY,
+        code VARCHAR(50) NOT NULL UNIQUE,
+        title VARCHAR(255) NOT NULL,
+        description TEXT,
+        discount_type VARCHAR(50) NOT NULL,
+        discount_value INTEGER NOT NULL,
+        max_discount_amount INTEGER,
+        min_order_value INTEGER NOT NULL DEFAULT 0,
+        usage_limit INTEGER,
+        used_count INTEGER NOT NULL DEFAULT 0,
+        user_limit INTEGER NOT NULL DEFAULT 1,
+        start_date TIMESTAMP NOT NULL,
+        end_date TIMESTAMP NOT NULL,
+        is_active BOOLEAN NOT NULL DEFAULT true,
+        created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMP NOT NULL DEFAULT NOW()
+      );
+
+      CREATE TABLE IF NOT EXISTS coupon_usages (
+        id TEXT PRIMARY KEY,
+        coupon_id TEXT NOT NULL REFERENCES coupons(id) ON DELETE CASCADE,
+        user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        order_id TEXT NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
+        discount_applied INTEGER NOT NULL,
+        used_at TIMESTAMP NOT NULL DEFAULT NOW()
+      );
+
+      CREATE TABLE IF NOT EXISTS payment_transactions (
+        id TEXT PRIMARY KEY,
+        order_id TEXT NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
+        user_id TEXT REFERENCES users(id) ON DELETE SET NULL,
+        transaction_code VARCHAR(100) NOT NULL UNIQUE,
+        provider VARCHAR(50) NOT NULL,
+        amount INTEGER NOT NULL,
+        currency VARCHAR(10) NOT NULL DEFAULT 'VND',
+        status VARCHAR(50) NOT NULL DEFAULT 'pending',
+        gateway_transaction_no VARCHAR(255),
+        raw_payload JSONB,
+        paid_at TIMESTAMP,
+        created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMP NOT NULL DEFAULT NOW()
+      );
+
+      CREATE TABLE IF NOT EXISTS reviews (
+        id TEXT PRIMARY KEY,
+        user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        product_id TEXT NOT NULL REFERENCES products(id) ON DELETE CASCADE,
+        order_id TEXT REFERENCES orders(id) ON DELETE SET NULL,
+        rating INTEGER NOT NULL,
+        title VARCHAR(255),
+        comment TEXT NOT NULL,
+        images JSONB,
+        is_verified_buyer BOOLEAN NOT NULL DEFAULT false,
+        status VARCHAR(50) NOT NULL DEFAULT 'approved',
+        created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMP NOT NULL DEFAULT NOW()
+      );
+
       -- Ensure brand_id column exists if products table already existed
       ALTER TABLE products ADD COLUMN IF NOT EXISTS brand_id TEXT REFERENCES brands(id) ON DELETE SET NULL;
     `);
@@ -800,7 +990,33 @@ export async function initializeDatabase(): Promise<boolean> {
       }
     }
 
-    console.log('[DB Init] Database schema (brands, product_images, product_variants) & seed data initialized successfully.');
+    // 9. Seed Coupons if not present
+    for (const coupon of SEED_COUPONS) {
+      const existing = await db
+        .select()
+        .from(couponsTable)
+        .where(eq(couponsTable.id, coupon.id))
+        .limit(1);
+
+      if (existing.length === 0) {
+        await db.insert(couponsTable).values(coupon);
+      }
+    }
+
+    // 10. Seed Reviews if not present
+    for (const review of SEED_REVIEWS) {
+      const existing = await db
+        .select()
+        .from(reviewsTable)
+        .where(eq(reviewsTable.id, review.id))
+        .limit(1);
+
+      if (existing.length === 0) {
+        await db.insert(reviewsTable).values(review);
+      }
+    }
+
+    console.log('[DB Init] Database schema (carts, coupons, payments, reviews, brands, product_images, product_variants) & seed data initialized successfully.');
     return true;
   } catch (error) {
     console.error('[DB Init] Error initializing database tables/seeds:', error);

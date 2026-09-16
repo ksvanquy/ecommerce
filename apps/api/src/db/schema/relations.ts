@@ -6,9 +6,17 @@ import { productsTable } from './products.ts';
 import { productImagesTable } from './productImages.ts';
 import { productVariantsTable } from './productVariants.ts';
 import { ordersTable, orderItemsTable } from './orders.ts';
+import { cartsTable, cartItemsTable } from './carts.ts';
+import { couponsTable, couponUsagesTable } from './coupons.ts';
+import { paymentTransactionsTable } from './payments.ts';
+import { reviewsTable } from './reviews.ts';
 
 export const usersRelations = relations(usersTable, ({ many }) => ({
   orders: many(ordersTable),
+  carts: many(cartsTable),
+  reviews: many(reviewsTable),
+  couponUsages: many(couponUsagesTable),
+  paymentTransactions: many(paymentTransactionsTable),
 }));
 
 export const brandsRelations = relations(brandsTable, ({ many }) => ({
@@ -39,6 +47,8 @@ export const productsRelations = relations(productsTable, ({ one, many }) => ({
   images: many(productImagesTable),
   variants: many(productVariantsTable),
   orderItems: many(orderItemsTable),
+  reviews: many(reviewsTable),
+  cartItems: many(cartItemsTable),
 }));
 
 export const productImagesRelations = relations(productImagesTable, ({ one }) => ({
@@ -61,6 +71,9 @@ export const ordersRelations = relations(ordersTable, ({ one, many }) => ({
     references: [usersTable.id],
   }),
   items: many(orderItemsTable),
+  paymentTransactions: many(paymentTransactionsTable),
+  couponUsages: many(couponUsagesTable),
+  reviews: many(reviewsTable),
 }));
 
 export const orderItemsRelations = relations(orderItemsTable, ({ one }) => ({
@@ -73,3 +86,72 @@ export const orderItemsRelations = relations(orderItemsTable, ({ one }) => ({
     references: [productsTable.id],
   }),
 }));
+
+export const cartsRelations = relations(cartsTable, ({ one, many }) => ({
+  user: one(usersTable, {
+    fields: [cartsTable.userId],
+    references: [usersTable.id],
+  }),
+  items: many(cartItemsTable),
+}));
+
+export const cartItemsRelations = relations(cartItemsTable, ({ one }) => ({
+  cart: one(cartsTable, {
+    fields: [cartItemsTable.cartId],
+    references: [cartsTable.id],
+  }),
+  product: one(productsTable, {
+    fields: [cartItemsTable.productId],
+    references: [productsTable.id],
+  }),
+  variant: one(productVariantsTable, {
+    fields: [cartItemsTable.variantId],
+    references: [productVariantsTable.id],
+  }),
+}));
+
+export const couponsRelations = relations(couponsTable, ({ many }) => ({
+  usages: many(couponUsagesTable),
+}));
+
+export const couponUsagesRelations = relations(couponUsagesTable, ({ one }) => ({
+  coupon: one(couponsTable, {
+    fields: [couponUsagesTable.couponId],
+    references: [couponsTable.id],
+  }),
+  user: one(usersTable, {
+    fields: [couponUsagesTable.userId],
+    references: [usersTable.id],
+  }),
+  order: one(ordersTable, {
+    fields: [couponUsagesTable.orderId],
+    references: [ordersTable.id],
+  }),
+}));
+
+export const paymentTransactionsRelations = relations(paymentTransactionsTable, ({ one }) => ({
+  order: one(ordersTable, {
+    fields: [paymentTransactionsTable.orderId],
+    references: [ordersTable.id],
+  }),
+  user: one(usersTable, {
+    fields: [paymentTransactionsTable.userId],
+    references: [usersTable.id],
+  }),
+}));
+
+export const reviewsRelations = relations(reviewsTable, ({ one }) => ({
+  user: one(usersTable, {
+    fields: [reviewsTable.userId],
+    references: [usersTable.id],
+  }),
+  product: one(productsTable, {
+    fields: [reviewsTable.productId],
+    references: [productsTable.id],
+  }),
+  order: one(ordersTable, {
+    fields: [reviewsTable.orderId],
+    references: [ordersTable.id],
+  }),
+}));
+

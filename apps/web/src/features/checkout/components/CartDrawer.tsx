@@ -11,6 +11,8 @@ import {
   Sparkles,
   ShieldCheck,
   CreditCard,
+  CheckSquare,
+  Square,
 } from 'lucide-react';
 import { useCartStore } from '../store/cartStore.ts';
 import { Button, Badge } from '@repo/ui';
@@ -28,8 +30,12 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onNavigateToCart }) => {
     setOpen,
     removeItem,
     updateQuantity,
+    toggleSelectItem,
+    toggleSelectAll,
     clearCart,
+    syncWithServer,
     totalItems,
+    selectedItemsCount,
     subtotalPrice,
     discountAmount,
     shippingFee,
@@ -48,13 +54,22 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onNavigateToCart }) => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, setOpen]);
 
+  // Sync with server cart when opened
+  useEffect(() => {
+    if (isOpen) {
+      syncWithServer();
+    }
+  }, [isOpen, syncWithServer]);
+
   if (!isOpen) return null;
 
   const count = totalItems();
+  const selectedCount = selectedItemsCount();
   const subtotal = subtotalPrice();
   const discount = discountAmount();
   const shipping = shippingFee();
   const total = totalPrice();
+  const allSelected = items.length > 0 && items.every((i) => i.isSelected);
 
   const handleGoToFullCart = () => {
     setOpen(false);
@@ -83,7 +98,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onNavigateToCart }) => {
           onClick={(e) => e.stopPropagation()}
         >
           {/* Drawer Header */}
-          <div className="p-4 border-b border-slate-200 flex items-center justify-between bg-slate-50/70">
+          <div className="p-4 border-b border-slate-200 flex items-center justify-between bg-slate-50/80">
             <div className="flex items-center space-x-2.5">
               <div className="w-8 h-8 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center">
                 <ShoppingBag className="w-4 h-4" />
@@ -93,7 +108,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onNavigateToCart }) => {
                   Giỏ hàng của bạn
                 </h3>
                 <p className="text-[11px] text-slate-500 font-medium">
-                  {count} {count === 1 ? 'sản phẩm' : 'sản phẩm'}
+                  {selectedCount}/{count} món được chọn thanh toán
                 </p>
               </div>
             </div>
@@ -123,6 +138,27 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onNavigateToCart }) => {
               </Button>
             </div>
           </div>
+
+          {/* Select all bar if items exist */}
+          {items.length > 0 && (
+            <div className="px-4 py-2 bg-slate-50 border-b border-slate-200 flex items-center justify-between text-xs text-slate-600">
+              <button
+                type="button"
+                onClick={() => toggleSelectAll(!allSelected)}
+                className="flex items-center gap-1.5 font-medium hover:text-blue-600 cursor-pointer"
+              >
+                {allSelected ? (
+                  <CheckSquare className="w-4 h-4 text-blue-600" />
+                ) : (
+                  <Square className="w-4 h-4 text-slate-400" />
+                )}
+                <span>Chọn tất cả ({items.length})</span>
+              </button>
+              <span className="text-[11px] text-slate-400">
+                Đã chọn: <strong className="text-slate-700">{selectedCount}</strong>
+              </span>
+            </div>
+          )}
 
           {/* Drawer Body */}
           <div className="flex-1 overflow-y-auto p-4 space-y-3">
@@ -155,7 +191,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onNavigateToCart }) => {
               </div>
             ) : (
               items.map((item) => {
-                const { product, quantity, id: cartItemId } = item;
+                const { product, quantity, id: cartItemId, isSelected } = item;
                 const maxStock = product.inventory > 0 ? product.inventory : 999;
                 const isMax = quantity >= maxStock;
 
@@ -163,10 +199,28 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onNavigateToCart }) => {
                   <div
                     key={cartItemId}
                     id={`cart-drawer-item-${cartItemId}`}
-                    className="flex items-start gap-3 p-3 bg-slate-50/70 hover:bg-slate-50 rounded-xl border border-slate-200/80 transition group"
+                    className={`flex items-start gap-2.5 p-3 rounded-xl border transition group ${
+                      isSelected
+                        ? 'bg-blue-50/20 border-blue-200/70'
+                        : 'bg-slate-50/50 border-slate-200/60 opacity-75'
+                    }`}
                   >
+                    {/* Item checkbox */}
+                    <button
+                      type="button"
+                      onClick={() => toggleSelectItem(cartItemId)}
+                      className="mt-2 text-slate-400 hover:text-blue-600 shrink-0 cursor-pointer"
+                      title={isSelected ? 'Bỏ chọn sản phẩm' : 'Chọn sản phẩm thanh toán'}
+                    >
+                      {isSelected ? (
+                        <CheckSquare className="w-4 h-4 text-blue-600" />
+                      ) : (
+                        <Square className="w-4 h-4 text-slate-400" />
+                      )}
+                    </button>
+
                     {/* Thumbnail */}
-                    <div className="w-16 h-16 rounded-lg bg-white border border-slate-200 flex items-center justify-center overflow-hidden shrink-0 p-1">
+                    <div className="w-14 h-14 rounded-lg bg-white border border-slate-200 flex items-center justify-center overflow-hidden shrink-0 p-1">
                       {product.imageUrl ? (
                         <img
                           src={product.imageUrl}
@@ -199,12 +253,12 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onNavigateToCart }) => {
                         </Button>
                       </div>
 
-                      <div className="flex items-center gap-2 mt-0.5">
-                        <Badge variant="neutral" className="text-[9px] py-0 px-1.5">
+                      <div className="flex items-center gap-1.5 mt-0.5">
+                        <Badge variant="neutral" className="text-[9px] py-0 px-1">
                           {product.category}
                         </Badge>
                         <span className="text-[11px] text-slate-500 font-mono">
-                          {formatCurrency(product.price)} / cái
+                          {formatCurrency(product.price)}
                         </span>
                       </div>
 
@@ -269,7 +323,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onNavigateToCart }) => {
               {/* Calculation summary breakdown */}
               <div className="space-y-1.5 text-xs">
                 <div className="flex justify-between text-slate-600">
-                  <span>Tạm tính ({count} món):</span>
+                  <span>Tạm tính ({selectedCount} món chọn):</span>
                   <span className="font-mono font-medium">{formatCurrency(subtotal)}</span>
                 </div>
 
@@ -309,11 +363,16 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onNavigateToCart }) => {
                   id="btn-drawer-checkout"
                   variant="primary"
                   size="md"
-                  className="w-full justify-center text-xs font-bold"
+                  disabled={selectedCount === 0}
+                  className="w-full justify-center text-xs font-bold disabled:opacity-50"
                   onClick={handleOpenCheckout}
                 >
                   <CreditCard className="w-4 h-4 mr-1.5" />
-                  <span>Đặt hàng ngay ({formatCurrency(total)})</span>
+                  <span>
+                    {selectedCount > 0
+                      ? `Đặt hàng ngay (${formatCurrency(total)})`
+                      : 'Vui lòng chọn sản phẩm để thanh toán'}
+                  </span>
                 </Button>
 
                 {/* View Full Cart button */}

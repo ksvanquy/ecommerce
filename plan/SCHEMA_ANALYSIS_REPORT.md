@@ -284,53 +284,57 @@ Dưới đây là sơ đồ kiến trúc Cơ sở Dữ liệu mở rộng hoàn 
 Để hoàn thiện ứng dụng TechStore từ phiên bản sơ khai thành một nền tảng Thương mại điện tử sản phẩm công nghệ hoàn chỉnh, chúng tôi đề xuất lộ trình nâng cấp 4 bước với danh sách công việc (task breakdown) chi tiết như sau:
 
 ### 1. **Bước 1 - Cập nhật & Đồng bộ Schema DB Backend (`apps/api/src/db/schema/`)**
-- [ ] **Hoàn thiện định nghĩa Schema**:
-  - [ ] Đã tạo file schema: `carts.ts` (bảng `carts` và `cart_items`).
-  - [ ] Đã tạo file schema: `coupons.ts` (bảng `coupons` và `coupon_usages`).
-  - [ ] Đã tạo file schema: `payments.ts` (bảng `payment_transactions`).
-  - [ ] Đã tạo file schema: `reviews.ts` (bảng `reviews`).
-- [ ] **Export và liên kết Schema trong `index.ts`**:
-  - [ ] Import và re-export toàn bộ 4 schema mới trong `apps/api/src/db/schema/index.ts`.
-  - [ ] Bổ sung 4 schema mới vào object `schema` tổng hợp.
-- [ ] **Bổ sung Quan hệ đối tượng (Relations)**:
-  - [ ] Cập nhật `apps/api/src/db/schema/relations.ts` bổ sung `cartsRelations`, `cartItemsRelations`, `couponsRelations`, `couponUsagesRelations`, `paymentTransactionsRelations`, `reviewsRelations`.
-  - [ ] Thêm quan hệ ngược trong `usersRelations`, `productsRelations`, `ordersRelations`.
-- [ ] **Đồng bộ Cơ sở dữ liệu**:
-  - [ ] Chạy migration / push schema Drizzle ORM để cập nhật cấu trúc DB PostgreSQL.
-  - [ ] Cập nhật file `init-db.ts` nếu có dữ liệu mẫu ban đầu cho `coupons`.
+- [x] **Hoàn thiện định nghĩa Schema**:
+  - [x] Đã tạo file schema: `carts.ts` (bảng `carts` và `cart_items`).
+  - [x] Đã tạo file schema: `coupons.ts` (bảng `coupons` và `coupon_usages`).
+  - [x] Đã tạo file schema: `payments.ts` (bảng `payment_transactions`).
+  - [x] Đã tạo file schema: `reviews.ts` (bảng `reviews`).
+- [x] **Export và liên kết Schema trong `index.ts`**:
+  - [x] Import và re-export toàn bộ 4 schema mới trong `apps/api/src/db/schema/index.ts`.
+  - [x] Bổ sung 4 schema mới vào object `schema` tổng hợp.
+- [x] **Bổ sung Quan hệ đối tượng (Relations)**:
+  - [x] Cập nhật `apps/api/src/db/schema/relations.ts` bổ sung `cartsRelations`, `cartItemsRelations`, `couponsRelations`, `couponUsagesRelations`, `paymentTransactionsRelations`, `reviewsRelations`.
+  - [x] Thêm quan hệ ngược trong `usersRelations`, `productsRelations`, `ordersRelations`.
+- [x] **Đồng bộ Cơ sở dữ liệu & Seed Data**:
+  - [x] Cập nhật file `init-db.ts` với đầy đủ DDL tạo bảng `carts`, `cart_items`, `coupons`, `coupon_usages`, `payment_transactions`, `reviews`.
+  - [x] Cập nhật dữ liệu mẫu ban đầu cho `coupons` (`TECHSTORE10`, `GIAM50K`, `FREESHIP`, `VIPTECH20`) và `reviews`.
+  - [x] Đồng bộ Zod schemas & TypeScript Domain Types tại `@repo/shared-types`.
 
 ### 2. **Bước 2 - Phát triển các Module Backend API (`apps/api/src/`)**
-- [ ] **Module Giỏ hàng (`apps/api/src/cart/`)**:
-  - [ ] Xây dựng `cart.repository.ts`: Truy vấn giỏ hàng theo `user_id` hoặc `session_id`.
-  - [ ] Xây dựng `cart.service.ts`: Xử lý logic thêm/sửa/xóa item, hợp nhất giỏ hàng Guest vào User khi đăng nhập.
-  - [ ] Xây dựng `cart.controller.ts` & router: `GET /api/cart`, `POST /api/cart/items`, `PATCH /api/cart/items/:id`, `DELETE /api/cart/items/:id`.
-- [ ] **Module Mã giảm giá (`apps/api/src/coupons/`)**:
-  - [ ] Xây dựng `coupons.repository.ts`: Tra cứu mã coupon, đếm số lần sử dụng.
-  - [ ] Xây dựng `coupons.service.ts`: Kiểm tra điều kiện (hạn dùng, đơn tối thiểu, giới hạn dùng), tính số tiền giảm.
-  - [ ] Xây dựng `coupons.controller.ts` & router: `POST /api/coupons/validate`, `GET /api/coupons/available`.
-- [ ] **Module Thanh toán (`apps/api/src/payments/`)**:
-  - [ ] Xây dựng `payments.repository.ts`: Ghi nhận nhật ký giao dịch thanh toán `payment_transactions`.
-  - [ ] Xây dựng `payments.service.ts`: Tạo yêu cầu thanh toán (VietQR / VNPay / MoMo) và cập nhật trạng thái đơn hàng.
-  - [ ] Xây dựng `payments.controller.ts` & router: `POST /api/payments/create-intent`, `POST /api/payments/webhook` (tiếp nhận callback IPN).
-- [ ] **Module Đánh giá & Bình luận (`apps/api/src/reviews/`)**:
-  - [ ] Xây dựng `reviews.repository.ts`: Thêm đánh giá, tính điểm rating trung bình theo sản phẩm.
-  - [ ] Xây dựng `reviews.service.ts`: Kiểm tra đơn hàng đã hoàn thành (`status = 'delivered'`) để xác minh `is_verified_buyer`.
-  - [ ] Xây dựng `reviews.controller.ts` & router: `GET /api/products/:productId/reviews`, `POST /api/reviews`.
+- [x] **Module Giỏ hàng (`apps/api/src/cart/`)**:
+  - [x] Xây dựng `cart.repository.ts`: Truy vấn giỏ hàng theo `user_id` hoặc `session_id`, populating thông tin sản phẩm, phân loại variant, thương hiệu, hình ảnh.
+  - [x] Xây dựng `cart.service.ts`: Xử lý logic thêm/sửa/xóa item, kiểm tra tồn kho, hợp nhất giỏ hàng Guest vào User khi đăng nhập.
+  - [x] Xây dựng `cart.controller.ts` & router: `GET /api/cart`, `POST /api/cart/items`, `PATCH /api/cart/items/:id`, `DELETE /api/cart/items/:id`, `DELETE /api/cart`, `POST /api/cart/merge`.
+- [x] **Module Mã giảm giá (`apps/api/src/coupons/`)**:
+  - [x] Xây dựng `coupons.repository.ts`: Tra cứu mã coupon, đếm số lần sử dụng của user và toàn hệ thống.
+  - [x] Xây dựng `coupons.service.ts`: Kiểm tra điều kiện (hạn dùng, đơn tối thiểu, giới hạn dùng), tính số tiền giảm theo % (kèm mức trần maxDiscountAmount) hoặc số tiền cố định.
+  - [x] Xây dựng `coupons.controller.ts` & router: `POST /api/coupons/validate`, `GET /api/coupons/available`, `GET /api/coupons`, `POST /api/coupons`.
+- [x] **Module Thanh toán (`apps/api/src/payments/`)**:
+  - [x] Xây dựng `payments.repository.ts`: Ghi nhận nhật ký giao dịch thanh toán `payment_transactions`.
+  - [x] Xây dựng `payments.service.ts`: Tạo yêu cầu thanh toán (VietQR chuẩn động theo cú pháp ngân hàng / VNPay / MoMo) và cập nhật trạng thái đơn hàng khi thanh toán thành công.
+  - [x] Xây dựng `payments.controller.ts` & router: `POST /api/payments/create-intent`, `GET /api/payments/order/:orderId`, `GET /api/payments/verify/:transactionCode`, `POST /api/payments/confirm`, `POST /api/payments/webhook`.
+- [x] **Module Đánh giá & Bình luận (`apps/api/src/reviews/`)**:
+  - [x] Xây dựng `reviews.repository.ts`: Thêm đánh giá, tính điểm rating trung bình và phân bổ 1-5 sao theo sản phẩm.
+  - [x] Xây dựng `reviews.service.ts`: Kiểm tra đơn hàng để xác minh huy hiệu người mua hàng thật (`is_verified_buyer`).
+  - [x] Xây dựng `reviews.controller.ts` & router: `GET /api/reviews/product/:productId`, `GET /api/products/:id/reviews`, `GET /api/reviews/recent`, `POST /api/reviews`.
+- [x] **Tích hợp & Khai báo Định tuyến Hệ thống**:
+  - [x] Đăng ký đầy đủ 4 router mới tại `apps/api/src/index.ts`.
+  - [x] Bổ sung phương thức `updatePaymentStatus` tại `orders.repository.ts` để đồng bộ chuyển trạng thái đơn hàng khi thanh toán.
 
 ### 3. **Bước 3 - Phát triển & Cập nhật Frontend Client (`apps/web/src/`)**
-- [ ] **Đồng bộ Giỏ hàng Server (`features/checkout/`)**:
-  - [ ] Cập nhật `cartStore.ts` kết nối API Backend `/api/cart` để duy trì giỏ hàng khi refresh hoặc chuyển thiết bị.
-  - [ ] Nâng cấp `CartDrawer.tsx` và `CartView.tsx` hỗ trợ chọn/bỏ chọn item thanh toán (`isSelected`).
-- [ ] **Tích hợp Mã giảm giá tại Checkout**:
-  - [ ] Cập nhật `CheckoutView.tsx`: Thêm ô nhập mã Coupon & nút áp dụng.
-  - [ ] Hiển thị dòng "Giảm giá Voucher" trong phần tổng quan đơn hàng và cập nhật số tiền phải trả.
-- [ ] **Tích hợp Thanh toán Online**:
-  - [ ] Cập nhật `CheckoutView.tsx`: Cho phép chọn phương thức thanh toán VietQR / VNPay / MoMo bên cạnh COD.
-  - [ ] Tạo modal hiển thị mã VietQR động với cú pháp chuyển khoản tương ứng với `transactionCode`.
-- [ ] **Giao diện Đánh giá & Bình luận (`features/products/` & `features/checkout/`)**:
-  - [ ] Tạo component `ProductReviewsSection.tsx` tại trang Chi tiết sản phẩm (`ProductDetailView.tsx`) hiển thị rating sao trung bình và danh sách bình luận.
-  - [ ] Tạo component / modal `WriteReviewModal.tsx` cho phép người dùng chọn số sao (1-5), nhập tiêu đề & nội dung đánh giá.
-  - [ ] Thêm nút "Viết đánh giá" cho các sản phẩm trong đơn hàng đã giao tại `OrderHistoryView.tsx`.
+- [x] **Đồng bộ Giỏ hàng Server (`features/checkout/`)**:
+  - [x] Cập nhật `cartStore.ts` kết nối API Backend `/api/cart` để duy trì giỏ hàng khi refresh hoặc chuyển thiết bị.
+  - [x] Nâng cấp `CartDrawer.tsx` và `CartView.tsx` hỗ trợ chọn/bỏ chọn item thanh toán (`isSelected`).
+- [x] **Tích hợp Mã giảm giá tại Checkout**:
+  - [x] Cập nhật `CheckoutView.tsx`: Thêm ô nhập mã Coupon & nút áp dụng.
+  - [x] Hiển thị dòng "Giảm giá Voucher" trong phần tổng quan đơn hàng và cập nhật số tiền phải trả.
+- [x] **Tích hợp Thanh toán Online**:
+  - [x] Cập nhật `CheckoutView.tsx`: Cho phép chọn phương thức thanh toán VietQR / VNPay / MoMo bên cạnh COD.
+  - [x] Tạo modal hiển thị mã VietQR động với cú pháp chuyển khoản tương ứng với `transactionCode`.
+- [x] **Giao diện Đánh giá & Bình luận (`features/products/` & `features/checkout/`)**:
+  - [x] Tạo component `ProductReviewsSection.tsx` tại trang Chi tiết sản phẩm (`ProductDetailView.tsx`) hiển thị rating sao trung bình và danh sách bình luận.
+  - [x] Tạo component / modal `WriteReviewModal.tsx` cho phép người dùng chọn số sao (1-5), nhập tiêu đề & nội dung đánh giá.
+  - [x] Thêm nút "Viết đánh giá" cho các sản phẩm trong đơn hàng đã giao tại `OrderHistoryView.tsx`.
 
 ### 4. **Bước 4 - Kiểm thử, Tích hợp Toàn trình & Triển khai (Integration & Deployment)**
 - [ ] **Kiểm thử Luồng E2E**:

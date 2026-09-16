@@ -1,6 +1,6 @@
 import { pgTable, text, integer, varchar, boolean, timestamp } from 'drizzle-orm/pg-core';
-import { users } from './users';
-import { orders } from './orders';
+import { usersTable } from './users.ts';
+import { ordersTable } from './orders.ts';
 
 export const coupons = pgTable('coupons', {
   id: text('id').primaryKey(),
@@ -28,10 +28,10 @@ export const couponUsages = pgTable('coupon_usages', {
     .references(() => coupons.id, { onDelete: 'cascade' }),
   userId: text('user_id')
     .notNull()
-    .references(() => users.id, { onDelete: 'cascade' }),
+    .references(() => usersTable.id, { onDelete: 'cascade' }),
   orderId: text('order_id')
     .notNull()
-    .references(() => orders.id, { onDelete: 'cascade' }),
+    .references(() => ordersTable.id, { onDelete: 'cascade' }),
   discountApplied: integer('discount_applied').notNull(),
   usedAt: timestamp('used_at').defaultNow().notNull(),
 });
@@ -40,3 +40,12 @@ export type Coupon = typeof coupons.$inferSelect;
 export type NewCoupon = typeof coupons.$inferInsert;
 export type CouponUsage = typeof couponUsages.$inferSelect;
 export type NewCouponUsage = typeof couponUsages.$inferInsert;
+
+export type CouponDb = Coupon;
+export type NewCouponDb = NewCoupon;
+export type CouponUsageDb = CouponUsage;
+export type NewCouponUsageDb = NewCouponUsage;
+
+export const couponsTable = coupons;
+export const couponUsagesTable = couponUsages;
+

@@ -5,6 +5,10 @@ import { productsRouter } from './products/index.ts';
 import { categoriesRouter } from './categories/index.ts';
 import { brandsRouter } from './brands/index.ts';
 import { ordersRouter } from './orders/index.ts';
+import { cartRouter } from './cart/index.ts';
+import { couponsRouter } from './coupons/index.ts';
+import { paymentsRouter } from './payments/index.ts';
+import { reviewsRouter } from './reviews/index.ts';
 import { errorHandler, notFoundHandler } from './shared/middlewares/error.middleware.ts';
 import { initializeDatabase } from './init-db.ts';
 
@@ -23,7 +27,7 @@ app.get('/api/info', (_req, res) => {
   res.json({
     name: 'ecommerce-api',
     version: '1.0.0',
-    phase: 'Phase 5: Hoàn thiện & Vận hành (Error Handling, Zod Validation & Production Ready)',
+    phase: 'Phase 6: E-Commerce Complete Suite (Cart, Coupons, Payments, Reviews)',
     status: 'operational',
     timestamp: new Date().toISOString(),
   });
@@ -48,6 +52,22 @@ app.use('/api/products', productsRouter);
 // Categories routes (/categories and /api/categories)
 app.use('/categories', categoriesRouter);
 app.use('/api/categories', categoriesRouter);
+
+// Cart routes (/cart and /api/cart)
+app.use('/cart', cartRouter);
+app.use('/api/cart', cartRouter);
+
+// Coupons routes (/coupons and /api/coupons)
+app.use('/coupons', couponsRouter);
+app.use('/api/coupons', couponsRouter);
+
+// Payments routes (/payments and /api/payments)
+app.use('/payments', paymentsRouter);
+app.use('/api/payments', paymentsRouter);
+
+// Reviews routes (/reviews and /api/reviews)
+app.use('/reviews', reviewsRouter);
+app.use('/api/reviews', reviewsRouter);
 
 // Orders & Checkout routes (/orders and /api/orders)
 app.use('/orders', ordersRouter);

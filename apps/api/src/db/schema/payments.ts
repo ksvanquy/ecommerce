@@ -1,13 +1,13 @@
 import { pgTable, text, integer, varchar, timestamp, jsonb } from 'drizzle-orm/pg-core';
-import { orders } from './orders';
-import { users } from './users';
+import { ordersTable } from './orders.ts';
+import { usersTable } from './users.ts';
 
 export const paymentTransactions = pgTable('payment_transactions', {
   id: text('id').primaryKey(),
   orderId: text('order_id')
     .notNull()
-    .references(() => orders.id, { onDelete: 'cascade' }),
-  userId: text('user_id').references(() => users.id, { onDelete: 'set null' }),
+    .references(() => ordersTable.id, { onDelete: 'cascade' }),
+  userId: text('user_id').references(() => usersTable.id, { onDelete: 'set null' }),
   transactionCode: varchar('transaction_code', { length: 100 }).notNull().unique(),
   provider: varchar('provider', { length: 50 }).notNull(), // 'vnpay' | 'momo' | 'vietqr' | 'stripe' | 'zalopay' | 'cod'
   amount: integer('amount').notNull(),
@@ -22,3 +22,9 @@ export const paymentTransactions = pgTable('payment_transactions', {
 
 export type PaymentTransaction = typeof paymentTransactions.$inferSelect;
 export type NewPaymentTransaction = typeof paymentTransactions.$inferInsert;
+
+export type PaymentTransactionDb = PaymentTransaction;
+export type NewPaymentTransactionDb = NewPaymentTransaction;
+
+export const paymentTransactionsTable = paymentTransactions;
+

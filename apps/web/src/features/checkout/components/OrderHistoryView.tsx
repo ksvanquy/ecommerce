@@ -5,8 +5,10 @@ import { useCancelOrder } from '../api/useCancelOrder.ts';
 import { useCartStore } from '../store/cartStore.ts';
 import { useAuthStore } from '../../auth/store/authStore.ts';
 import { useLogin } from '../../auth/api/useLogin.ts';
-import { Button, Modal } from '@repo/ui';
+import { Button, Modal, toast } from '@repo/ui';
 import { formatCurrency } from '../../../utils/currency.ts';
+import { PaymentModal } from './PaymentModal.tsx';
+import { WriteReviewModal } from '../../products/components/WriteReviewModal.tsx';
 import {
   Package,
   Calendar,
@@ -30,6 +32,8 @@ import {
   ChevronUp,
   LogIn,
   ShieldCheck,
+  Star,
+  QrCode,
 } from 'lucide-react';
 import type { Order, OrderStatus } from '../types.ts';
 
@@ -38,7 +42,12 @@ export const OrderHistoryView: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [cancelModalOrder, setCancelModalOrder] = useState<Order | null>(null);
   const [detailModalOrder, setDetailModalOrder] = useState<Order | null>(null);
-  const [feedbackMessage, setFeedbackMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [paymentModalOrder, setPaymentModalOrder] = useState<Order | null>(null);
+  const [reviewTarget, setReviewTarget] = useState<{
+    productId: string;
+    productName: string;
+    orderId: string;
+  } | null>(null);
 
   const user = useAuthStore((state) => state.user);
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
@@ -59,21 +68,18 @@ export const OrderHistoryView: React.FC = () => {
 
   const handleConfirmCancel = () => {
     if (!cancelModalOrder) return;
-    setFeedbackMessage(null);
 
     cancelOrder(cancelModalOrder.id, {
       onSuccess: () => {
-        setFeedbackMessage({
-          type: 'success',
-          text: `Đã hủy đơn hàng #${cancelModalOrder.id} thành công. Toàn bộ số lượng sản phẩm đã được hoàn trả về kho tồn kho.`,
+        toast.success(`Đã hủy đơn hàng #${cancelModalOrder.id} thành công`, {
+          description: 'Toàn bộ số lượng sản phẩm đã được hoàn trả về kho tồn kho.',
         });
         setCancelModalOrder(null);
         refetch();
       },
       onError: (err: any) => {
-        setFeedbackMessage({
-          type: 'error',
-          text: err?.message || 'Có lỗi xảy ra khi hủy đơn hàng.',
+        toast.error('Không thể hủy đơn hàng lúc này', {
+          description: err?.message || 'Vui lòng kiểm tra lại điều kiện đơn hàng.',
         });
       },
     });
@@ -95,6 +101,9 @@ export const OrderHistoryView: React.FC = () => {
         },
         item.quantity,
       );
+    });
+    toast.success(`Đã thêm ${order.items.length} sản phẩm vào giỏ hàng`, {
+      description: `Sản phẩm từ đơn hàng #${order.id} đã sẵn sàng trong giỏ hàng.`,
     });
     setOpenCart(true);
   };
@@ -171,34 +180,6 @@ export const OrderHistoryView: React.FC = () => {
           </div>
         </div>
       </div>
-
-      {/* Feedback Alert if Cancelled */}
-      {feedbackMessage && (
-        <div
-          className={`p-3.5 rounded-xl border flex items-start justify-between text-xs ${
-            feedbackMessage.type === 'success'
-              ? 'bg-emerald-50 border-emerald-200 text-emerald-800'
-              : 'bg-rose-50 border-rose-200 text-rose-800'
-          }`}
-        >
-          <div className="flex items-center gap-2">
-            {feedbackMessage.type === 'success' ? (
-              <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-            ) : (
-              <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0" />
-            )}
-            <span>{feedbackMessage.text}</span>
-          </div>
-          <Button
-            type="button"
-            variant="ghost"
-            onClick={() => setFeedbackMessage(null)}
-            className="text-xs font-semibold ml-4 underline opacity-70 hover:opacity-100 p-0 hover:bg-transparent inline h-auto"
-          >
-            Đóng
-          </Button>
-        </div>
-      )}
 
       {/* Guest Mode Notification & Quick Login */}
       {!isAuthenticated && (
@@ -445,6 +426,18 @@ export const OrderHistoryView: React.FC = () => {
                       <span>Mua lại</span>
                     </Button>
 
+                    {order.paymentMethod !== 'cod' && order.paymentStatus !== 'paid' && order.status !== 'cancelled' && (
+                      <Button
+                        variant="primary"
+                        size="sm"
+                        className="text-xs bg-blue-600 hover:bg-blue-700"
+                        onClick={() => setPaymentModalOrder(order)}
+                      >
+                        <QrCode className="w-3 h-3 mr-1" />
+                        <span>Thanh toán ngay</span>
+                      </Button>
+                    )}
+
                     {order.status === 'pending' && (
                       <Button
                         variant="danger"
@@ -562,9 +555,28 @@ export const OrderHistoryView: React.FC = () => {
                         </p>
                       </div>
                     </div>
-                    <span className="font-bold font-mono text-slate-900 shrink-0">
-                      {formatCurrency(it.subtotal || it.price * it.quantity)}
-                    </span>
+                    <div className="flex items-center gap-3 shrink-0">
+                      <span className="font-bold font-mono text-slate-900">
+                        {formatCurrency(it.subtotal || it.price * it.quantity)}
+                      </span>
+                      {['delivered', 'processing'].includes(detailModalOrder.status) && (
+                        <Button
+                          variant="outline"
+                          size="xs"
+                          className="text-[11px] text-amber-600 border-amber-200 hover:bg-amber-50"
+                          onClick={() => {
+                            setReviewTarget({
+                              productId: it.productId,
+                              productName: it.productName,
+                              orderId: detailModalOrder.id,
+                            });
+                          }}
+                        >
+                          <Star className="w-3 h-3 mr-1 fill-amber-500 text-amber-500" />
+                          <span>Đánh giá</span>
+                        </Button>
+                      )}
+                    </div>
                   </div>
                 ))}
               </div>
@@ -596,10 +608,24 @@ export const OrderHistoryView: React.FC = () => {
               </div>
             </div>
 
-            <div className="pt-2 flex justify-end">
+            <div className="pt-2 flex justify-between items-center">
+              {detailModalOrder.paymentMethod !== 'cod' && detailModalOrder.paymentStatus !== 'paid' && detailModalOrder.status !== 'cancelled' && (
+                <Button
+                  variant="primary"
+                  size="sm"
+                  className="text-xs"
+                  onClick={() => {
+                    setPaymentModalOrder(detailModalOrder);
+                  }}
+                >
+                  <QrCode className="w-3.5 h-3.5 mr-1" />
+                  Mở mã QR thanh toán
+                </Button>
+              )}
               <Button
                 variant="outline"
                 size="sm"
+                className="ml-auto"
                 onClick={() => setDetailModalOrder(null)}
               >
                 Đóng
@@ -608,6 +634,46 @@ export const OrderHistoryView: React.FC = () => {
           </div>
         )}
       </Modal>
+
+      {/* Online Payment Modal */}
+      {paymentModalOrder && (
+        <PaymentModal
+          order={paymentModalOrder}
+          provider={
+            (paymentModalOrder.paymentMethod as any) === 'cod'
+              ? 'vietqr'
+              : (paymentModalOrder.paymentMethod as any)
+          }
+          onPaymentSuccess={() => {
+            refetch();
+            setPaymentModalOrder(null);
+            if (detailModalOrder && detailModalOrder.id === paymentModalOrder.id) {
+              setDetailModalOrder({
+                ...detailModalOrder,
+                paymentStatus: 'paid',
+                status: 'processing',
+              });
+            }
+          }}
+          onClose={() => setPaymentModalOrder(null)}
+        />
+      )}
+
+      {/* Write Review Modal */}
+      {reviewTarget && (
+        <WriteReviewModal
+          productId={reviewTarget.productId}
+          productName={reviewTarget.productName}
+          orderId={reviewTarget.orderId}
+          onReviewSubmitted={() => {
+            toast.success('Đã gửi đánh giá thành công!', {
+              description: `Cảm ơn bạn đã đóng góp đánh giá cho "${reviewTarget.productName}".`,
+            });
+            setReviewTarget(null);
+          }}
+          onClose={() => setReviewTarget(null)}
+        />
+      )}
     </div>
   );
 };

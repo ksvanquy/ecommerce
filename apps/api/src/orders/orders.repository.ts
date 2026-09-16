@@ -229,6 +229,36 @@ export class OrdersRepository {
       updatedAt: updated.updatedAt.toISOString(),
     };
   }
+
+  async updatePaymentStatus(id: string, paymentStatus: 'paid' | 'unpaid' | 'refunded', advanceStatus: boolean = true): Promise<Order | null> {
+    const order = await this.findById(id);
+    if (!order) return null;
+
+    const now = new Date();
+    const updateData: Record<string, any> = {
+      paymentStatus,
+      updatedAt: now,
+    };
+
+    if (paymentStatus === 'paid' && advanceStatus && order.status === 'pending') {
+      updateData.status = 'processing';
+    }
+
+    const [updated] = await db
+      .update(ordersTable)
+      .set(updateData)
+      .where(eq(ordersTable.id, id))
+      .returning();
+
+    if (!updated) return null;
+
+    return {
+      ...order,
+      status: updated.status as OrderStatus,
+      paymentStatus: updated.paymentStatus as any,
+      updatedAt: updated.updatedAt.toISOString(),
+    };
+  }
 }
 
 export const ordersRepository = new OrdersRepository();
