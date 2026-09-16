@@ -281,31 +281,6 @@ export const CartView: React.FC = () => {
                 </div>
               </div>
             </div>
-
-            {/* Micro Feature highlights */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs text-slate-600">
-              <div className="p-3.5 bg-white rounded-xl border border-slate-200 flex items-center gap-2.5">
-                <Truck className="w-4 h-4 text-blue-600 shrink-0" />
-                <div>
-                  <p className="font-semibold text-slate-800">Miễn phí ship</p>
-                  <p className="text-[11px] text-slate-400">Cho đơn hàng từ 500.000 VNĐ</p>
-                </div>
-              </div>
-              <div className="p-3.5 bg-white rounded-xl border border-slate-200 flex items-center gap-2.5">
-                <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
-                <div>
-                  <p className="font-semibold text-slate-800">Bảo hành chính hãng</p>
-                  <p className="text-[11px] text-slate-400">12 tháng đổi mới 1-1</p>
-                </div>
-              </div>
-              <div className="p-3.5 bg-white rounded-xl border border-slate-200 flex items-center gap-2.5">
-                <RotateCcw className="w-4 h-4 text-purple-600 shrink-0" />
-                <div>
-                  <p className="font-semibold text-slate-800">Đổi trả 30 ngày</p>
-                  <p className="text-[11px] text-slate-400">Thủ tục nhanh chóng</p>
-                </div>
-              </div>
-            </div>
           </div>
 
           {/* Right: Order Summary Card */}

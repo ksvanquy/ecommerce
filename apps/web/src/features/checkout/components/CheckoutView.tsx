@@ -334,7 +334,7 @@ export const CheckoutView: React.FC<CheckoutViewProps> = ({ onBackToCart }) => {
             Xác nhận &amp; Hoàn tất Đặt hàng
           </h1>
           <p className="text-xs text-slate-500 mt-1">
-            Vui lòng rà soát lại thông tin nhận hàng và sản phẩm trước khi khởi tạo transaction thanh toán.
+            Vui lòng rà soát lại thông tin nhận hàng và sản phẩm trước khi xác nhận đặt hàng.
           </p>
         </div>
 
@@ -361,10 +361,10 @@ export const CheckoutView: React.FC<CheckoutViewProps> = ({ onBackToCart }) => {
           </div>
           <div className="text-xs">
             <p className="font-bold text-blue-950">
-              Hệ thống Transaction Độc lập &amp; Đảm bảo Kho bãi (Server-side Acid Transaction)
+              Thanh toán An toàn &amp; Bảo mật Đơn hàng
             </p>
             <p className="text-blue-800/80 mt-1 leading-relaxed">
-              Nhằm ngăn chặn tranh chấp tồn kho khi mua hàng cùng lúc, TechStore sử dụng transaction nguyên tử cấp độ cơ sở dữ liệu để kiểm tra số lượng và khấu trừ kho thực một cách an toàn. Mọi mã giảm giá và tổng hóa đơn được tính toán lại hoàn toàn ở máy chủ để bảo mật tuyệt đối.
+              Thông tin giao dịch của bạn được mã hóa và bảo mật tuyệt đối. Tất cả giá trị đơn hàng và mã ưu đãi sẽ được hệ thống kiểm tra chính xác trước khi khởi tạo đơn hàng.
             </p>
           </div>
         </div>
