@@ -115,8 +115,8 @@ export const Header: React.FC<HeaderProps> = ({
             type="button"
             onClick={handleOpenCart}
             className={`px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 cursor-pointer shadow-2xs ${
-              activeTab === 'cart' || totalCartItems > 0
-                ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-blue-200'
+              activeTab === 'cart'
+                ? 'bg-blue-600 text-white shadow-blue-200'
                 : 'bg-slate-100 text-slate-700 hover:bg-slate-200 hover:text-slate-900'
             }`}
             title="Xem Giỏ hàng chi tiết"
@@ -127,7 +127,11 @@ export const Header: React.FC<HeaderProps> = ({
             {totalCartItems > 0 && (
               <span
                 id="header-cart-badge"
-                className="ml-0.5 px-1.5 py-0.5 rounded-full bg-white text-blue-700 text-[10px] font-extrabold flex items-center justify-center leading-none shadow-2xs"
+                className={`ml-0.5 px-1.5 py-0.5 rounded-full text-[10px] font-extrabold flex items-center justify-center leading-none shadow-2xs ${
+                  activeTab === 'cart'
+                    ? 'bg-white text-blue-700'
+                    : 'bg-blue-600 text-white'
+                }`}
               >
                 {totalCartItems > 99 ? '99+' : totalCartItems}
               </span>
