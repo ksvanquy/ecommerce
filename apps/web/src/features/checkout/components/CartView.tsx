@@ -77,7 +77,7 @@ export const CartView: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6 max-w-6xl mx-auto py-2">
+    <div className="space-y-6 w-full py-2">
       {/* Header Banner */}
       <div className="bg-gradient-to-r from-slate-900 via-blue-950 to-indigo-950 text-white rounded-2xl p-6 shadow-sm">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">

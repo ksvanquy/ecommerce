@@ -316,7 +316,7 @@ export const CheckoutView: React.FC<CheckoutViewProps> = ({ onBackToCart }) => {
 
   // 3. Normal Form View
   return (
-    <div className="py-8 px-4 sm:px-6 lg:px-8">
+    <div className="space-y-6 w-full py-2">
       {/* Back Link and Header */}
       <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
