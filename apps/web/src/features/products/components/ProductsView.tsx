@@ -201,36 +201,40 @@ export const ProductsView: React.FC = () => {
       {/* Right Column: Filters and Grid layout (Responsive span) */}
       <div className="col-span-1 md:col-span-9 space-y-6">
         {/* On Mobile: Horizontal Category Slider (keeps mobile fully functional) */}
-        <div className="md:hidden bg-white rounded-2xl p-3 flex items-center gap-1.5 overflow-x-auto scrollbar-none text-xs border border-slate-100">
-          <button
-            type="button"
-            onClick={() => handleFilterChange({ category: 'all', page: 1 })}
-            className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
-              filters.category === 'all' || !filters.category
-                ? 'bg-blue-600 text-white'
-                : 'bg-slate-100 hover:bg-slate-200/70 text-slate-700 hover:text-slate-900'
-            }`}
-          >
-            <span>Tất cả</span>
-          </button>
-          
-          {categoryTree.map((cat) => {
-            const isSelected = filters.category === cat.slug || filters.category === cat.id || filters.category === cat.name;
-            return (
-              <button
-                key={cat.id}
-                type="button"
-                onClick={() => handleFilterChange({ category: cat.slug, page: 1 })}
-                className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
-                  isSelected
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-slate-100 hover:bg-slate-200/70 text-slate-700 hover:text-slate-900'
-                }`}
-              >
-                <span>{cat.name}</span>
-              </button>
-            );
-          })}
+        <div className="md:hidden relative w-full">
+          <div className="bg-white rounded-2xl p-3 pr-12 flex items-center gap-1.5 overflow-x-auto flat-scrollbar-x text-xs border border-slate-100">
+            <button
+              type="button"
+              onClick={() => handleFilterChange({ category: 'all', page: 1 })}
+              className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
+                filters.category === 'all' || !filters.category
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-slate-100 hover:bg-slate-200/70 text-slate-700 hover:text-slate-900'
+              }`}
+            >
+              <span>Tất cả</span>
+            </button>
+            
+            {categoryTree.map((cat) => {
+              const isSelected = filters.category === cat.slug || filters.category === cat.id || filters.category === cat.name;
+              return (
+                <button
+                  key={cat.id}
+                  type="button"
+                  onClick={() => handleFilterChange({ category: cat.slug, page: 1 })}
+                  className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
+                    isSelected
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-slate-100 hover:bg-slate-200/70 text-slate-700 hover:text-slate-900'
+                  }`}
+                >
+                  <span>{cat.name}</span>
+                </button>
+              );
+            })}
+          </div>
+          {/* Subtle fade-out effect on the right indicating more categories to scroll */}
+          <div className="pointer-events-none absolute right-px top-px bottom-px w-14 bg-gradient-to-l from-white via-white/80 to-transparent rounded-r-2xl" />
         </div>
 
         {/* Search & Filter Bar */}

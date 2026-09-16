@@ -9,3 +9,27 @@ body {
   background-color: #f8fafc;
   color: #0f172a;
 }
+
+/* Custom premium scrollbar for horizontal containers */
+.flat-scrollbar-x {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
+}
+
+.flat-scrollbar-x::-webkit-scrollbar {
+  height: 4px;
+}
+
+.flat-scrollbar-x::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.flat-scrollbar-x::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1;
+  border-radius: 9999px;
+}
+
+.flat-scrollbar-x::-webkit-scrollbar-thumb:hover {
+  background-color: #94a3b8;
+}
+

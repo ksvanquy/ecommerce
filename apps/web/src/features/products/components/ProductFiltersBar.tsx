@@ -85,72 +85,75 @@ export const ProductFiltersBar: React.FC<ProductFiltersBarProps> = ({
 
   return (
     <div className="bg-white border border-slate-200/90 rounded-2xl p-4 sm:p-5 shadow-xs space-y-4">
-      {/* 1st Row: Flat Brand Pills */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
-        {/* Toggle / Filter Trigger Button on the left */}
-        <button
-          type="button"
-          onClick={() => setShowAdvanced(!showAdvanced)}
-          className={`flex items-center gap-1.5 px-3.5 py-1.5 border rounded-xl text-xs font-extrabold transition-all whitespace-nowrap cursor-pointer shrink-0 ${
-            showAdvanced
-              ? 'border-blue-600 text-white bg-blue-600 shadow-xs'
-              : 'border-blue-200 text-blue-600 bg-blue-50/20 hover:bg-blue-50/50'
-          }`}
-        >
-          <Filter className="w-3.5 h-3.5" />
-          <span>Lọc</span>
-        </button>
-
-        {/* Brand selection pills */}
-        <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none shrink-0 py-0.5">
-          {brandsList.map((brand) => {
-            const isSelected = filters.brandId === brand.id;
-            return (
-              <button
-                key={brand.id}
-                type="button"
-                onClick={() => onFilterChange({ brandId: isSelected ? undefined : brand.id, page: 1 })}
-                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold border transition-all whitespace-nowrap cursor-pointer ${
-                  isSelected
-                    ? 'border-blue-500 text-blue-600 bg-blue-50/30'
-                    : 'border-slate-100 bg-slate-100 hover:bg-slate-200/60 text-slate-700 hover:text-slate-900'
-                }`}
-              >
-                <span>{brand.name}</span>
-              </button>
-            );
-          })}
-        </div>
-
-
-        {/* Custom smart tag pills from screenshot */}
-        <div className="flex items-center gap-1.5 shrink-0 py-0.5">
+      {/* 1st Row: Flat Brand Pills with fade indicators and custom scrollbar */}
+      <div className="relative w-full">
+        <div className="flex items-center gap-2 overflow-x-auto pb-1.5 flat-scrollbar-x pr-14">
+          {/* Toggle / Filter Trigger Button on the left */}
           <button
             type="button"
-            onClick={() => handleSmartTagClick('AI')}
-            className={`flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-bold border transition-all whitespace-nowrap cursor-pointer ${
-              filters.search === 'AI'
-                ? 'border-blue-500 text-blue-600 bg-blue-50/30 font-extrabold'
-                : 'border-slate-100 bg-slate-100 hover:bg-slate-200/60 text-slate-700 hover:text-slate-900'
+            onClick={() => setShowAdvanced(!showAdvanced)}
+            className={`flex items-center gap-1.5 px-3.5 py-1.5 border rounded-xl text-xs font-extrabold transition-all whitespace-nowrap cursor-pointer shrink-0 ${
+              showAdvanced
+                ? 'border-blue-600 text-white bg-blue-600 shadow-xs'
+                : 'border-blue-200 text-blue-600 bg-blue-50/20 hover:bg-blue-50/50'
             }`}
           >
-            <Sparkles className="w-3.5 h-3.5 text-blue-500" />
-            <span>Thiết bị AI cao cấp</span>
+            <Filter className="w-3.5 h-3.5" />
+            <span>Lọc</span>
           </button>
 
-          <button
-            type="button"
-            onClick={() => handleSmartTagClick('M1')}
-            className={`flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-bold border transition-all whitespace-nowrap cursor-pointer ${
-              filters.search === 'M1'
-                ? 'border-blue-500 text-blue-600 bg-blue-50/30 font-extrabold'
-                : 'border-slate-100 bg-slate-100 hover:bg-slate-200/60 text-slate-700 hover:text-slate-900'
-            }`}
-          >
-            <TrendingUp className="w-3.5 h-3.5 text-blue-500" />
-            <span>Dòng chip M1 / M2</span>
-          </button>
+          {/* Brand selection pills */}
+          <div className="flex items-center gap-1.5 shrink-0 py-0.5">
+            {brandsList.map((brand) => {
+              const isSelected = filters.brandId === brand.id;
+              return (
+                <button
+                  key={brand.id}
+                  type="button"
+                  onClick={() => onFilterChange({ brandId: isSelected ? undefined : brand.id, page: 1 })}
+                  className={`px-3.5 py-1.5 rounded-xl text-xs font-bold border transition-all whitespace-nowrap cursor-pointer ${
+                    isSelected
+                      ? 'border-blue-500 text-blue-600 bg-blue-50/30'
+                      : 'border-slate-100 bg-slate-100 hover:bg-slate-200/60 text-slate-700 hover:text-slate-900'
+                  }`}
+                >
+                  <span>{brand.name}</span>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Custom smart tag pills from screenshot */}
+          <div className="flex items-center gap-1.5 shrink-0 py-0.5">
+            <button
+              type="button"
+              onClick={() => handleSmartTagClick('AI')}
+              className={`flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-bold border transition-all whitespace-nowrap cursor-pointer ${
+                filters.search === 'AI'
+                  ? 'border-blue-500 text-blue-600 bg-blue-50/30 font-extrabold'
+                  : 'border-slate-100 bg-slate-100 hover:bg-slate-200/60 text-slate-700 hover:text-slate-900'
+              }`}
+            >
+              <Sparkles className="w-3.5 h-3.5 text-blue-500" />
+              <span>Thiết bị AI cao cấp</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => handleSmartTagClick('M1')}
+              className={`flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-bold border transition-all whitespace-nowrap cursor-pointer ${
+                filters.search === 'M1'
+                  ? 'border-blue-500 text-blue-600 bg-blue-50/30 font-extrabold'
+                  : 'border-slate-100 bg-slate-100 hover:bg-slate-200/60 text-slate-700 hover:text-slate-900'
+              }`}
+            >
+              <TrendingUp className="w-3.5 h-3.5 text-blue-500" />
+              <span>Dòng chip M1 / M2</span>
+            </button>
+          </div>
         </div>
+        {/* Subtle right fade indicator */}
+        <div className="pointer-events-none absolute right-0 top-0 bottom-1.5 w-16 bg-gradient-to-l from-white via-white/80 to-transparent" />
       </div>
 
       {/* Advanced Filters Block (collapsible for Price Ranges etc) */}
