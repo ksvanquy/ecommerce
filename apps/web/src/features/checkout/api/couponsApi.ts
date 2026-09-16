@@ -7,12 +7,12 @@ import type {
 
 export const couponsApi = {
   validateCoupon: async (payload: ValidateCouponPayload): Promise<CouponValidationResult> => {
-    const response = await apiClient.post('/api/coupons/validate', payload);
+    const response = await apiClient.post('/coupons/validate', payload);
     return response.data.data;
   },
 
   getAvailableCoupons: async (): Promise<Coupon[]> => {
-    const response = await apiClient.get('/api/coupons/available');
+    const response = await apiClient.get('/coupons/available');
     return response.data.data;
   },
 };

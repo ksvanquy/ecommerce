@@ -18,7 +18,7 @@ export interface ProductReviewsResponse {
 
 export const reviewsApi = {
   getProductReviews: async (productId: string, page = 1, limit = 20): Promise<ProductReviewsResponse> => {
-    const response = await apiClient.get(`/api/products/${productId}/reviews`, {
+    const response = await apiClient.get(`/products/${productId}/reviews`, {
       params: { page, limit },
     });
     return {
@@ -29,12 +29,12 @@ export const reviewsApi = {
   },
 
   createReview: async (payload: CreateReviewPayload): Promise<Review> => {
-    const response = await apiClient.post('/api/reviews', payload);
+    const response = await apiClient.post('/reviews', payload);
     return response.data.data;
   },
 
   getRecentReviews: async (limit = 10): Promise<Review[]> => {
-    const response = await apiClient.get('/api/reviews/recent', {
+    const response = await apiClient.get('/reviews/recent', {
       params: { limit },
     });
     return response.data.data;

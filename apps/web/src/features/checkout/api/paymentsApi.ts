@@ -23,22 +23,22 @@ export interface PaymentIntentResponse {
 
 export const paymentsApi = {
   createIntent: async (payload: CreatePaymentIntentPayload): Promise<PaymentIntentResponse> => {
-    const response = await apiClient.post('/api/payments/create-intent', payload);
+    const response = await apiClient.post('/payments/create-intent', payload);
     return response.data.data;
   },
 
   getOrderTransactions: async (orderId: string): Promise<PaymentTransaction[]> => {
-    const response = await apiClient.get(`/api/payments/order/${orderId}`);
+    const response = await apiClient.get(`/payments/order/${orderId}`);
     return response.data.data;
   },
 
   verifyTransaction: async (transactionCode: string): Promise<PaymentTransaction> => {
-    const response = await apiClient.get(`/api/payments/verify/${transactionCode}`);
+    const response = await apiClient.get(`/payments/verify/${transactionCode}`);
     return response.data.data;
   },
 
   confirmPayment: async (transactionCode: string, gatewayTxNo?: string): Promise<{ transaction: PaymentTransaction; orderPaid: boolean }> => {
-    const response = await apiClient.post('/api/payments/confirm', {
+    const response = await apiClient.post('/payments/confirm', {
       transactionCode,
       gatewayTxNo,
     });
