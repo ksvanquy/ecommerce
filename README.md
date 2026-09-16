@@ -45,11 +45,14 @@ Dự án được cấu trúc theo dạng Monorepo chuẩn (npm workspaces):
 ### 1. Phía Người Dùng (Client / Web)
 - **Giao diện hiện đại**: Thiết kế tối ưu hiển thị thiết bị công nghệ với Tailwind CSS v4 và hoạt ảnh mượt mà từ Motion.
 - **Khám phá sản phẩm đa tầng**: Cây danh mục đa cấp (Electronics, Laptops, Audio, Keyboards...), bộ lọc giá, tìm kiếm tức thì theo từ khóa, sắp xếp và phân trang.
-- **Giỏ hàng & Đặt hàng nhanh chóng**: Lưu trữ giỏ hàng (Zustand persist), hỗ trợ thanh toán COD, chuyển khoản ngân hàng và kiểm tra tính hợp lệ của tồn kho.
-- **Quản lý tài khoản**: Đăng ký, đăng nhập JWT, cập nhật hồ sơ cá nhân và theo dõi trạng thái đơn hàng thời gian thực.
+- **Giỏ hàng & Đặt hàng nhanh chóng**: Lưu trữ giỏ hàng (Zustand persist), hỗ trợ thanh toán COD làm mặc định, chuyển khoản ngân hàng và kiểm tra tính hợp lệ của tồn kho.
+- **Quản lý tài khoản & Sổ địa chỉ (Mới)**: Đăng ký, đăng nhập JWT, quản lý danh bạ nhiều địa chỉ giao hàng linh hoạt trên hồ sơ cá nhân và dễ dàng chọn nhanh địa chỉ nhận hàng khi Checkout.
+- **Xem trạng thái đơn hàng**: Theo dõi chính xác thông tin đơn hàng và tình trạng vận chuyển thời gian thực.
 
 ### 2. Phía Backend (API)
 - **Kiến trúc 3 tầng (Layered Architecture)**: Phân tách rõ ràng giữa `Controller` (giao tiếp HTTP), `Service` (xử lý nghiệp vụ) và `Repository` (truy vấn dữ liệu).
+- **Xác nhận thanh toán thủ công an toàn (Bảo mật mới)**: Loại bỏ rủi ro khách hàng tự duyệt trạng thái đơn hàng. Giao dịch do người dùng báo cáo sẽ nằm ở trạng thái `pending` và đơn hàng tiếp tục ở trạng thái chưa thanh toán (`unpaid`) cho tới khi được Admin trực tiếp đối soát thủ công trên tài khoản ngân hàng thực tế và phê duyệt thành công.
+- **Khóa cứng vai trò đăng ký (Bảo mật mới)**: Loại bỏ hộp chọn vai trò trên UI đăng ký, chặn đứng lỗ hổng leo thang đặc quyền tạo tài khoản `admin` bằng cách ép cứng vai trò `customer` trực tiếp tại tầng nghiệp vụ của máy chủ.
 - **Public API Contract**: Mỗi module (`users`, `products`, `categories`, `orders`) sở hữu một file `index.ts` đóng vai trò Facade ngăn chặn việc truy cập lộn xộn giữa các module.
 - **Centralized Database Schema (Drizzle ORM)**: Toàn bộ bảng cơ sở dữ liệu và quan hệ hai chiều (`relations`) được đặt tại `src/db/schema`, hỗ trợ đầy đủ Drizzle Relational Queries (`db.query`).
 - **Pure PostgreSQL & ACID Transactions**: 100% dữ liệu được lưu trữ bền vững trên PostgreSQL. Toàn bộ thao tác đặt hàng và trừ tồn kho chạy bằng Database Transaction (`db.transaction`) đảm bảo tính toàn vẹn dữ liệu.
@@ -140,9 +143,14 @@ npm start
 | Phương thức | Endpoint | Mô tả | Quyền truy cập |
 | :--- | :--- | :--- | :--- |
 | `GET` | `/api/health` | Kiểm tra trạng thái hệ thống & kết nối DB | Public |
-| `POST` | `/api/auth/register` | Đăng ký tài khoản mới | Public |
+| `POST` | `/api/auth/register` | Đăng ký tài khoản mới (luôn là vai trò `customer`) | Public |
 | `POST` | `/api/auth/login` | Đăng nhập lấy JWT Token | Public |
 | `GET` | `/api/auth/me` | Lấy thông tin tài khoản hiện tại | User / Admin |
+| `GET` | `/api/addresses` | Lấy danh sách sổ địa chỉ đã lưu | User |
+| `POST` | `/api/addresses` | Thêm một địa chỉ nhận hàng mới | User |
+| `PATCH` | `/api/addresses/:id` | Cập nhật thông tin chi tiết địa chỉ | User |
+| `DELETE` | `/api/addresses/:id` | Xóa địa chỉ khỏi danh bạ | User |
+| `PUT` | `/api/addresses/:id/default` | Đặt địa chỉ làm mặc định khi Checkout | User |
 | `GET` | `/api/categories` | Lấy danh sách danh mục (phân cấp cây) | Public |
 | `GET` | `/api/products` | Danh sách sản phẩm (có query, lọc, phân trang) | Public |
 | `GET` | `/api/products/:id` | Chi tiết một sản phẩm | Public |
@@ -150,3 +158,4 @@ npm start
 | `GET` | `/api/orders` | Danh sách đơn hàng | User / Admin |
 | `POST` | `/api/orders` | Tạo đơn hàng mới | User / Guest |
 | `PATCH` | `/api/orders/:id/status` | Cập nhật trạng thái giao vận đơn hàng | Admin |
+| `POST` | `/api/payments/confirm` | Nhận yêu cầu báo cáo chuyển khoản thủ công hoặc Webhook IPN | Public |

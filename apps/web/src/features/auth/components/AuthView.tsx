@@ -4,6 +4,7 @@ import { Card, Button, Badge } from '@repo/ui';
 import { LoginForm } from './LoginForm.tsx';
 import { RegisterForm } from './RegisterForm.tsx';
 import { useAuthStore } from '../store/authStore.ts';
+import { AddressManager } from '../../checkout/components/AddressManager.tsx';
 import {
   User as UserIcon,
   LogOut,
@@ -103,6 +104,11 @@ export const AuthView: React.FC = () => {
                   <p className="text-[11px] text-blue-600 mt-0.5">Phiên làm việc JWT bảo vệ riêng tư</p>
                 </div>
               </div>
+            </Card>
+
+            {/* Address Book Manager Card */}
+            <Card>
+              <AddressManager />
             </Card>
           </div>
 
