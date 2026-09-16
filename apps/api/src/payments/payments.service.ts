@@ -137,6 +137,34 @@ export class PaymentsService {
     return await paymentsRepository.findByOrderId(orderId);
   }
 
+  async getAllTransactions(): Promise<PaymentTransaction[]> {
+    return await paymentsRepository.findAllTransactions();
+  }
+
+  async approvePayment(transactionId: string): Promise<PaymentTransaction> {
+    const transactions = await paymentsRepository.findAllTransactions();
+    const tx = transactions.find((t) => t.id === transactionId || t.transactionCode === transactionId);
+    if (!tx) {
+      throw new AppError(`Không tìm thấy giao dịch với ID/Mã "${transactionId}"`, 404, 'TRANSACTION_NOT_FOUND');
+    }
+
+    if (tx.status === 'success') {
+      return tx;
+    }
+
+    const updatedTx = await paymentsRepository.updateTransactionStatus(
+      tx.id,
+      'success',
+      `APPROVED-MANUAL-${Date.now()}`,
+      { approvedBy: 'admin', approvedAt: new Date().toISOString() }
+    );
+
+    // Cập nhật trạng thái đơn hàng sang 'paid' và bắt đầu xử lý đóng gói 'processing'
+    await ordersRepository.updatePaymentStatus(tx.orderId, 'paid', true);
+
+    return updatedTx!;
+  }
+
   async getTransactionByCode(transactionCode: string): Promise<PaymentTransaction> {
     const tx = await paymentsRepository.findByTransactionCode(transactionCode);
     if (!tx) {

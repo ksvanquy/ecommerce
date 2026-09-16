@@ -33,6 +33,15 @@ const SEED_USERS = [
     updatedAt: new Date('2026-01-01T00:00:00.000Z'),
   },
   {
+    id: 'usr_admin_techstore_01',
+    email: 'admin@techstore.com',
+    passwordHash: DEFAULT_PASSWORD_HASH,
+    fullName: 'Quản trị viên TechStore',
+    role: 'admin',
+    createdAt: new Date('2026-01-01T00:00:00.000Z'),
+    updatedAt: new Date('2026-01-01T00:00:00.000Z'),
+  },
+  {
     id: 'usr_customer_demo_02',
     email: 'customer@ecommerce.com',
     passwordHash: DEFAULT_PASSWORD_HASH,

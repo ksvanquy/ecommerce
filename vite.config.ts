@@ -13,6 +13,12 @@ export default defineConfig(() => {
         name: 'api-server-middleware',
         configureServer(server) {
           server.middlewares.use(app);
+          server.middlewares.use((req, res, next) => {
+            if (req.url && (req.url === '/admin' || req.url.startsWith('/admin/'))) {
+              req.url = '/apps/admin/index.html';
+            }
+            next();
+          });
         },
       },
     ],

@@ -8,9 +8,16 @@ const __dirname = path.dirname(__filename);
 
 const PORT = 3000;
 const distPath = path.resolve(__dirname, 'dist');
+const adminDistPath = path.resolve(__dirname, 'dist/admin');
 
 // Serve static assets from production build
 app.use(express.static(distPath));
+app.use('/admin', express.static(adminDistPath));
+
+// Fallback for admin SPA routes
+app.get('/admin/*', (req, res) => {
+  res.sendFile(path.join(adminDistPath, 'index.html'));
+});
 
 // Fallback to index.html for SPA routes
 app.get('*', (req, res, next) => {

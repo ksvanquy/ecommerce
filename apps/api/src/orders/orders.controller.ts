@@ -2,6 +2,8 @@ import { Router, Request, Response, NextFunction } from 'express';
 import { ordersService } from './orders.service.ts';
 import {
   optionalAuthMiddleware,
+  authMiddleware,
+  requireRole,
   AuthenticatedRequest,
 } from '../shared/middlewares/auth.middleware.ts';
 import { validateBody, validateQuery } from '../shared/middlewares/validation.middleware.ts';
@@ -168,12 +170,14 @@ ordersRouter.patch(
 );
 
 /**
- * PATCH /orders/:id/status - Cập nhật trạng thái đơn hàng
+ * PATCH /orders/:id/status - Cập nhật trạng thái đơn hàng (Protected: requires admin role)
  */
 ordersRouter.patch(
   '/:id/status',
+  authMiddleware,
+  requireRole(['admin']),
   validateBody(updateOrderStatusSchema),
-  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
       const { id } = req.params;
       const { status } = req.body as UpdateOrderStatusPayload;

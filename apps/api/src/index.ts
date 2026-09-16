@@ -11,6 +11,7 @@ import { paymentsRouter } from './payments/index.ts';
 import { reviewsRouter } from './reviews/index.ts';
 import { addressesRouter } from './addresses/index.ts';
 import { errorHandler, notFoundHandler } from './shared/middlewares/error.middleware.ts';
+import { adminRouter } from './routes/admin.router.ts';
 import { initializeDatabase } from './init-db.ts';
 
 export const app = express();
@@ -77,6 +78,9 @@ app.use('/api/addresses', addressesRouter);
 // Orders & Checkout routes (/orders and /api/orders)
 app.use('/orders', ordersRouter);
 app.use('/api/orders', ordersRouter);
+
+// Admin routes (/api/admin)
+app.use('/api/admin', adminRouter);
 
 // 404 Not Found handler for unknown API routes
 app.use('/api/*', notFoundHandler);

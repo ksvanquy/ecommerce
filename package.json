@@ -9,7 +9,7 @@
   ],
   "scripts": {
     "dev": "vite --port=3000 --host=0.0.0.0",
-    "build": "vite build",
+    "build": "vite build && vite build --config apps/admin/vite.config.ts",
     "start": "node server.ts",
     "preview": "vite preview",
     "clean": "rm -rf dist server.js",
@@ -34,6 +34,7 @@
     "react": "^19.0.1",
     "react-dom": "^19.0.1",
     "react-router-dom": "^7.18.3",
+    "recharts": "^3.10.1",
     "sonner": "^2.0.8",
     "vite": "^6.2.3",
     "zod": "^4.6.5",

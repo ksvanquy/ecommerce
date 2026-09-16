@@ -80,6 +80,15 @@ export class PaymentsRepository {
     return rows.map((r) => this.formatTransaction(r));
   }
 
+  async findAllTransactions(): Promise<PaymentTransaction[]> {
+    const rows = await db
+      .select()
+      .from(paymentTransactionsTable)
+      .orderBy(desc(paymentTransactionsTable.createdAt));
+
+    return rows.map((r) => this.formatTransaction(r));
+  }
+
   async updateTransactionStatus(
     id: string,
     status: 'pending' | 'success' | 'failed' | 'refunded',
