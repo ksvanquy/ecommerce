@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { createBrowserRouter, RouterProvider, useNavigate } from 'react-router-dom';
 import { Header } from '../components/layout/Header.tsx';
 import { Footer } from '../components/layout/Footer.tsx';
@@ -15,13 +15,34 @@ import {
   ProductsView,
   ProductDetailView,
 } from '../features/products/index.ts';
+import { useCategoryTree } from '../features/products/api/useCategories.ts';
 import {
   CartView,
   OrderHistoryView,
   CheckoutView,
 } from '../features/checkout/index.ts';
 import { ProtectedRoute } from './ProtectedRoute.tsx';
-import { LogOut, Package, User as UserIcon } from 'lucide-react';
+import { LogOut, Package, User as UserIcon, Laptop, Smartphone, Cpu, Layers, Grid } from 'lucide-react';
+
+/**
+ * Helper to match category slugs with beautiful Lucide icons
+ */
+function getCategoryIcon(slug: string) {
+  const norm = slug.toLowerCase();
+  if (norm.includes('laptop') || norm.includes('macbook') || norm.includes('may-tinh')) {
+    return <Laptop className="w-4 h-4 shrink-0" />;
+  }
+  if (norm.includes('phone') || norm.includes('dien-thoai') || norm.includes('iphone') || norm.includes('samsung')) {
+    return <Smartphone className="w-4 h-4 shrink-0" />;
+  }
+  if (norm.includes('linh-kien') || norm.includes('cpu') || norm.includes('vga') || norm.includes('ram')) {
+    return <Cpu className="w-4 h-4 shrink-0" />;
+  }
+  if (norm.includes('phu-kien') || norm.includes('accessories') || norm.includes('chuot') || norm.includes('ban-phim')) {
+    return <Layers className="w-4 h-4 shrink-0" />;
+  }
+  return <Grid className="w-4 h-4 shrink-0" />;
+}
 
 /**
  * Main Layout wrapper with Header and Auth Modal (no Sidebar, full width layout)
@@ -40,8 +61,37 @@ function MainLayout({
     mode: 'login',
   });
 
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const { data: categoryTree = [] } = useCategoryTree();
+
   // Call useCurrentUser so state persists and rehydrates across reloads
   useCurrentUser();
+
+  // Listen to category changes inside ProductsView to highlight subheader categories correctly
+  useEffect(() => {
+    const handleCategoryChanged = (e: Event) => {
+      const customEvent = e as CustomEvent<{ categorySlug: string }>;
+      if (customEvent.detail) {
+        setSelectedCategory(customEvent.detail.categorySlug || 'all');
+      }
+    };
+    window.addEventListener('techstore:category-changed', handleCategoryChanged);
+    return () => {
+      window.removeEventListener('techstore:category-changed', handleCategoryChanged);
+    };
+  }, []);
+
+  const handleSelectCategory = (slug: string) => {
+    setSelectedCategory(slug);
+    window.dispatchEvent(
+      new CustomEvent('techstore:select-category', {
+        detail: { categorySlug: slug },
+      })
+    );
+    if (onSelectTab && activeTab !== 'products') {
+      onSelectTab('products');
+    }
+  };
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900 font-sans">
@@ -50,6 +100,53 @@ function MainLayout({
         onSelectTab={onSelectTab}
         onOpenAuthModal={(mode) => setAuthModalState({ isOpen: true, mode })}
       />
+
+      {/* Sub-header horizontal navigation bar for categories */}
+      <div className="bg-white border-b border-slate-200/80 sticky top-16 z-30 shadow-2xs">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+          <div className="flex items-center gap-1.5 overflow-x-auto py-3 scrollbar-none text-xs">
+            {/* All products button */}
+            <button
+              type="button"
+              onClick={() => handleSelectCategory('all')}
+              className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
+                selectedCategory === 'all'
+                  ? 'bg-blue-600 text-white shadow-sm'
+                  : 'bg-slate-100 hover:bg-slate-200/70 text-slate-700 hover:text-slate-900'
+              }`}
+            >
+              <Grid className="w-4 h-4 shrink-0" />
+              <span>Tất cả sản phẩm</span>
+            </button>
+
+            {categoryTree.map((cat) => {
+              const isSelected = selectedCategory === cat.slug || selectedCategory === cat.id || selectedCategory === cat.name;
+              return (
+                <button
+                  key={cat.id}
+                  type="button"
+                  onClick={() => handleSelectCategory(cat.slug)}
+                  className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
+                    isSelected
+                      ? 'bg-blue-600 text-white shadow-sm'
+                      : 'bg-slate-100 hover:bg-slate-200/70 text-slate-700 hover:text-slate-900'
+                  }`}
+                >
+                  {getCategoryIcon(cat.slug)}
+                  <span>{cat.name}</span>
+                  {cat.children && cat.children.length > 0 && (
+                    <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${
+                      isSelected ? 'bg-blue-500 text-white' : 'bg-slate-200 text-slate-600'
+                    }`}>
+                      {cat.children.length}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </div>
 
       <div className="flex-1 w-full max-w-7xl mx-auto">
         <PageWrapper>

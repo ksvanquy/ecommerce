@@ -6,6 +6,8 @@ import {
   Package,
   ShoppingCart,
   ChevronDown,
+  Search,
+  X,
 } from 'lucide-react';
 import { useAuthStore } from '../../features/auth/store/authStore.ts';
 import { useCartStore } from '../../features/checkout/store/cartStore.ts';
@@ -35,6 +37,7 @@ export const Header: React.FC<HeaderProps> = ({
   };
 
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
+  const [searchVal, setSearchVal] = useState('');
   const profileMenuRef = useRef<HTMLDivElement>(null);
 
   // Close profile dropdown on outside click
@@ -48,6 +51,43 @@ export const Header: React.FC<HeaderProps> = ({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  // Sync search input if cleared/changed from outside (e.g. products view clear filters)
+  useEffect(() => {
+    const handleSearchSync = (e: Event) => {
+      const customEvent = e as CustomEvent<{ searchTerm: string }>;
+      if (customEvent.detail) {
+        setSearchVal(customEvent.detail.searchTerm || '');
+      }
+    };
+    window.addEventListener('techstore:search-sync', handleSearchSync);
+    return () => {
+      window.removeEventListener('techstore:search-sync', handleSearchSync);
+    };
+  }, []);
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchVal(value);
+    window.dispatchEvent(
+      new CustomEvent('techstore:search-changed', {
+        detail: { searchTerm: value },
+      })
+    );
+    // Automatically switch to products tab when searching
+    if (onSelectTab && activeTab !== 'products') {
+      onSelectTab('products');
+    }
+  };
+
+  const handleClearSearch = () => {
+    setSearchVal('');
+    window.dispatchEvent(
+      new CustomEvent('techstore:search-changed', {
+        detail: { searchTerm: '' },
+      })
+    );
+  };
+
   return (
     <header
       id="app-header"
@@ -57,13 +97,13 @@ export const Header: React.FC<HeaderProps> = ({
         {/* Brand Logo */}
         <div
           id="brand-logo"
-          className="flex items-center space-x-3 cursor-pointer group select-none"
+          className="flex items-center space-x-3 cursor-pointer group select-none shrink-0"
           onClick={() => onSelectTab && onSelectTab('products')}
         >
           <div className="h-10 w-10 rounded-xl bg-gradient-to-tr from-blue-600 via-blue-700 to-indigo-600 flex items-center justify-center text-white shadow-sm group-hover:scale-105 transition-transform duration-200">
             <ShoppingBag className="w-5 h-5" />
           </div>
-          <div>
+          <div className="hidden xs:block">
             <div className="flex items-center gap-1.5">
               <span className="font-bold text-slate-900 tracking-tight text-lg">TechStore</span>
               <span className="text-[10px] uppercase font-extrabold tracking-wider bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded-md hidden sm:inline-block">
@@ -76,8 +116,29 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
         </div>
 
+        {/* Central Search Box */}
+        <div className="flex-1 max-w-sm sm:max-w-md relative mx-2">
+          <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+          <input
+            type="text"
+            value={searchVal}
+            onChange={handleSearchChange}
+            placeholder="Tìm kiếm sản phẩm..."
+            className="w-full pl-9 pr-8 py-2 bg-slate-100 hover:bg-slate-200/40 focus:bg-white border border-slate-200/50 focus:border-blue-500 rounded-xl text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/10 transition duration-150"
+          />
+          {searchVal && (
+            <button
+              type="button"
+              onClick={handleClearSearch}
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-0.5 cursor-pointer"
+            >
+              <X className="w-3.5 h-3.5" />
+            </button>
+          )}
+        </div>
+
         {/* Right Side: Quick Navigation, Prominent Cart & Low-key Auth */}
-        <div className="flex items-center space-x-2 sm:space-x-3">
+        <div className="flex items-center space-x-2 sm:space-x-3 shrink-0">
           {/* Quick link: Products */}
           <Button
             type="button"

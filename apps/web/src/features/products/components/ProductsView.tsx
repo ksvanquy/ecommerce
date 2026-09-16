@@ -55,6 +55,43 @@ export const ProductsView: React.FC = () => {
     };
   }, []);
 
+  // Listen for custom search event from Header
+  useEffect(() => {
+    const handleSearchEvent = (e: Event) => {
+      const customEvent = e as CustomEvent<{ searchTerm: string }>;
+      if (customEvent.detail !== undefined) {
+        setFilters((prev) => ({
+          ...prev,
+          search: customEvent.detail.searchTerm,
+          page: 1,
+        }));
+      }
+    };
+
+    window.addEventListener('techstore:search-changed', handleSearchEvent);
+    return () => {
+      window.removeEventListener('techstore:search-changed', handleSearchEvent);
+    };
+  }, []);
+
+  // Synchronize category state outwards to the sticky global subheader
+  useEffect(() => {
+    window.dispatchEvent(
+      new CustomEvent('techstore:category-changed', {
+        detail: { categorySlug: filters.category || 'all' },
+      })
+    );
+  }, [filters.category]);
+
+  // Synchronize search term outwards to the Header
+  useEffect(() => {
+    window.dispatchEvent(
+      new CustomEvent('techstore:search-sync', {
+        detail: { searchTerm: filters.search || '' },
+      })
+    );
+  }, [filters.search]);
+
   const handleFilterChange = (newFilters: Partial<ProductFilters>) => {
     setFilters((prev) => ({ ...prev, ...newFilters }));
   };
