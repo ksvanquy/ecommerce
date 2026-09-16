@@ -306,42 +306,41 @@ export const ProductDetailView: React.FC = () => {
                     <Layers className="w-3.5 h-3.5 text-blue-600" />
                     <span>Chọn phiên bản ({product.variants.length} tùy chọn):</span>
                   </span>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                     {product.variants.map((v) => {
                       const isSelected = activeVariant?.id === v.id;
                       return (
-                        <Button
+                        <button
                           key={v.id}
                           type="button"
-                          variant="ghost"
                           onClick={() => {
                             setSelectedVariantId(v.id);
                             if (v.imageUrl) setActiveImage(v.imageUrl);
                           }}
-                          className={`p-2.5 rounded-lg border text-left transition flex items-center justify-between cursor-pointer ${
+                          className={`p-3 rounded-xl border text-left transition-all duration-200 flex items-center justify-between gap-3 cursor-pointer w-full focus:outline-none focus:ring-2 focus:ring-blue-500/20 ${
                             isSelected
-                              ? 'bg-white border-blue-600 ring-2 ring-blue-500/20 shadow-xs'
-                              : 'bg-white border-slate-200 hover:border-slate-300'
+                              ? 'bg-white border-blue-600 ring-2 ring-blue-500/10 shadow-xs'
+                              : 'bg-white border-slate-200 hover:border-slate-300 hover:bg-slate-50/50'
                           }`}
                         >
-                          <div className="flex items-center gap-2">
+                          <div className="flex items-center gap-2.5 min-w-0">
                             {v.colorCode && (
                               <span
-                                className="w-3.5 h-3.5 rounded-full border border-slate-300 shrink-0"
+                                className="w-4 h-4 rounded-full border border-slate-300/80 shrink-0"
                                 style={{ backgroundColor: v.colorCode }}
                               />
                             )}
-                            <div>
-                              <p className="text-xs font-semibold text-slate-900">{v.name}</p>
+                            <div className="min-w-0">
+                              <p className="text-xs font-bold text-slate-800 leading-tight">{v.name}</p>
                               {v.specSummary && (
-                                <p className="text-[10px] text-slate-500">{v.specSummary}</p>
+                                <p className="text-[10px] text-slate-500 mt-0.5 leading-normal">{v.specSummary}</p>
                               )}
                             </div>
                           </div>
-                          <span className="text-xs font-bold text-blue-600 ml-2 whitespace-nowrap">
+                          <span className="text-xs font-bold text-blue-600 shrink-0 ml-2 whitespace-nowrap">
                             {formatCurrency(v.price)}
                           </span>
-                        </Button>
+                        </button>
                       );
                     })}
                   </div>
