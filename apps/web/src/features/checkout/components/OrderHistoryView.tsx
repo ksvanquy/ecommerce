@@ -148,9 +148,6 @@ export const OrderHistoryView: React.FC = () => {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <div className="flex items-center space-x-2">
-              <span className="bg-blue-400/20 text-blue-300 text-[11px] font-bold px-2 py-0.5 rounded uppercase tracking-wider border border-blue-400/30">
-                TechStore Quản Lý
-              </span>
               <span className="text-slate-300 text-xs font-medium">
                 Quản lý & Theo dõi Đơn hàng
               </span>
@@ -247,19 +244,18 @@ export const OrderHistoryView: React.FC = () => {
             { id: 'delivered', label: 'Đã giao' },
             { id: 'cancelled', label: 'Đã hủy' },
           ].map((tab) => (
-            <Button
+            <button
               key={tab.id}
-              variant="ghost"
-              size="sm"
+              type="button"
               onClick={() => setSelectedStatus(tab.id)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition ${
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
                 selectedStatus === tab.id
-                  ? 'bg-blue-600 text-white shadow-xs hover:bg-blue-700'
-                  : 'text-slate-600 hover:bg-slate-100'
+                  ? 'bg-blue-600 text-white shadow-xs'
+                  : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
               }`}
             >
               {tab.label}
-            </Button>
+            </button>
           ))}
         </div>
 
