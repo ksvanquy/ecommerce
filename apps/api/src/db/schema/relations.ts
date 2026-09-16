@@ -10,6 +10,7 @@ import { cartsTable, cartItemsTable } from './carts.ts';
 import { couponsTable, couponUsagesTable } from './coupons.ts';
 import { paymentTransactionsTable } from './payments.ts';
 import { reviewsTable } from './reviews.ts';
+import { userAddressesTable } from './addresses.ts';
 
 export const usersRelations = relations(usersTable, ({ many }) => ({
   orders: many(ordersTable),
@@ -17,6 +18,7 @@ export const usersRelations = relations(usersTable, ({ many }) => ({
   reviews: many(reviewsTable),
   couponUsages: many(couponUsagesTable),
   paymentTransactions: many(paymentTransactionsTable),
+  addresses: many(userAddressesTable),
 }));
 
 export const brandsRelations = relations(brandsTable, ({ many }) => ({
@@ -152,6 +154,13 @@ export const reviewsRelations = relations(reviewsTable, ({ one }) => ({
   order: one(ordersTable, {
     fields: [reviewsTable.orderId],
     references: [ordersTable.id],
+  }),
+}));
+
+export const userAddressesRelations = relations(userAddressesTable, ({ one }) => ({
+  user: one(usersTable, {
+    fields: [userAddressesTable.userId],
+    references: [usersTable.id],
   }),
 }));
 

@@ -21,6 +21,7 @@ import {
   OrderHistoryView,
   CheckoutView,
 } from '../features/checkout/index.ts';
+import { AddressManager } from '../features/checkout/components/AddressManager.tsx';
 import { ProtectedRoute } from './ProtectedRoute.tsx';
 import { LogOut, Package, User as UserIcon, Laptop, Smartphone, Cpu, Layers, Grid } from 'lucide-react';
 
@@ -223,6 +224,11 @@ function ProfilePage() {
               Xem Lịch sử Đơn hàng
             </Button>
           </div>
+        </Card>
+
+        {/* Address Book Manager card wrapper */}
+        <Card>
+          <AddressManager />
         </Card>
       </div>
     </MainLayout>

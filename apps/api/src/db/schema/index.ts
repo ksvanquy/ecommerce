@@ -9,6 +9,7 @@ import * as carts from './carts.ts';
 import * as coupons from './coupons.ts';
 import * as payments from './payments.ts';
 import * as reviews from './reviews.ts';
+import * as addresses from './addresses.ts';
 import * as relations from './relations.ts';
 
 export * from './users.ts';
@@ -22,6 +23,7 @@ export * from './carts.ts';
 export * from './coupons.ts';
 export * from './payments.ts';
 export * from './reviews.ts';
+export * from './addresses.ts';
 export * from './relations.ts';
 
 export const schema = {
@@ -36,6 +38,7 @@ export const schema = {
   ...coupons,
   ...payments,
   ...reviews,
+  ...addresses,
   ...relations,
 };
 

@@ -9,6 +9,7 @@ import { createOrderSchema } from '@repo/shared-types';
 import { PaymentModal } from './PaymentModal.tsx';
 import { couponsApi } from '../api/couponsApi.ts';
 import type { Coupon } from '@repo/shared-types';
+import { AddressManager } from './AddressManager.tsx';
 import {
   ShoppingBag,
   Truck,
@@ -79,11 +80,25 @@ export const CheckoutView: React.FC<CheckoutViewProps> = ({ onBackToCart }) => {
   const [createdOrder, setCreatedOrder] = useState<Order | null>(null);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [selectedAddressId, setSelectedAddressId] = useState<string | null>(null);
 
-  // Pre-fill user information if logged in
+  // Pre-fill user information and default address if logged in
   useEffect(() => {
     if (user) {
       if (!customerName) setCustomerName(user.fullName || '');
+
+      import('../api/addressesApi.ts').then(({ addressesApi }) => {
+        addressesApi.getDefaultAddress()
+          .then((addr) => {
+            if (addr) {
+              setCustomerName(addr.receiverName);
+              setCustomerPhone(addr.receiverPhone);
+              setShippingAddress(`${addr.streetAddress}, ${addr.ward}, ${addr.district}, ${addr.province}`);
+              setSelectedAddressId(addr.id);
+            }
+          })
+          .catch((err) => console.warn('Failed to load default address:', err));
+      });
     }
   }, [user]);
 
@@ -464,6 +479,21 @@ export const CheckoutView: React.FC<CheckoutViewProps> = ({ onBackToCart }) => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           {/* Left Column: Form Info */}
           <div className="lg:col-span-7 space-y-6">
+            {user && (
+              <Card className="p-4 sm:p-6 space-y-4">
+                <AddressManager
+                  isSelectionMode={true}
+                  selectedAddressId={selectedAddressId || undefined}
+                  onSelectAddress={(addr) => {
+                    setCustomerName(addr.receiverName);
+                    setCustomerPhone(addr.receiverPhone);
+                    setShippingAddress(`${addr.streetAddress}, ${addr.ward}, ${addr.district}, ${addr.province}`);
+                    setSelectedAddressId(addr.id);
+                  }}
+                />
+              </Card>
+            )}
+
             <Card className="p-4 sm:p-6 space-y-5">
               <div className="flex items-center justify-between pb-3 border-b border-slate-100">
                 <h3 className="text-sm font-extrabold uppercase tracking-wider text-slate-800 flex items-center gap-2">

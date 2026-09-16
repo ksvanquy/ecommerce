@@ -199,11 +199,61 @@ export const paymentTransactions = pgTable('payment_transactions', {
 
 ---
 
+### 2.5. Bổ Sung Mô Hình Sổ Địa Chỉ Giao Hàng (User Addresses / Shipping Addresses)
+
+> **Câu hỏi của bạn:** *SCHEMA_ANALYSIS_REPORT có phải còn thiếu shipping/address không?*
+
+**Trả lời: ĐÚNG VẬY, ĐÂY LÀ MỘT THIẾU SÓT RẤT LỚN CỦA PHIÊN BẢN BAN ĐẦU.**
+
+Hiện tại trong database, bảng `orders` lưu thông tin địa chỉ giao hàng dưới dạng một cột text thô phẳng duy nhất: `shippingAddress: text('shipping_address').notNull()`. Thiết kế này tuy đơn giản nhưng có các điểm yếu nghiêm trọng trong môi trường thực tế:
+1. **Trải nghiệm kém (UX)**: Người dùng phải tự tay nhập lại toàn bộ địa chỉ giao hàng (Họ tên, SĐT, Địa chỉ) mỗi khi tiến hành mua hàng mới, không thể nhấn chọn nhanh các địa chỉ đã lưu.
+2. **Không hỗ trợ phân loại địa chỉ**: Khách hàng thường có nhu cầu lưu nhiều địa chỉ nhận hàng khác nhau (Nhà riêng, Văn phòng công ty, Quê quán,...) và cài đặt một địa chỉ mặc định (`isDefault`).
+3. **Khó tính toán phí vận chuyển & Tích hợp đối tác giao vận (GHTK, GHN, Viettel Post)**: Một địa chỉ dạng text thô sẽ cực kỳ khó để hệ thống bóc tách tự động ra Tỉnh/Thành phố, Quận/Huyện, Phường/Xã để tính phí ship động hoặc gửi vận đơn tự động qua API của các bên giao vận.
+
+#### Thiết kế Schema Đề xuất cho sổ địa chỉ `user_addresses`:
+
+```typescript
+export const userAddresses = pgTable('user_addresses', {
+  id: text('id').primaryKey(),
+  userId: text('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  receiverName: varchar('receiver_name', { length: 255 }).notNull(), // Tên người nhận
+  receiverPhone: varchar('receiver_phone', { length: 50 }).notNull(), // SĐT người nhận
+  province: varchar('province', { length: 100 }).notNull(), // Tỉnh / Thành phố
+  district: varchar('district', { length: 100 }).notNull(), // Quận / Huyện
+  ward: varchar('ward', { length: 100 }).notNull(), // Phường / Xã
+  streetAddress: text('street_address').notNull(), // Số nhà, tên đường, thôn xóm
+  addressType: varchar('address_type', { length: 50 }).notNull().default('home'), // 'home' (Nhà riêng) | 'office' (Văn phòng) | 'other'
+  isDefault: boolean('is_default').notNull().default(false), // Địa chỉ mặc định
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});
+```
+
+*Khi đặt hàng, hệ thống sẽ tự động sao chép (snapshot) địa chỉ được chọn từ `user_addresses` sang cột `shipping_address` của bảng `orders` để lưu trữ hóa đơn gốc ổn định, không bị thay đổi ngay cả khi người dùng sửa hay xóa địa chỉ trong sổ địa chỉ sau này.*
+
+---
+
 ## 3. Sơ Đồ ERD Nâng Cấp Tổng Thể (ASCII ERD)
 
 Dưới đây là sơ đồ kiến trúc Cơ sở Dữ liệu mở rộng hoàn chỉnh cho TechStore sau khi bổ sung 5 bảng mới (`carts`, `cart_items`, `reviews`, `coupons`, `coupon_usages`, `payment_transactions`):
 
 ```text
+                               +--------------------+
+                               |   USER_ADDRESSES   |
+                               +--------------------+
+                               | PK  id             |
+                               | FK  user_id        | ----> USERS (1:N)
+                               |     receiver_name  |
+                               |     receiver_phone |
+                               |     province       |
+                               |     district       |
+                               |     ward           |
+                               |     street_address |
+                               +--------------------+
+                                         ^
+                                         | 1
+                                         |
+                                         | *
                                +-------------------+
                                |       USERS       |
                                +-------------------+
@@ -283,22 +333,28 @@ Dưới đây là sơ đồ kiến trúc Cơ sở Dữ liệu mở rộng hoàn 
 
 Để hoàn thiện ứng dụng TechStore từ phiên bản sơ khai thành một nền tảng Thương mại điện tử sản phẩm công nghệ hoàn chỉnh, chúng tôi đề xuất lộ trình nâng cấp 4 bước với danh sách công việc (task breakdown) chi tiết như sau:
 
-### 1. **Bước 1 - Cập nhật & Đồng bộ Schema DB Backend (`apps/api/src/db/schema/`)**
+##### 1. **Bước 1 - Cập nhật & Đồng bộ Schema DB Backend (`apps/api/src/db/schema/`)**
 - [x] **Hoàn thiện định nghĩa Schema**:
   - [x] Đã tạo file schema: `carts.ts` (bảng `carts` và `cart_items`).
   - [x] Đã tạo file schema: `coupons.ts` (bảng `coupons` và `coupon_usages`).
   - [x] Đã tạo file schema: `payments.ts` (bảng `payment_transactions`).
   - [x] Đã tạo file schema: `reviews.ts` (bảng `reviews`).
+  - [x] Thiết kế file schema mới: `addresses.ts` (bảng `user_addresses`) để hỗ trợ Sổ địa chỉ giao hàng:
+    - [x] Định nghĩa bảng `user_addresses` (id, user_id, receiver_name, receiver_phone, province, district, ward, street_address, address_type, is_default).
+    - [x] Tạo quan hệ `userAddressesRelations` kết nối 1-nhiều với `users`.
 - [x] **Export và liên kết Schema trong `index.ts`**:
   - [x] Import và re-export toàn bộ 4 schema mới trong `apps/api/src/db/schema/index.ts`.
   - [x] Bổ sung 4 schema mới vào object `schema` tổng hợp.
+  - [x] Import/re-export schema `addresses` khi bắt đầu triển khai.
 - [x] **Bổ sung Quan hệ đối tượng (Relations)**:
   - [x] Cập nhật `apps/api/src/db/schema/relations.ts` bổ sung `cartsRelations`, `cartItemsRelations`, `couponsRelations`, `couponUsagesRelations`, `paymentTransactionsRelations`, `reviewsRelations`.
   - [x] Thêm quan hệ ngược trong `usersRelations`, `productsRelations`, `ordersRelations`.
+  - [x] Bổ sung quan hệ `userAddressesRelations` liên kết 1-nhiều giữa `users` và `user_addresses`.
 - [x] **Đồng bộ Cơ sở dữ liệu & Seed Data**:
-  - [x] Cập nhật file `init-db.ts` với đầy đủ DDL tạo bảng `carts`, `cart_items`, `coupons`, `coupon_usages`, `payment_transactions`, `reviews`.
+  - [x] Cập nhật file `init-db.ts` with đầy đủ DDL tạo bảng `carts`, `cart_items`, `coupons`, `coupon_usages`, `payment_transactions`, `reviews`.
   - [x] Cập nhật dữ liệu mẫu ban đầu cho `coupons` (`TECHSTORE10`, `GIAM50K`, `FREESHIP`, `VIPTECH20`) và `reviews`.
   - [x] Đồng bộ Zod schemas & TypeScript Domain Types tại `@repo/shared-types`.
+  - [x] Đồng bộ DDL tạo bảng `user_addresses` và bổ sung kiểu dữ liệu địa chỉ mới vào `@repo/shared-types`.
 
 ### 2. **Bước 2 - Phát triển các Module Backend API (`apps/api/src/`)**
 - [x] **Module Giỏ hàng (`apps/api/src/cart/`)**:
@@ -317,6 +373,22 @@ Dưới đây là sơ đồ kiến trúc Cơ sở Dữ liệu mở rộng hoàn 
   - [x] Xây dựng `reviews.repository.ts`: Thêm đánh giá, tính điểm rating trung bình và phân bổ 1-5 sao theo sản phẩm.
   - [x] Xây dựng `reviews.service.ts`: Kiểm tra đơn hàng để xác minh huy hiệu người mua hàng thật (`is_verified_buyer`).
   - [x] Xây dựng `reviews.controller.ts` & router: `GET /api/reviews/product/:productId`, `GET /api/products/:id/reviews`, `GET /api/reviews/recent`, `POST /api/reviews`.
+- [x] **Module Quản lý Sổ địa chỉ (`apps/api/src/addresses/`)**:
+  - [x] Xây dựng `addresses.repository.ts`:
+    - [x] Truy vấn danh sách địa chỉ hoạt động của user theo `user_id`.
+    - [x] Lấy địa chỉ giao hàng mặc định (`is_default = true`).
+    - [x] Thêm địa chỉ mới, cập nhật thông tin địa chỉ và xóa địa chỉ vật lý.
+    - [x] Logic reset trạng thái mặc định của các địa chỉ khác khi set một địa chỉ mới làm mặc định.
+  - [x] Xây dựng `addresses.service.ts`:
+    - [x] Kiểm tra phân quyền sở hữu địa chỉ (chỉ chính chủ mới được sửa/xóa).
+    - [x] Đảm bảo mỗi user luôn có tối đa 1 địa chỉ mặc định (nếu địa chỉ đầu tiên được thêm, tự động set làm mặc định).
+    - [x] Validate thông tin đầu vào (SĐT hợp lệ, Tỉnh/Thành, Quận/Huyện không trống).
+  - [x] Xây dựng `addresses.controller.ts` & router định tuyến:
+    - [x] `GET /addresses` - Lấy danh sách địa chỉ của user đang đăng nhập.
+    - [x] `POST /addresses` - Thêm một địa chỉ mới vào sổ.
+    - [x] `PATCH /addresses/:id` - Cập nhật chi tiết một địa chỉ.
+    - [x] `DELETE /addresses/:id` - Xóa một địa chỉ khỏi sổ.
+    - [x] `PUT /addresses/:id/default` - Thiết lập địa chỉ được chọn làm địa chỉ mặc định.
 - [x] **Tích hợp & Khai báo Định tuyến Hệ thống**:
   - [x] Đăng ký đầy đủ 4 router mới tại `apps/api/src/index.ts`.
   - [x] Bổ sung phương thức `updatePaymentStatus` tại `orders.repository.ts` để đồng bộ chuyển trạng thái đơn hàng khi thanh toán.
@@ -335,6 +407,16 @@ Dưới đây là sơ đồ kiến trúc Cơ sở Dữ liệu mở rộng hoàn 
   - [x] Tạo component `ProductReviewsSection.tsx` tại trang Chi tiết sản phẩm (`ProductDetailView.tsx`) hiển thị rating sao trung bình và danh sách bình luận.
   - [x] Tạo component / modal `WriteReviewModal.tsx` cho phép người dùng chọn số sao (1-5), nhập tiêu đề & nội dung đánh giá.
   - [x] Thêm nút "Viết đánh giá" cho các sản phẩm trong đơn hàng đã giao tại `OrderHistoryView.tsx`.
+- [x] **Giao diện Sổ địa chỉ & Chọn nhanh khi Checkout (`features/addresses/`)**:
+  - [x] Quản lý địa chỉ trong hồ sơ cá nhân:
+    - [x] Thiết kế màn hình "Sổ địa chỉ" trong giao diện Cài đặt tài khoản (`ProfileView`).
+    - [x] Thiết kế Form popup/Modal Thêm mới và Sửa địa chỉ (Tên, SĐT, Tỉnh/Thành phố, Quận/Huyện, Phường/Xã, Địa chỉ chi tiết).
+    - [x] Thao tác nhanh: Chọn địa chỉ mặc định bằng một nhấp chuột, nút Xóa có hộp thoại xác nhận.
+  - [x] Tích hợp thông minh vào luồng thanh toán (Checkout):
+    - [x] Thiết kế khối thông tin địa chỉ giao hàng nổi bật ở đầu trang `CheckoutView` (Tự động hiển thị địa chỉ mặc định).
+    - [x] Nút "Thay đổi địa chỉ" mở Modal danh sách các địa chỉ đã lưu để lựa chọn nhanh.
+    - [x] Tích hợp tùy chọn "Thêm địa chỉ mới" ngay tại màn hình Checkout nếu chưa có địa chỉ hoặc muốn nhận ở nơi khác.
+    - [x] Khi chọn địa chỉ, tự động điền (bind) thông tin vào form thanh toán và tính toán lại phí ship tương ứng (nếu có).
 
 ### 4. **Bước 4 - Kiểm thử, Tích hợp Toàn trình & Triển khai (Integration & Deployment)**
 - [x] **Kiểm thử Luồng E2E**:

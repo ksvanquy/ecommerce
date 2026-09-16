@@ -16,6 +16,7 @@ import {
   cartItemsTable,
   paymentTransactionsTable,
   reviewsTable,
+  userAddressesTable,
 } from './db/schema/index.ts';
 import { eq } from 'drizzle-orm';
 
@@ -37,6 +38,37 @@ const SEED_USERS = [
     passwordHash: DEFAULT_PASSWORD_HASH,
     fullName: 'Nguyễn Văn Khách Hàng',
     role: 'customer',
+    createdAt: new Date('2026-01-01T00:00:00.000Z'),
+    updatedAt: new Date('2026-01-01T00:00:00.000Z'),
+  },
+];
+
+const SEED_ADDRESSES = [
+  {
+    id: 'addr_demo_01',
+    userId: 'usr_customer_demo_02',
+    receiverName: 'Nguyễn Văn Khách Hàng',
+    receiverPhone: '0901234567',
+    province: 'Thành phố Hồ Chí Minh',
+    district: 'Quận 1',
+    ward: 'Phường Bến Nghé',
+    streetAddress: 'Số 123 Đường Lê Lợi',
+    addressType: 'home',
+    isDefault: true,
+    createdAt: new Date('2026-01-01T00:00:00.000Z'),
+    updatedAt: new Date('2026-01-01T00:00:00.000Z'),
+  },
+  {
+    id: 'addr_demo_02',
+    userId: 'usr_customer_demo_02',
+    receiverName: 'Nguyễn Văn Khách Hàng (Văn phòng)',
+    receiverPhone: '0988777666',
+    province: 'Thành phố Hà Nội',
+    district: 'Quận Hoàn Kiếm',
+    ward: 'Phường Tràng Tiền',
+    streetAddress: 'Tòa nhà văn phòng Tech, 45 Phố Tràng Tiền',
+    addressType: 'office',
+    isDefault: false,
     createdAt: new Date('2026-01-01T00:00:00.000Z'),
     updatedAt: new Date('2026-01-01T00:00:00.000Z'),
   },
@@ -887,6 +919,21 @@ export async function initializeDatabase(): Promise<boolean> {
         updated_at TIMESTAMP NOT NULL DEFAULT NOW()
       );
 
+      CREATE TABLE IF NOT EXISTS user_addresses (
+        id TEXT PRIMARY KEY,
+        user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        receiver_name VARCHAR(255) NOT NULL,
+        receiver_phone VARCHAR(50) NOT NULL,
+        province VARCHAR(100) NOT NULL,
+        district VARCHAR(100) NOT NULL,
+        ward VARCHAR(100) NOT NULL,
+        street_address TEXT NOT NULL,
+        address_type VARCHAR(50) NOT NULL DEFAULT 'home',
+        is_default BOOLEAN NOT NULL DEFAULT false,
+        created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMP NOT NULL DEFAULT NOW()
+      );
+
       -- Ensure brand_id column exists if products table already existed
       ALTER TABLE products ADD COLUMN IF NOT EXISTS brand_id TEXT REFERENCES brands(id) ON DELETE SET NULL;
 
@@ -912,6 +959,7 @@ export async function initializeDatabase(): Promise<boolean> {
       CREATE INDEX IF NOT EXISTS idx_payment_transactions_code ON payment_transactions(transaction_code);
       CREATE INDEX IF NOT EXISTS idx_reviews_product_id ON reviews(product_id);
       CREATE INDEX IF NOT EXISTS idx_reviews_user_id ON reviews(user_id);
+      CREATE INDEX IF NOT EXISTS idx_user_addresses_user_id ON user_addresses(user_id);
     `);
 
     // 2. Seed Brands if not present
@@ -1039,7 +1087,20 @@ export async function initializeDatabase(): Promise<boolean> {
       }
     }
 
-    console.log('[DB Init] Database schema (carts, coupons, payments, reviews, brands, product_images, product_variants) & seed data initialized successfully.');
+    // 11. Seed User Addresses if not present
+    for (const address of SEED_ADDRESSES) {
+      const existing = await db
+        .select()
+        .from(userAddressesTable)
+        .where(eq(userAddressesTable.id, address.id))
+        .limit(1);
+
+      if (existing.length === 0) {
+        await db.insert(userAddressesTable).values(address);
+      }
+    }
+
+    console.log('[DB Init] Database schema (carts, coupons, payments, reviews, user_addresses, brands, product_images, product_variants) & seed data initialized successfully.');
     return true;
   } catch (error) {
     console.error('[DB Init] Error initializing database tables/seeds:', error);

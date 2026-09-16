@@ -157,6 +157,24 @@ export const createPaymentIntentSchema = z.object({
   bankCode: z.string().optional(),
 });
 
+// Address Schemas
+export const createAddressSchema = z.object({
+  receiverName: z.string().min(2, 'Họ tên người nhận phải từ 2 ký tự trở lên').trim(),
+  receiverPhone: z
+    .string()
+    .min(9, 'Số điện thoại phải từ 9 số trở lên')
+    .regex(/^[0-9+() -]+$/, 'Số điện thoại không hợp lệ')
+    .trim(),
+  province: z.string().min(1, 'Tỉnh/Thành phố là bắt buộc').trim(),
+  district: z.string().min(1, 'Quận/Huyện là bắt buộc').trim(),
+  ward: z.string().min(1, 'Phường/Xã là bắt buộc').trim(),
+  streetAddress: z.string().min(2, 'Địa chỉ chi tiết là bắt buộc').trim(),
+  addressType: z.enum(['home', 'office', 'other']).optional().default('home'),
+  isDefault: z.boolean().optional().default(false),
+});
+
+export const updateAddressSchema = createAddressSchema.partial();
+
 // ==========================================
 // 2. TypeScript Types inferred from Zod
 // ==========================================
@@ -197,6 +215,9 @@ export type CreateCouponPayload = z.infer<typeof createCouponSchema>;
 
 export type CreateReviewPayload = z.infer<typeof createReviewSchema>;
 export type CreatePaymentIntentPayload = z.infer<typeof createPaymentIntentSchema>;
+
+export type CreateAddressPayload = z.infer<typeof createAddressSchema>;
+export type UpdateAddressPayload = z.infer<typeof updateAddressSchema>;
 
 export interface OrderFilters {
   page?: number;
@@ -455,4 +476,19 @@ export interface PaginatedResponse<T> extends ApiResponse<T[]> {
     total: number;
     totalPages: number;
   };
+}
+
+export interface UserAddress {
+  id: string;
+  userId: string;
+  receiverName: string;
+  receiverPhone: string;
+  province: string;
+  district: string;
+  ward: string;
+  streetAddress: string;
+  addressType: 'home' | 'office' | 'other';
+  isDefault: boolean;
+  createdAt: string;
+  updatedAt: string;
 }

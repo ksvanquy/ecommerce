@@ -9,6 +9,7 @@ import { cartRouter } from './cart/index.ts';
 import { couponsRouter } from './coupons/index.ts';
 import { paymentsRouter } from './payments/index.ts';
 import { reviewsRouter } from './reviews/index.ts';
+import { addressesRouter } from './addresses/index.ts';
 import { errorHandler, notFoundHandler } from './shared/middlewares/error.middleware.ts';
 import { initializeDatabase } from './init-db.ts';
 
@@ -68,6 +69,10 @@ app.use('/api/payments', paymentsRouter);
 // Reviews routes (/reviews and /api/reviews)
 app.use('/reviews', reviewsRouter);
 app.use('/api/reviews', reviewsRouter);
+
+// Addresses routes (/addresses and /api/addresses)
+app.use('/addresses', addressesRouter);
+app.use('/api/addresses', addressesRouter);
 
 // Orders & Checkout routes (/orders and /api/orders)
 app.use('/orders', ordersRouter);
