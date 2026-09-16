@@ -63,6 +63,9 @@ export const paymentMethodSchema = z.enum([
   'cod',
   'bank_transfer',
   'credit_card',
+  'vietqr',
+  'vnpay',
+  'momo',
 ]);
 
 export const paymentStatusSchema = z.enum([

@@ -889,6 +889,26 @@ export async function initializeDatabase(): Promise<boolean> {
 
       -- Ensure brand_id column exists if products table already existed
       ALTER TABLE products ADD COLUMN IF NOT EXISTS brand_id TEXT REFERENCES brands(id) ON DELETE SET NULL;
+
+      -- Indexes for performance optimization on Foreign Keys & Frequent Queries
+      CREATE INDEX IF NOT EXISTS idx_products_category_id ON products(category_id);
+      CREATE INDEX IF NOT EXISTS idx_products_brand_id ON products(brand_id);
+      CREATE INDEX IF NOT EXISTS idx_product_images_product_id ON product_images(product_id);
+      CREATE INDEX IF NOT EXISTS idx_product_variants_product_id ON product_variants(product_id);
+      CREATE INDEX IF NOT EXISTS idx_orders_user_id ON orders(user_id);
+      CREATE INDEX IF NOT EXISTS idx_order_items_order_id ON order_items(order_id);
+      CREATE INDEX IF NOT EXISTS idx_order_items_product_id ON order_items(product_id);
+      CREATE INDEX IF NOT EXISTS idx_carts_user_id ON carts(user_id);
+      CREATE INDEX IF NOT EXISTS idx_carts_session_id ON carts(session_id);
+      CREATE INDEX IF NOT EXISTS idx_cart_items_cart_id ON cart_items(cart_id);
+      CREATE INDEX IF NOT EXISTS idx_cart_items_product_id ON cart_items(product_id);
+      CREATE INDEX IF NOT EXISTS idx_coupons_code ON coupons(code);
+      CREATE INDEX IF NOT EXISTS idx_coupon_usages_user_coupon ON coupon_usages(user_id, coupon_id);
+      CREATE INDEX IF NOT EXISTS idx_coupon_usages_order_id ON coupon_usages(order_id);
+      CREATE INDEX IF NOT EXISTS idx_payment_transactions_order_id ON payment_transactions(order_id);
+      CREATE INDEX IF NOT EXISTS idx_payment_transactions_code ON payment_transactions(transaction_code);
+      CREATE INDEX IF NOT EXISTS idx_reviews_product_id ON reviews(product_id);
+      CREATE INDEX IF NOT EXISTS idx_reviews_user_id ON reviews(user_id);
     `);
 
     // 2. Seed Brands if not present

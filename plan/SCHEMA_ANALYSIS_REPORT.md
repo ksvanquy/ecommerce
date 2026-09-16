@@ -337,12 +337,13 @@ Dưới đây là sơ đồ kiến trúc Cơ sở Dữ liệu mở rộng hoàn 
   - [x] Thêm nút "Viết đánh giá" cho các sản phẩm trong đơn hàng đã giao tại `OrderHistoryView.tsx`.
 
 ### 4. **Bước 4 - Kiểm thử, Tích hợp Toàn trình & Triển khai (Integration & Deployment)**
-- [ ] **Kiểm thử Luồng E2E**:
-  - [ ] Thêm sản phẩm vào giỏ -> Nhập mã giảm giá -> Đặt hàng & Tạo giao dịch thanh toán -> Xác nhận đơn -> Viết đánh giá sản phẩm.
-- [ ] **Tối ưu Cơ sở Dữ liệu & Performance**:
-  - [ ] Đảm bảo đánh index thích hợp trên các khóa ngoại (`cart_id`, `product_id`, `user_id`, `order_id`, `coupon_id`).
-- [ ] **Linting & Build Monorepo**:
-  - [ ] Chạy `npm run build` và kiểm tra không có lỗi TypeScript hay build error ở cả `apps/api` và `apps/web`.
+- [x] **Kiểm thử Luồng E2E**:
+  - [x] Thêm sản phẩm vào giỏ -> Nhập mã giảm giá -> Đặt hàng & Tạo giao dịch thanh toán -> Xác nhận đơn -> Viết đánh giá sản phẩm.
+- [x] **Tối ưu Cơ sở Dữ liệu & Performance**:
+  - [x] Đánh index toàn diện cho các khóa ngoại và cột tra cứu (`cart_id`, `product_id`, `user_id`, `order_id`, `coupon_id`, `transaction_code`, `category_id`, `brand_id`).
+- [x] **Linting & Build Monorepo**:
+  - [x] Chạy `npm run build` và kiểm tra không có lỗi TypeScript hay build error ở cả `apps/api`, `apps/web` và `packages/*`.
+  - [x] Chuẩn hóa toàn bộ hệ thống thông báo sang sử dụng Toast UI component từ `@repo/ui`.
 
 ---
 *Báo cáo được lưu trữ chính thức tại `plan/SCHEMA_ANALYSIS_REPORT.md`.*
