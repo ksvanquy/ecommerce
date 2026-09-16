@@ -285,7 +285,12 @@ export function AddressManager({
                   <div className="flex items-center gap-1">
                     {!addr.isDefault && (
                       <button
-                        onClick={() => handleSetDefault(addr.id)}
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          e.preventDefault();
+                          handleSetDefault(addr.id);
+                        }}
                         className="text-[11px] text-blue-600 hover:text-blue-700 font-medium px-2 py-1 rounded hover:bg-blue-50 transition-colors"
                       >
                         Đặt làm mặc định
@@ -295,14 +300,24 @@ export function AddressManager({
 
                   <div className="flex items-center gap-1.5">
                     <button
-                      onClick={() => openEditModal(addr)}
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        openEditModal(addr);
+                      }}
                       className="p-1.5 text-slate-400 hover:text-slate-600 hover:bg-slate-50 rounded transition-all"
                       title="Sửa địa chỉ"
                     >
                       <Edit3 className="w-3.5 h-3.5" />
                     </button>
                     <button
-                      onClick={() => setDeletingId(addr.id)}
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        setDeletingId(addr.id);
+                      }}
                       className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded transition-all"
                       title="Xóa địa chỉ"
                     >
@@ -444,10 +459,10 @@ export function AddressManager({
             Bạn có chắc chắn muốn xóa địa chỉ giao hàng này khỏi sổ địa chỉ không? Thao tác này không thể hoàn tác.
           </p>
           <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
-            <Button variant="outline" onClick={() => setDeletingId(null)}>
+            <Button type="button" variant="outline" onClick={() => setDeletingId(null)}>
               Hủy
             </Button>
-            <Button variant="danger" onClick={() => deletingId && handleDeleteAddress(deletingId)}>
+            <Button type="button" variant="danger" onClick={() => deletingId && handleDeleteAddress(deletingId)}>
               Xác nhận xóa
             </Button>
           </div>
