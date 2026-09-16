@@ -34,15 +34,22 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   const isOutOfStock = product.inventory <= 0;
   const isLowStock = product.inventory > 0 && product.inventory <= 10;
 
+  // Stable deterministic sold count to make it look realistic as in the image
+  const stableSoldCount = React.useMemo(() => {
+    const code = product.id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+    const count = (code % 880) + 120;
+    return count >= 1000 ? `${(count / 1000).toFixed(1)}k` : count;
+  }, [product.id]);
+
   return (
     <div
       id={`product-card-${product.id}`}
-      className="group bg-white border border-slate-200 rounded-xl overflow-hidden hover:border-blue-300 hover:bg-slate-50/20 transition-all duration-200 flex flex-col relative"
+      className="group bg-white border border-slate-100 rounded-xl overflow-hidden shadow-xs hover:shadow-md hover:border-slate-200 transition-all duration-200 flex flex-col relative"
     >
       {/* Product Image Link Area */}
       <Link
         to={`/products/${product.id}`}
-        className="relative h-48 bg-slate-50 overflow-hidden flex items-center justify-center p-4 block cursor-pointer"
+        className="relative aspect-square w-full bg-slate-50 overflow-hidden flex items-center justify-center block cursor-pointer"
         title={`Xem chi tiết ${product.name}`}
       >
         {product.imageUrl && !imageError ? (
@@ -52,7 +59,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             onError={() => setImageError(true)}
             loading="lazy"
             referrerPolicy="no-referrer"
-            className="h-full w-full object-contain group-hover:scale-105 transition-transform duration-300"
+            className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300"
           />
         ) : (
           <div className="w-16 h-16 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-2xl border border-blue-100">
@@ -60,79 +67,60 @@ export const ProductCard: React.FC<ProductCardProps> = ({
           </div>
         )}
 
-        {/* Stock status & Brand overlay */}
-        <div className="absolute top-2.5 left-2.5 flex flex-col gap-1 items-start z-10">
-          {product.brand && (
-            <Badge variant="info" className="bg-blue-600 text-white text-[10px] font-bold">
-              {product.brand.name}
-            </Badge>
-          )}
-          <Badge variant="neutral" className="bg-white/90 text-slate-700 text-[10px]">
-            {product.category}
-          </Badge>
+        {/* Voucher Tag at the bottom left of image, matching the image prompt */}
+        <div className="absolute bottom-0 left-0 bg-[#facc15] text-[#dc2626] font-bold text-[9px] sm:text-[10px] px-1.5 py-0.5 uppercase tracking-wide rounded-tr">
+          VOUCHER
         </div>
 
+        {/* Stock status overlay */}
         {isOutOfStock ? (
-          <div className="absolute top-2.5 right-2.5 bg-rose-600/90 text-white text-[10px] font-bold px-2 py-0.5 rounded z-10">
+          <div className="absolute top-2 right-2 bg-rose-600/95 text-white text-[9px] font-bold px-1.5 py-0.5 rounded shadow-xs">
             Hết hàng
           </div>
         ) : isLowStock ? (
-          <div className="absolute top-2.5 right-2.5 bg-amber-500/90 text-white text-[10px] font-bold px-2 py-0.5 rounded z-10">
+          <div className="absolute top-2 right-2 bg-amber-500/95 text-white text-[9px] font-bold px-1.5 py-0.5 rounded shadow-xs">
             Chỉ còn {product.inventory}
           </div>
         ) : null}
       </Link>
 
       {/* Product Content Details */}
-      <div className="p-4 flex-1 flex flex-col justify-between">
-        <div>
-          <Link to={`/products/${product.id}`} className="block group/link">
-            <h4 className="font-semibold text-sm text-slate-900 line-clamp-1 group-hover/link:text-blue-600 transition-colors">
+      <div className="p-3 flex-1 flex flex-col justify-between bg-white">
+        <div className="space-y-1">
+          <Link to={`/products/${product.id}`} className="block">
+            <h4 className="font-medium text-[13px] sm:text-sm text-slate-800 line-clamp-2 leading-tight group-hover:text-blue-600 transition-colors min-h-[34px]">
               {product.name}
             </h4>
           </Link>
-
-          {/* Variants summary chip if present */}
-          {product.variants && product.variants.length > 0 && (
-            <div className="mt-1 flex items-center gap-1 text-[11px] text-slate-500">
-              <span className="inline-block w-2 h-2 rounded-full bg-blue-500"></span>
-              <span>{product.variants.length} phiên bản tùy chọn</span>
-            </div>
-          )}
-
-          <p className="text-xs text-slate-500 mt-1 line-clamp-2 leading-relaxed">
-            {product.description}
-          </p>
         </div>
 
-        <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
-          <div>
-            <span className="text-[10px] text-slate-400 block leading-none">Giá bán</span>
-            <span className="font-bold text-slate-900 text-base">
+        <div className="mt-2.5 flex items-end justify-between gap-1.5">
+          <div className="flex flex-col min-w-0">
+            <span className="font-normal text-rose-600 text-[13px] sm:text-[14px] whitespace-nowrap">
               {formatCurrency(product.price)}
+            </span>
+            <span className="text-[10px] sm:text-[11px] text-slate-400 font-light whitespace-nowrap">
+              {stableSoldCount} sold
             </span>
           </div>
 
-          <Button
+          <button
             id={`btn-add-cart-${product.id}`}
-            size="sm"
-            variant={addedAnimation ? 'primary' : 'outline'}
             disabled={isOutOfStock}
             onClick={handleAddToCart}
-            className={addedAnimation ? 'bg-emerald-600 hover:bg-emerald-700 text-white border-transparent' : ''}
+            className={`w-7.5 h-7.5 rounded-full flex items-center justify-center transition-all ${
+              addedAnimation
+                ? 'bg-emerald-500 text-white shadow-xs'
+                : 'bg-rose-50 text-rose-600 hover:bg-rose-100 active:scale-95'
+            } disabled:opacity-40 disabled:cursor-not-allowed`}
+            title="Thêm vào giỏ hàng"
           >
             {addedAnimation ? (
-              <>
-                <Check className="w-3.5 h-3.5 mr-1" />
-                Đã thêm
-              </>
+              <Check className="w-3.5 h-3.5" />
             ) : (
-              <>
-                <ShoppingCart className="w-3.5 h-3.5 mr-1" />
-                Thêm giỏ
-              </>
+              <ShoppingCart className="w-3.5 h-3.5" />
             )}
-          </Button>
+          </button>
         </div>
       </div>
     </div>
