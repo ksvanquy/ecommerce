@@ -1,34 +1,9 @@
 import React from 'react';
-import { ShoppingBag, Phone, Mail, ShieldCheck, Truck, RotateCcw, CreditCard } from 'lucide-react';
+import { ShoppingBag, Phone, Mail } from 'lucide-react';
 
 export const Footer: React.FC = () => {
   return (
     <footer id="app-footer" className="mt-auto border-t border-slate-200 bg-white text-xs text-slate-600">
-      {/* Sleek value props banner */}
-      <div className="border-b border-slate-100 bg-slate-50/40 py-4">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="flex items-center space-x-2.5">
-            <Truck className="w-4 h-4 text-blue-600 shrink-0" />
-            <span className="font-semibold text-slate-800 text-[11px]">Giao hàng toàn quốc</span>
-          </div>
-
-          <div className="flex items-center space-x-2.5">
-            <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
-            <span className="font-semibold text-slate-800 text-[11px]">Chính hãng 100%</span>
-          </div>
-
-          <div className="flex items-center space-x-2.5">
-            <RotateCcw className="w-4 h-4 text-purple-600 shrink-0" />
-            <span className="font-semibold text-slate-800 text-[11px]">Đổi trả trong 7 ngày</span>
-          </div>
-
-          <div className="flex items-center space-x-2.5">
-            <CreditCard className="w-4 h-4 text-amber-600 shrink-0" />
-            <span className="font-semibold text-slate-800 text-[11px]">Thanh toán linh hoạt</span>
-          </div>
-        </div>
-      </div>
-
       {/* Simplified main footer content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
         <div className="space-y-2 max-w-md">
