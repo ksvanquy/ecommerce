@@ -103,7 +103,7 @@ export const Header: React.FC<HeaderProps> = ({
           <div className="h-10 w-10 rounded-xl bg-blue-600 flex items-center justify-center text-white transition-colors duration-200">
             <ShoppingBag className="w-5 h-5" />
           </div>
-          <div className="hidden xs:block">
+          <div className="hidden sm:block">
             <div className="flex items-center gap-1.5">
               <span className="font-bold text-slate-900 tracking-tight text-lg">TechStore</span>
               <span className="text-[10px] uppercase font-extrabold tracking-wider bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded-md hidden sm:inline-block">
@@ -150,7 +150,7 @@ export const Header: React.FC<HeaderProps> = ({
             className={activeTab === 'products' ? 'shadow-blue-200' : ''}
           >
             <ShoppingBag className="w-4 h-4" />
-            <span>Sản phẩm</span>
+            <span className="hidden lg:inline">Sản phẩm</span>
           </Button>
 
           {/* Quick link: Orders (if authenticated) */}
@@ -164,7 +164,7 @@ export const Header: React.FC<HeaderProps> = ({
               className={`hidden sm:inline-flex ${activeTab === 'orders' ? 'shadow-blue-200' : ''}`}
             >
               <Package className="w-4 h-4" />
-              <span>Đơn hàng</span>
+              <span className="hidden lg:inline">Đơn hàng</span>
             </Button>
           )}
 
@@ -181,7 +181,7 @@ export const Header: React.FC<HeaderProps> = ({
             aria-label="Giỏ hàng"
           >
             <ShoppingCart className="w-4 h-4" />
-            <span>Giỏ hàng</span>
+            <span className="hidden lg:inline">Giỏ hàng</span>
             {totalCartItems > 0 && (
               <span
                 id="header-cart-badge"
