@@ -133,9 +133,9 @@ export const CheckoutView: React.FC<CheckoutViewProps> = ({ onBackToCart }) => {
           </span>
         </div>
 
-        <Card className="border-t-4 border-t-emerald-500 shadow-lg">
+        <Card className="border-t-4 border-t-emerald-500 border border-slate-200">
           <div className="text-center py-6 border-b border-slate-100">
-            <div className="mx-auto w-16 h-16 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center mb-4 shadow-inner">
+            <div className="mx-auto w-16 h-16 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center mb-4">
               <CheckCircle2 className="w-10 h-10 animate-bounce" />
             </div>
             <h1 className="text-2xl font-bold text-slate-900">Đặt Hàng Thành Công!</h1>
@@ -338,7 +338,7 @@ export const CheckoutView: React.FC<CheckoutViewProps> = ({ onBackToCart }) => {
         </div>
 
         {/* Breadcrumb / Stepper */}
-        <div className="flex items-center text-xs font-semibold text-slate-400 bg-white border border-slate-200/80 px-3.5 py-2 rounded-xl shadow-2xs">
+        <div className="flex items-center text-xs font-semibold text-slate-400 bg-white border border-slate-200 px-3.5 py-2 rounded-xl">
           <span className="text-slate-500 cursor-pointer hover:underline" onClick={handleBack}>
             1. Giỏ hàng
           </span>
@@ -354,8 +354,8 @@ export const CheckoutView: React.FC<CheckoutViewProps> = ({ onBackToCart }) => {
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Step Banner */}
-        <div className="bg-gradient-to-r from-blue-50/80 to-indigo-50/80 border border-blue-200/60 rounded-xl p-4 flex items-start gap-3.5">
-          <div className="w-9 h-9 rounded-xl bg-blue-600 text-white flex items-center justify-center shrink-0 mt-0.5 shadow-sm">
+        <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 flex items-start gap-3.5">
+          <div className="w-9 h-9 rounded-xl bg-blue-600 text-white flex items-center justify-center shrink-0 mt-0.5">
             <ShieldCheck className="w-5 h-5" />
           </div>
           <div className="text-xs">
@@ -477,7 +477,7 @@ export const CheckoutView: React.FC<CheckoutViewProps> = ({ onBackToCart }) => {
                 <label
                   className={`border rounded-xl p-4 flex items-start gap-3 cursor-pointer transition-all ${
                     paymentMethod === 'cod'
-                      ? 'border-blue-600 bg-blue-50/40 ring-1 ring-blue-600 shadow-2xs'
+                      ? 'border-blue-600 bg-blue-50/40 ring-1 ring-blue-600'
                       : 'border-slate-200 bg-white hover:border-slate-300'
                   }`}
                 >
@@ -503,7 +503,7 @@ export const CheckoutView: React.FC<CheckoutViewProps> = ({ onBackToCart }) => {
                 <label
                   className={`border rounded-xl p-4 flex items-start gap-3 cursor-pointer transition-all ${
                     paymentMethod === 'bank_transfer'
-                      ? 'border-blue-600 bg-blue-50/40 ring-1 ring-blue-600 shadow-2xs'
+                      ? 'border-blue-600 bg-blue-50/40 ring-1 ring-blue-600'
                       : 'border-slate-200 bg-white hover:border-slate-300'
                   }`}
                 >
@@ -531,7 +531,7 @@ export const CheckoutView: React.FC<CheckoutViewProps> = ({ onBackToCart }) => {
 
           {/* Right Column: Order Summaries Card */}
           <div className="lg:col-span-5 lg:sticky lg:top-24 space-y-4">
-            <Card className="p-4 sm:p-5 bg-white space-y-4 shadow-sm border border-slate-200">
+            <Card className="p-4 sm:p-5 bg-white space-y-4 border border-slate-200">
               <h3 className="text-sm font-extrabold uppercase tracking-wider text-slate-800 flex items-center justify-between pb-3 border-b border-slate-100">
                 <span className="flex items-center gap-2">
                   <ShoppingBag className="w-4 h-4 text-blue-600" />
@@ -622,7 +622,7 @@ export const CheckoutView: React.FC<CheckoutViewProps> = ({ onBackToCart }) => {
                   variant="primary"
                   size="md"
                   disabled={isPending || items.length === 0}
-                  className="w-full justify-center text-sm font-extrabold py-3 shadow-md active:scale-[0.98] transition-transform"
+                  className="w-full justify-center text-sm font-extrabold py-3 active:scale-[0.98] transition-transform"
                 >
                   {isPending ? (
                     <span className="inline-flex items-center gap-2">

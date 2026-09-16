@@ -91,7 +91,7 @@ export const Header: React.FC<HeaderProps> = ({
   return (
     <header
       id="app-header"
-      className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-xs"
+      className="sticky top-0 z-40 bg-white border-b border-slate-200/80"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
         {/* Brand Logo */}
@@ -100,7 +100,7 @@ export const Header: React.FC<HeaderProps> = ({
           className="flex items-center space-x-3 cursor-pointer group select-none shrink-0"
           onClick={() => onSelectTab && onSelectTab('products')}
         >
-          <div className="h-10 w-10 rounded-xl bg-gradient-to-tr from-blue-600 via-blue-700 to-indigo-600 flex items-center justify-center text-white shadow-sm group-hover:scale-105 transition-transform duration-200">
+          <div className="h-10 w-10 rounded-xl bg-blue-600 flex items-center justify-center text-white transition-colors duration-200">
             <ShoppingBag className="w-5 h-5" />
           </div>
           <div className="hidden xs:block">

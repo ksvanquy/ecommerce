@@ -79,7 +79,7 @@ export const CartView: React.FC = () => {
   return (
     <div className="space-y-6 w-full py-2">
       {/* Header Banner */}
-      <div className="bg-gradient-to-r from-slate-900 via-blue-950 to-indigo-950 text-white rounded-2xl p-6 shadow-sm">
+      <div className="bg-slate-900 text-white rounded-2xl p-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <h1 className="text-2xl font-bold tracking-tight">
@@ -104,7 +104,7 @@ export const CartView: React.FC = () => {
 
       {items.length === 0 ? (
         /* Empty Cart View */
-        <div className="bg-white border border-slate-200 rounded-2xl p-12 text-center space-y-4 shadow-xs">
+        <div className="bg-white border border-slate-200 rounded-2xl p-12 text-center space-y-4">
           <div className="w-16 h-16 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center mx-auto">
             <PackageOpen className="w-8 h-8" />
           </div>
@@ -131,7 +131,7 @@ export const CartView: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           {/* Left: Cart Items Table/List */}
           <div className="lg:col-span-8 space-y-4">
-            <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-xs">
+            <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden">
               <div className="p-4 sm:p-5 border-b border-slate-200 flex items-center justify-between">
                 <div className="flex items-center space-x-2">
                   <ShoppingBag className="w-5 h-5 text-blue-600" />
@@ -309,7 +309,7 @@ export const CartView: React.FC = () => {
 
           {/* Right: Order Summary Card */}
           <div className="lg:col-span-4 space-y-4">
-            <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs space-y-4 sticky top-20">
+            <div className="bg-white border border-slate-200 rounded-2xl p-5 space-y-4 sticky top-20">
               <h3 className="font-bold text-base text-slate-900 border-b border-slate-100 pb-3">
                 Tóm tắt đơn hàng
               </h3>

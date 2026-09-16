@@ -37,7 +37,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   return (
     <div
       id={`product-card-${product.id}`}
-      className="group bg-white border border-slate-200 rounded-xl overflow-hidden hover:border-blue-400 hover:shadow-md transition-all duration-200 flex flex-col relative"
+      className="group bg-white border border-slate-200 rounded-xl overflow-hidden hover:border-blue-300 hover:bg-slate-50/20 transition-all duration-200 flex flex-col relative"
     >
       {/* Product Image Link Area */}
       <Link
@@ -63,21 +63,21 @@ export const ProductCard: React.FC<ProductCardProps> = ({
         {/* Stock status & Brand overlay */}
         <div className="absolute top-2.5 left-2.5 flex flex-col gap-1 items-start z-10">
           {product.brand && (
-            <Badge variant="info" className="bg-blue-600 text-white shadow-2xs text-[10px] font-bold">
+            <Badge variant="info" className="bg-blue-600 text-white text-[10px] font-bold">
               {product.brand.name}
             </Badge>
           )}
-          <Badge variant="neutral" className="bg-white/90 text-slate-700 shadow-2xs text-[10px]">
+          <Badge variant="neutral" className="bg-white/90 text-slate-700 text-[10px]">
             {product.category}
           </Badge>
         </div>
 
         {isOutOfStock ? (
-          <div className="absolute top-2.5 right-2.5 bg-rose-600/90 text-white text-[10px] font-bold px-2 py-0.5 rounded shadow-2xs z-10">
+          <div className="absolute top-2.5 right-2.5 bg-rose-600/90 text-white text-[10px] font-bold px-2 py-0.5 rounded z-10">
             Hết hàng
           </div>
         ) : isLowStock ? (
-          <div className="absolute top-2.5 right-2.5 bg-amber-500/90 text-white text-[10px] font-bold px-2 py-0.5 rounded shadow-2xs z-10">
+          <div className="absolute top-2.5 right-2.5 bg-amber-500/90 text-white text-[10px] font-bold px-2 py-0.5 rounded z-10">
             Chỉ còn {product.inventory}
           </div>
         ) : null}

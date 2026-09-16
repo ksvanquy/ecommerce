@@ -102,7 +102,7 @@ function MainLayout({
       />
 
       {/* Sub-header horizontal navigation bar for categories */}
-      <div className="bg-white border-b border-slate-200/80 sticky top-16 z-30 shadow-2xs">
+      <div className="bg-white border-b border-slate-200/80 sticky top-16 z-30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
           <div className="flex items-center gap-1.5 overflow-x-auto py-3 scrollbar-none text-xs">
             {/* All products button */}
@@ -111,7 +111,7 @@ function MainLayout({
               onClick={() => handleSelectCategory('all')}
               className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
                 selectedCategory === 'all'
-                  ? 'bg-blue-600 text-white shadow-sm'
+                  ? 'bg-blue-600 text-white'
                   : 'bg-slate-100 hover:bg-slate-200/70 text-slate-700 hover:text-slate-900'
               }`}
             >
@@ -128,7 +128,7 @@ function MainLayout({
                   onClick={() => handleSelectCategory(cat.slug)}
                   className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
                     isSelected
-                      ? 'bg-blue-600 text-white shadow-sm'
+                      ? 'bg-blue-600 text-white'
                       : 'bg-slate-100 hover:bg-slate-200/70 text-slate-700 hover:text-slate-900'
                   }`}
                 >

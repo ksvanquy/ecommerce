@@ -144,7 +144,7 @@ export const OrderHistoryView: React.FC = () => {
   return (
     <div className="space-y-6 w-full py-2">
       {/* Header Banner */}
-      <div className="bg-gradient-to-r from-slate-900 via-indigo-950 to-blue-900 text-white rounded-2xl p-6 shadow-sm">
+      <div className="bg-slate-900 text-white rounded-2xl p-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <div className="flex items-center space-x-2">
@@ -205,9 +205,9 @@ export const OrderHistoryView: React.FC = () => {
 
       {/* Guest Mode Notification & Quick Login */}
       {!isAuthenticated && (
-        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200/80 rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="bg-blue-50 border border-blue-200 rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="flex items-start gap-3">
-            <div className="w-9 h-9 rounded-xl bg-blue-600 text-white flex items-center justify-center shrink-0 shadow-xs">
+            <div className="w-9 h-9 rounded-xl bg-blue-600 text-white flex items-center justify-center shrink-0">
               <ShieldCheck className="w-5 h-5" />
             </div>
             <div>
@@ -236,7 +236,7 @@ export const OrderHistoryView: React.FC = () => {
       )}
 
       {/* Filters and Search Bar */}
-      <div className="bg-white border border-slate-200/80 rounded-xl p-3 flex flex-col md:flex-row items-center justify-between gap-3 shadow-2xs">
+      <div className="bg-white border border-slate-200 rounded-xl p-3 flex flex-col md:flex-row items-center justify-between gap-3">
         {/* Status Tabs */}
         <div className="flex flex-wrap gap-1 w-full md:w-auto">
           {[
