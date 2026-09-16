@@ -64,7 +64,7 @@ export const CheckoutView: React.FC<CheckoutViewProps> = ({ onBackToCart }) => {
   const [customerPhone, setCustomerPhone] = useState('');
   const [shippingAddress, setShippingAddress] = useState('');
   const [customerNote, setCustomerNote] = useState('');
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('vietqr');
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('cod');
   const [validationError, setValidationError] = useState<string | null>(null);
 
   // Coupon state
