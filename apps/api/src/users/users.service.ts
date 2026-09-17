@@ -113,6 +113,32 @@ export class UsersService {
     }
     return this.toPublicUser(userDb);
   }
+
+  /**
+   * Lấy danh sách tất cả người dùng (Dành cho Quản trị)
+   */
+  async getAllUsers(): Promise<User[]> {
+    const list = await this.repo.listAll();
+    return list.map((u) => this.toPublicUser(u));
+  }
+
+  /**
+   * Cập nhật vai trò người dùng (Admin / Customer)
+   */
+  async updateUserRole(userId: string, role: UserRole): Promise<User> {
+    const updated = await this.repo.updateRole(userId, role);
+    if (!updated) {
+      throw new Error(`Không tìm thấy người dùng với ID "${userId}"`);
+    }
+    return this.toPublicUser(updated);
+  }
+
+  /**
+   * Xóa tài khoản người dùng
+   */
+  async deleteUser(userId: string): Promise<boolean> {
+    return await this.repo.deleteUser(userId);
+  }
 }
 
 export const usersService = new UsersService();

@@ -40,6 +40,34 @@ export const createCategorySchema = z.object({
 
 export const updateCategorySchema = createCategorySchema.partial();
 
+export const createBrandSchema = z.object({
+  name: z.string().min(2, 'Tên thương hiệu phải có ít nhất 2 ký tự').trim(),
+  slug: z.string().min(2, 'Slug thương hiệu phải có ít nhất 2 ký tự').trim().toLowerCase(),
+  logoUrl: z.string().optional().default(''),
+  description: z.string().optional().default(''),
+  website: z.string().optional().default(''),
+  country: z.string().optional().default(''),
+  isActive: z.boolean().optional().default(true),
+});
+
+export const updateBrandSchema = createBrandSchema.partial();
+
+export const createProductVariantSchema = z.object({
+  productId: z.string().min(1, 'Mã sản phẩm là bắt buộc'),
+  name: z.string().min(1, 'Tên phiên bản là bắt buộc').trim(),
+  sku: z.string().min(1, 'Mã SKU là bắt buộc').trim().toUpperCase(),
+  price: z.number().positive('Giá phiên bản phải lớn hơn 0'),
+  originalPrice: z.number().positive().optional(),
+  inventory: z.number().int().nonnegative('Số lượng tồn kho không được âm'),
+  colorName: z.string().optional(),
+  colorCode: z.string().optional(),
+  specSummary: z.string().optional(),
+  imageUrl: z.string().optional(),
+  isDefault: z.boolean().optional().default(false),
+});
+
+export const updateProductVariantSchema = createProductVariantSchema.partial();
+
 export const productFiltersSchema = z.object({
   page: z.coerce.number().int().positive().optional().default(1),
   limit: z.coerce.number().int().positive().max(100).optional().default(8),
@@ -188,6 +216,12 @@ export type UpdateProductPayload = z.infer<typeof updateProductSchema>;
 
 export type CreateCategoryPayload = z.infer<typeof createCategorySchema>;
 export type UpdateCategoryPayload = z.infer<typeof updateCategorySchema>;
+
+export type CreateBrandPayload = z.infer<typeof createBrandSchema>;
+export type UpdateBrandPayload = z.infer<typeof updateBrandSchema>;
+
+export type CreateProductVariantPayload = z.infer<typeof createProductVariantSchema>;
+export type UpdateProductVariantPayload = z.infer<typeof updateProductVariantSchema>;
 
 export interface ProductFilters {
   page?: number;

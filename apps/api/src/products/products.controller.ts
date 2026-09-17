@@ -178,3 +178,71 @@ productsRouter.get(
     }
   }
 );
+
+/**
+ * POST /api/products/:productId/variants
+ * Create product variant
+ */
+productsRouter.post(
+  '/:productId/variants',
+  authMiddleware,
+  requireRole(['admin']),
+  async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const variant = await productsService.createVariant(req.params.productId, req.body);
+      res.status(201).json({
+        success: true,
+        message: 'Tạo biến thể sản phẩm thành công.',
+        data: variant,
+        timestamp: new Date().toISOString(),
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+/**
+ * PUT /api/products/:productId/variants/:variantId
+ * Update product variant
+ */
+productsRouter.put(
+  '/:productId/variants/:variantId',
+  authMiddleware,
+  requireRole(['admin']),
+  async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const variant = await productsService.updateVariant(req.params.variantId, req.body);
+      res.json({
+        success: true,
+        message: 'Cập nhật biến thể sản phẩm thành công.',
+        data: variant,
+        timestamp: new Date().toISOString(),
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+/**
+ * DELETE /api/products/:productId/variants/:variantId
+ * Delete product variant
+ */
+productsRouter.delete(
+  '/:productId/variants/:variantId',
+  authMiddleware,
+  requireRole(['admin']),
+  async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      await productsService.deleteVariant(req.params.variantId);
+      res.json({
+        success: true,
+        message: 'Xóa biến thể sản phẩm thành công.',
+        timestamp: new Date().toISOString(),
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+);

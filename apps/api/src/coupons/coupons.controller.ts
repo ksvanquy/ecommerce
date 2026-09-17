@@ -109,3 +109,50 @@ couponsRouter.post(
     }
   }
 );
+
+/**
+ * PUT /coupons/:id - Cập nhật mã khuyến mãi (Admin only)
+ */
+couponsRouter.put(
+  '/:id',
+  authMiddleware,
+  requireRole(['admin']),
+  async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const { id } = req.params;
+      const coupon = await couponsService.updateCoupon(id, req.body);
+
+      res.json({
+        success: true,
+        message: 'Cập nhật mã khuyến mãi thành công',
+        data: coupon,
+        timestamp: new Date().toISOString(),
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+/**
+ * DELETE /coupons/:id - Xóa mã khuyến mãi (Admin only)
+ */
+couponsRouter.delete(
+  '/:id',
+  authMiddleware,
+  requireRole(['admin']),
+  async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const { id } = req.params;
+      await couponsService.deleteCoupon(id);
+
+      res.json({
+        success: true,
+        message: 'Xóa mã khuyến mãi thành công',
+        timestamp: new Date().toISOString(),
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+);

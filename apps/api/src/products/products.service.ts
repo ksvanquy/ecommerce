@@ -65,6 +65,23 @@ export class ProductsService {
     await this.getProductById(id);
     return productsRepository.delete(id);
   }
+
+  async createVariant(productId: string, data: any): Promise<any> {
+    await this.getProductById(productId);
+    return productsRepository.createVariant(productId, data);
+  }
+
+  async updateVariant(variantId: string, data: any): Promise<any> {
+    const updated = await productsRepository.updateVariant(variantId, data);
+    if (!updated) {
+      throw new Error('Không tìm thấy biến thể hoặc cập nhật thất bại.');
+    }
+    return updated;
+  }
+
+  async deleteVariant(variantId: string): Promise<boolean> {
+    return productsRepository.deleteVariant(variantId);
+  }
 }
 
 export const productsService = new ProductsService();

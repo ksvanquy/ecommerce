@@ -139,6 +139,40 @@ export class CouponsRepository {
 
     return this.formatCoupon(created);
   }
+
+  async updateCoupon(id: string, payload: Partial<CreateCouponPayload>): Promise<Coupon | null> {
+    const updateData: any = { updatedAt: new Date() };
+
+    if (payload.code !== undefined) updateData.code = payload.code.toUpperCase().trim();
+    if (payload.title !== undefined) updateData.title = payload.title.trim();
+    if (payload.description !== undefined) updateData.description = payload.description;
+    if (payload.discountType !== undefined) updateData.discountType = payload.discountType;
+    if (payload.discountValue !== undefined) updateData.discountValue = payload.discountValue;
+    if (payload.maxDiscountAmount !== undefined) updateData.maxDiscountAmount = payload.maxDiscountAmount;
+    if (payload.minOrderValue !== undefined) updateData.minOrderValue = payload.minOrderValue;
+    if (payload.usageLimit !== undefined) updateData.usageLimit = payload.usageLimit;
+    if (payload.userLimit !== undefined) updateData.userLimit = payload.userLimit;
+    if (payload.startDate !== undefined) updateData.startDate = new Date(payload.startDate);
+    if (payload.endDate !== undefined) updateData.endDate = new Date(payload.endDate);
+    if (payload.isActive !== undefined) updateData.isActive = payload.isActive;
+
+    const [updated] = await db
+      .update(couponsTable)
+      .set(updateData)
+      .where(eq(couponsTable.id, id))
+      .returning();
+
+    return updated ? this.formatCoupon(updated) : null;
+  }
+
+  async deleteCoupon(id: string): Promise<boolean> {
+    const deleted = await db
+      .delete(couponsTable)
+      .where(eq(couponsTable.id, id))
+      .returning();
+
+    return deleted.length > 0;
+  }
 }
 
 export const couponsRepository = new CouponsRepository();

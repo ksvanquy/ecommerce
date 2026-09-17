@@ -285,6 +285,98 @@ export class ProductsRepository {
 
     return deleted.length > 0;
   }
+
+  async createVariant(productId: string, data: any): Promise<ProductVariant> {
+    const newId = `var_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
+    const now = new Date();
+
+    const [inserted] = await db
+      .insert(productVariantsTable)
+      .values({
+        id: newId,
+        productId,
+        sku: data.sku || `SKU-${Date.now()}`,
+        name: data.name,
+        colorName: data.colorName || null,
+        colorCode: data.colorCode || null,
+        specSummary: data.specSummary || null,
+        price: Math.max(0, Math.round(data.price)),
+        originalPrice: data.originalPrice ? Math.max(0, Math.round(data.originalPrice)) : null,
+        inventory: Math.max(0, Math.round(data.inventory || 0)),
+        imageUrl: data.imageUrl || null,
+        isDefault: data.isDefault || false,
+        createdAt: now,
+        updatedAt: now,
+      })
+      .returning();
+
+    return {
+      id: inserted.id,
+      productId: inserted.productId,
+      sku: inserted.sku,
+      name: inserted.name,
+      colorName: inserted.colorName || undefined,
+      colorCode: inserted.colorCode || undefined,
+      specSummary: inserted.specSummary || undefined,
+      price: inserted.price,
+      originalPrice: inserted.originalPrice || undefined,
+      inventory: inserted.inventory,
+      imageUrl: inserted.imageUrl || undefined,
+      isDefault: inserted.isDefault,
+      createdAt: inserted.createdAt.toISOString(),
+      updatedAt: inserted.updatedAt.toISOString(),
+    };
+  }
+
+  async updateVariant(variantId: string, data: any): Promise<ProductVariant | null> {
+    const now = new Date();
+    const updateData: any = { updatedAt: now };
+
+    if (data.name !== undefined) updateData.name = data.name;
+    if (data.sku !== undefined) updateData.sku = data.sku;
+    if (data.colorName !== undefined) updateData.colorName = data.colorName;
+    if (data.colorCode !== undefined) updateData.colorCode = data.colorCode;
+    if (data.specSummary !== undefined) updateData.specSummary = data.specSummary;
+    if (data.price !== undefined) updateData.price = Math.max(0, Math.round(data.price));
+    if (data.originalPrice !== undefined) updateData.originalPrice = data.originalPrice ? Math.max(0, Math.round(data.originalPrice)) : null;
+    if (data.inventory !== undefined) updateData.inventory = Math.max(0, Math.round(data.inventory));
+    if (data.imageUrl !== undefined) updateData.imageUrl = data.imageUrl;
+    if (data.isDefault !== undefined) updateData.isDefault = data.isDefault;
+
+    const [updated] = await db
+      .update(productVariantsTable)
+      .set(updateData)
+      .where(eq(productVariantsTable.id, variantId))
+      .returning();
+
+    if (!updated) return null;
+
+    return {
+      id: updated.id,
+      productId: updated.productId,
+      sku: updated.sku,
+      name: updated.name,
+      colorName: updated.colorName || undefined,
+      colorCode: updated.colorCode || undefined,
+      specSummary: updated.specSummary || undefined,
+      price: updated.price,
+      originalPrice: updated.originalPrice || undefined,
+      inventory: updated.inventory,
+      imageUrl: updated.imageUrl || undefined,
+      isDefault: updated.isDefault,
+      createdAt: updated.createdAt.toISOString(),
+      updatedAt: updated.updatedAt.toISOString(),
+    };
+  }
+
+  async deleteVariant(variantId: string): Promise<boolean> {
+    const deleted = await db
+      .delete(productVariantsTable)
+      .where(eq(productVariantsTable.id, variantId))
+      .returning();
+
+    return deleted.length > 0;
+  }
 }
 
 export const productsRepository = new ProductsRepository();

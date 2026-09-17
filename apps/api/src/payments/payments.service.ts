@@ -165,6 +165,23 @@ export class PaymentsService {
     return updatedTx!;
   }
 
+  async rejectPayment(transactionId: string, reason?: string): Promise<PaymentTransaction> {
+    const transactions = await paymentsRepository.findAllTransactions();
+    const tx = transactions.find((t) => t.id === transactionId || t.transactionCode === transactionId);
+    if (!tx) {
+      throw new AppError(`Không tìm thấy giao dịch với ID/Mã "${transactionId}"`, 404, 'TRANSACTION_NOT_FOUND');
+    }
+
+    const updatedTx = await paymentsRepository.updateTransactionStatus(
+      tx.id,
+      'failed',
+      `REJECTED-MANUAL-${Date.now()}`,
+      { rejectedBy: 'admin', reason: reason || 'Chưa nhận được tiền hoặc thông tin chuyển khoản sai', rejectedAt: new Date().toISOString() }
+    );
+
+    return updatedTx!;
+  }
+
   async getTransactionByCode(transactionCode: string): Promise<PaymentTransaction> {
     const tx = await paymentsRepository.findByTransactionCode(transactionCode);
     if (!tx) {

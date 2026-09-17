@@ -99,6 +99,25 @@ export class CouponsService {
       await couponsRepository.recordUsage(coupon.id, userId, orderId, discountApplied);
     }
   }
+
+  async updateCoupon(id: string, payload: Partial<CreateCouponPayload>): Promise<Coupon> {
+    if (payload.code) {
+      const existing = await couponsRepository.findByCode(payload.code);
+      if (existing && existing.id !== id) {
+        throw new AppError(`Mã giảm giá "${payload.code}" đã được sử dụng bởi coupon khác`, 400, 'COUPON_CODE_EXISTS');
+      }
+    }
+
+    const updated = await couponsRepository.updateCoupon(id, payload);
+    if (!updated) {
+      throw new AppError(`Không tìm thấy mã giảm giá với ID "${id}"`, 404, 'COUPON_NOT_FOUND');
+    }
+    return updated;
+  }
+
+  async deleteCoupon(id: string): Promise<boolean> {
+    return await couponsRepository.deleteCoupon(id);
+  }
 }
 
 export const couponsService = new CouponsService();

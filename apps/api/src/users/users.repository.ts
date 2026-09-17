@@ -42,6 +42,25 @@ export class UsersRepository {
   async listAll(): Promise<UserDb[]> {
     return await db.select().from(usersTable);
   }
+
+  async updateRole(id: string, role: string): Promise<UserDb | null> {
+    const [updated] = await db
+      .update(usersTable)
+      .set({ role, updatedAt: new Date() })
+      .where(eq(usersTable.id, id))
+      .returning();
+
+    return updated || null;
+  }
+
+  async deleteUser(id: string): Promise<boolean> {
+    const deleted = await db
+      .delete(usersTable)
+      .where(eq(usersTable.id, id))
+      .returning();
+
+    return deleted.length > 0;
+  }
 }
 
 export const usersRepository = new UsersRepository();

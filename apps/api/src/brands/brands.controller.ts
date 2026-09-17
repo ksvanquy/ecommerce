@@ -36,6 +36,49 @@ export class BrandsController {
       next(err);
     }
   }
+
+  async create(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const created = await brandsService.createBrand(req.body);
+      res.status(201).json({
+        success: true,
+        message: 'Tạo thương hiệu thành công',
+        data: created,
+        timestamp: new Date().toISOString(),
+      });
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  async update(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const { id } = req.params;
+      const updated = await brandsService.updateBrand(id, req.body);
+      res.json({
+        success: true,
+        message: 'Cập nhật thương hiệu thành công',
+        data: updated,
+        timestamp: new Date().toISOString(),
+      });
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  async delete(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const { id } = req.params;
+      await brandsService.deleteBrand(id);
+      res.json({
+        success: true,
+        message: 'Xóa thương hiệu thành công',
+        timestamp: new Date().toISOString(),
+      });
+    } catch (err) {
+      next(err);
+    }
+  }
 }
 
 export const brandsController = new BrandsController();
