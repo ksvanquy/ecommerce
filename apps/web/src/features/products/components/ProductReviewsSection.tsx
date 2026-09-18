@@ -1,21 +1,14 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Card, Button, Badge, toast } from '@repo/ui';
+import { Button, Badge, toast } from '@repo/ui';
 import { reviewsApi, type ProductReviewsResponse } from '../api/reviewsApi.ts';
 import { WriteReviewModal } from './WriteReviewModal.tsx';
-import { useAuthStore } from '../../auth/store/authStore.ts';
 import {
   Star,
   MessageSquare,
   ShieldCheck,
-  ThumbsUp,
-  Image as ImageIcon,
-  CheckCircle2,
-  Calendar,
-  Sparkles,
   Loader2,
   User,
 } from 'lucide-react';
-import type { Review } from '@repo/shared-types';
 
 interface ProductReviewsSectionProps {
   productId: string;
@@ -26,7 +19,6 @@ export const ProductReviewsSection: React.FC<ProductReviewsSectionProps> = ({
   productId,
   productName,
 }) => {
-  const user = useAuthStore((state) => state.user);
   const [data, setData] = useState<ProductReviewsResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isWriteModalOpen, setIsWriteModalOpen] = useState(false);

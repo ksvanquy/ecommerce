@@ -15,7 +15,7 @@ app.use(express.static(distPath));
 app.use('/admin', express.static(adminDistPath));
 
 // Fallback for admin SPA routes
-app.get('/admin/*', (req, res) => {
+app.get('/admin/*', (_req, res) => {
   res.sendFile(path.join(adminDistPath, 'index.html'));
 });
 

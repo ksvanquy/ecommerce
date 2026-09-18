@@ -10,4 +10,4 @@ export interface AdminStats {
   categoryRevenue: { category: string; value: number }[];
 }
 
-export type AdminTab = 'dashboard' | 'orders' | 'products' | 'transactions' | 'users' | 'coupons';
+export type AdminTab = 'dashboard' | 'orders' | 'products' | 'transactions';

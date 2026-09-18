@@ -1,7 +1,7 @@
 import { eq, and, desc, sql, inArray } from 'drizzle-orm';
 import { db } from '../db/index.ts';
 import { reviewsTable, usersTable, ordersTable, orderItemsTable } from '../db/schema/index.ts';
-import type { Review, ReviewSummary, CreateReviewPayload } from '@repo/shared-types';
+import type { Review, ReviewSummary } from '@repo/shared-types';
 
 export class ReviewsRepository {
   private formatReview(dbReview: any, userMap?: Map<string, any>): Review {

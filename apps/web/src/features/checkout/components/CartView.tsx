@@ -41,8 +41,6 @@ export const CartView: React.FC = () => {
     shippingFee,
     totalPrice,
     couponCode,
-    appliedCoupon,
-    discountPercent,
     applyCoupon,
     removeCoupon,
   } = useCartStore();

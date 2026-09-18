@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Search, X, Tag, SlidersHorizontal, Award, Filter, Sparkles, TrendingUp } from 'lucide-react';
-import { Button } from '@repo/ui';
 import { useCategoryTree } from '../api/useCategories.ts';
 import { useBrands } from '../api/useBrands.ts';
 import type { ProductFilters } from '../types.ts';
@@ -17,7 +16,6 @@ export const ProductFiltersBar: React.FC<ProductFiltersBarProps> = ({
   filters,
   onFilterChange,
   onReset,
-  totalProducts,
 }) => {
   const { data: categoryTree = [] } = useCategoryTree();
   const { data: brandsList = [] } = useBrands();

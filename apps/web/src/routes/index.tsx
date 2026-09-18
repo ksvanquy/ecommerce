@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { createBrowserRouter, RouterProvider, useNavigate } from 'react-router-dom';
 import { Header } from '../components/layout/Header.tsx';
 import { Footer } from '../components/layout/Footer.tsx';
@@ -15,7 +15,6 @@ import {
   ProductsView,
   ProductDetailView,
 } from '../features/products/index.ts';
-import { useCategoryTree } from '../features/products/api/useCategories.ts';
 import {
   CartView,
   OrderHistoryView,
@@ -23,27 +22,7 @@ import {
 } from '../features/checkout/index.ts';
 import { AddressManager } from '../features/checkout/components/AddressManager.tsx';
 import { ProtectedRoute } from './ProtectedRoute.tsx';
-import { LogOut, Package, User as UserIcon, Laptop, Smartphone, Cpu, Layers, Grid } from 'lucide-react';
-
-/**
- * Helper to match category slugs with beautiful Lucide icons
- */
-function getCategoryIcon(slug: string) {
-  const norm = slug.toLowerCase();
-  if (norm.includes('laptop') || norm.includes('macbook') || norm.includes('may-tinh')) {
-    return <Laptop className="w-4 h-4 shrink-0" />;
-  }
-  if (norm.includes('phone') || norm.includes('dien-thoai') || norm.includes('iphone') || norm.includes('samsung')) {
-    return <Smartphone className="w-4 h-4 shrink-0" />;
-  }
-  if (norm.includes('linh-kien') || norm.includes('cpu') || norm.includes('vga') || norm.includes('ram')) {
-    return <Cpu className="w-4 h-4 shrink-0" />;
-  }
-  if (norm.includes('phu-kien') || norm.includes('accessories') || norm.includes('chuot') || norm.includes('ban-phim')) {
-    return <Layers className="w-4 h-4 shrink-0" />;
-  }
-  return <Grid className="w-4 h-4 shrink-0" />;
-}
+import { LogOut, Package } from 'lucide-react';
 
 /**
  * Main Layout wrapper with Header and Auth Modal (no Sidebar, full width layout)
@@ -171,7 +150,6 @@ function RegisterPage() {
  */
 function ProfilePage() {
   const user = useAuthStore((state) => state.user);
-  const token = useAuthStore((state) => state.token);
   const logout = useAuthStore((state) => state.logout);
   const navigate = useNavigate();
 

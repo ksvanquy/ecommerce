@@ -1,16 +1,12 @@
 import React, { useState } from 'react';
-import { Button, Card, Badge } from '@repo/ui';
+import { Button } from '@repo/ui';
 import { reviewsApi } from '../api/reviewsApi.ts';
-import { useAuthStore } from '../../auth/store/authStore.ts';
 import {
   Star,
   X,
   CheckCircle2,
   AlertCircle,
   Loader2,
-  Image as ImageIcon,
-  MessageSquare,
-  ShieldCheck,
 } from 'lucide-react';
 
 interface WriteReviewModalProps {
@@ -28,7 +24,6 @@ export const WriteReviewModal: React.FC<WriteReviewModalProps> = ({
   onReviewSubmitted,
   onClose,
 }) => {
-  const user = useAuthStore((state) => state.user);
   const [rating, setRating] = useState<number>(5);
   const [hoverRating, setHoverRating] = useState<number>(0);
   const [title, setTitle] = useState('');

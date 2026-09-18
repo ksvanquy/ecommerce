@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Button, Badge, toast } from '@repo/ui';
+import { Button, toast } from '@repo/ui';
 import { formatCurrency } from '../../../utils/currency.ts';
 import { paymentsApi, type PaymentIntentResponse } from '../api/paymentsApi.ts';
 import {
@@ -10,9 +10,7 @@ import {
   Building,
   AlertCircle,
   Loader2,
-  ExternalLink,
   ShieldCheck,
-  RefreshCw,
   X,
 } from 'lucide-react';
 import type { Order } from '../types.ts';

@@ -13,7 +13,7 @@ export const categoriesRouter = Router();
  * GET /api/categories/tree
  * Returns nested category tree for MegaMenu & Navigation
  */
-categoriesRouter.get('/tree', async (req: Request, res: Response, next: NextFunction) => {
+categoriesRouter.get('/tree', async (_req: Request, res: Response, next: NextFunction) => {
   try {
     const tree = await categoriesService.getCategoryTree();
     res.json({
@@ -30,7 +30,7 @@ categoriesRouter.get('/tree', async (req: Request, res: Response, next: NextFunc
  * GET /api/categories
  * Returns flat list of all categories
  */
-categoriesRouter.get('/', async (req: Request, res: Response, next: NextFunction) => {
+categoriesRouter.get('/', async (_req: Request, res: Response, next: NextFunction) => {
   try {
     const categories = await categoriesService.getAllCategories();
     res.json({

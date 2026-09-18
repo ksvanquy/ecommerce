@@ -26,7 +26,7 @@ export default defineConfig(() => {
           });
 
           // Rewrite rules for /admin/ in development
-          server.middlewares.use((req, res, next) => {
+          server.middlewares.use((req, _res, next) => {
             if (req.url) {
               const pathPart = req.url.split('?')[0];
               if (pathPart === '/admin/' || pathPart === '/admin/index.html') {

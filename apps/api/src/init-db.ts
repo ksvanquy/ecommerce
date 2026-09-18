@@ -11,10 +11,6 @@ import {
   ordersTable,
   orderItemsTable,
   couponsTable,
-  couponUsagesTable,
-  cartsTable,
-  cartItemsTable,
-  paymentTransactionsTable,
   reviewsTable,
   userAddressesTable,
 } from './db/schema/index.ts';

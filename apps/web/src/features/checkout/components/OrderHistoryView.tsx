@@ -13,23 +13,15 @@ import {
   Package,
   Calendar,
   MapPin,
-  Phone,
   User,
-  CreditCard,
-  Banknote,
   Search,
-  Filter,
   CheckCircle2,
   Clock,
   Truck,
   XCircle,
   AlertTriangle,
   RotateCcw,
-  ArrowRight,
   ShoppingBag,
-  ExternalLink,
-  ChevronDown,
-  ChevronUp,
   LogIn,
   ShieldCheck,
   Star,
@@ -49,7 +41,6 @@ export const OrderHistoryView: React.FC = () => {
     orderId: string;
   } | null>(null);
 
-  const user = useAuthStore((state) => state.user);
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const { mutate: loginMutate, isPending: isLoggingIn } = useLogin();
 

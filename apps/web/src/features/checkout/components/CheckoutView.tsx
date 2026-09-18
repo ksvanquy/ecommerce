@@ -27,11 +27,8 @@ import {
   ArrowLeft,
   Check,
   Copy,
-  Calendar,
-  Sparkles,
   QrCode,
   Smartphone,
-  TicketPercent,
   Loader2,
 } from 'lucide-react';
 import type { Order, PaymentMethod } from '../types.ts';

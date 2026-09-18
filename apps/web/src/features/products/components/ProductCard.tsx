@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import type { Product } from '../types.ts';
 import { useCartStore } from '../../checkout/store/cartStore.ts';
-import { Button, Badge } from '@repo/ui';
 import { ShoppingCart, Check } from 'lucide-react';
 import { formatCurrency } from '../../../utils/currency.ts';
 

@@ -4,7 +4,6 @@ import type { CartState, CartItem } from '../types.ts';
 import type { Product } from '../../products/types.ts';
 import { cartApi } from '../api/cartApi.ts';
 import { couponsApi } from '../api/couponsApi.ts';
-import type { Coupon } from '@repo/shared-types';
 
 export const useCartStore = create<CartState>()(
   persist(

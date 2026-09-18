@@ -5,7 +5,6 @@ import {
   LogOut,
   Package,
   ShoppingCart,
-  ChevronDown,
   Search,
   X,
 } from 'lucide-react';

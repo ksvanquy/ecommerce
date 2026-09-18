@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Button, Badge, Modal, Input } from '@repo/ui';
-import { MapPin, Phone, User, Plus, Trash2, Edit3, ShieldAlert, Check, Building2, Home } from 'lucide-react';
+import { Button, Badge, Modal, Input } from '@repo/ui';
+import { MapPin, Phone, User, Plus, Trash2, Edit3, ShieldAlert, Building2, Home } from 'lucide-react';
 import { addressesApi } from '../api/addressesApi.ts';
 import type { UserAddress, CreateAddressPayload } from '@repo/shared-types';
 

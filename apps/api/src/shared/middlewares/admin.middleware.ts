@@ -1,5 +1,5 @@
 import { Response, NextFunction } from 'express';
-import { AuthenticatedRequest, requireRole } from './auth.middleware.ts';
+import { AuthenticatedRequest } from './auth.middleware.ts';
 
 /**
  * Middleware chặn đứng tất cả người dùng không có vai trò 'admin'
